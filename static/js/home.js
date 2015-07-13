@@ -1,11 +1,15 @@
 var GEOCODE_KEY = 'AIzaSyBPmuX9h6_BEKfKLWy-Kdc1gQHWZQIUGCQ';
 var map;
+var yourLatitude;
+var yourLongitude;
+var yourLatlng;
+var blocks = [];
+var orderBlocks = [];
 
 
 
 /* set marker on google maps of current location */
 function addMarker(myLatlng, title, description){
-    alert(myLatlng);
      var marker = new google.maps.Marker({
         position: myLatlng,
         map: map,
@@ -38,20 +42,20 @@ function addMarker(myLatlng, title, description){
 /* save current position/ coordinates to map */
 function initialize(position) {
 
-    latitude = position.coords.latitude;
-    longitude = position.coords.longitude;
+    yourLatitude = position.coords.latitude;
+    yourLongitude = position.coords.longitude;
  //  alert('Your Current Coordinates: ' + latitude + " " + longitude);
-    var myLatlng = new google.maps.LatLng(latitude,longitude);
+    yourLatlng = new google.maps.LatLng(yourLatitude,yourLongitude);
 
     /* set map configuration */
     var mapOptions = {
-        center: myLatlng,
+        center: yourLatlng,
         zoom: 16
     };
 
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
-    addMarker(myLatlng,'You','This is where you are<br/>Zoom out to see other destinations');
+    addMarker(yourLatlng,'You','This is where you are<br/>Zoom out to see other destinations');
 
     // add destinations to map
     getDestinations();
@@ -60,41 +64,68 @@ function initialize(position) {
 
 
 /* get directions */
-function getDirections(origin, destination)
+function getDirections(destination, ptrBlockMenu, ID)
 {
+    var coordinates, latitude, longitude, durationText, durationSeconds,distance, route;
+    var totalDistance = 0, totalDuration = 0;
 	var directionsService = new google.maps.DirectionsService();
 
 	var directionrequest =
     {
-		origin: origin,
+		origin: yourLatlng,
  		destination: destination,
-		travelMode: google.maps.TravelMode.DRIVING
+		travelMode: google.maps.TravelMode.WALKING
 	}
 
 	directionsService.route(directionrequest, function(response, status){
 	    if (status == google.maps.DirectionsStatus.OK) {
-		    getSteps(response);
+		    route = response.routes[0].legs[0];
+		    // get individual steps
+		    for(var i=0; i< route.steps.length; i++)
+	        {
+	            coordinates = route.steps[i].start_point.toString();
+        		latitude = coordinates.substring(coordinates.lastIndexOf('(')+1,coordinates.lastIndexOf(','));
+        		longitude = coordinates.substring(coordinates.lastIndexOf(',')+1,coordinates.lastIndexOf(')'));
+        		distance = route.steps[i].distance.value;
+        		durationText = route.steps[i].duration.text;
+        		durationSeconds = route.steps[i].duration.value;
+        		totalDistance += distance;
+        		totalDuration += durationSeconds;
+         		//getAddress(latitude , longitude);
+        	}
+
+            // create menu items
+             /*
+                totalDistance = meters
+                1 meter = 0.000621371192 mile
+            */
+            var menuItemDistance = document.createElement('div');
+            menuItemDistance.className = 'blockMenuItem';
+            menuItemDistance.id = ID + 'distanceItem';
+            menuItemDistance.innerHTML = Number(totalDistance*0.000621371192).toFixed(1) + 'mi' ;
+            ptrBlockMenu.appendChild(menuItemDistance);
+
+            /*
+                duration menuItem
+                totalDuration = seconds
+            */
+            var menuItemDuration = document.createElement('div');
+            menuItemDuration.className = 'blockMenuItem';
+            menuItemDuration.id = ID + 'durationItem';
+            // convert duration into hrs:mins
+            var timeMins = totalDuration/60;
+            var hours = Math.floor(timeMins/60);
+            var mins = Math.floor(timeMins - (hours*60));
+            menuItemDuration.innerHTML = hours+"hrs:"+mins+"mins";
+            ptrBlockMenu.appendChild(menuItemDuration);
+
+            orderBlocks.push[totalDuration];
 	    }
 	});
 }
 
 
-function getSteps(steps)
-{
-	var route = steps.routes[0].legs[0];
-	var coordinates, latitude, longitude, durationText, durationSeconds;
-	var weather = {};
 
-	for(var i=0; i< route.steps.length; i++)
-	{
-		coordinates = route.steps[i].start_point.toString();
-		latitude = coordinates.substring(coordinates.lastIndexOf('(')+1,coordinates.lastIndexOf(','));
-		longitude = coordinates.substring(coordinates.lastIndexOf(',')+1,coordinates.lastIndexOf(')'));
-		durationText = route.steps[i].duration.text;
-		durationSeconds = route.steps[i].duration.value;
- 		getAddress(latitude , longitude);
-	}
-}
 
 
 /* geocode reverse lookup */
@@ -137,7 +168,6 @@ function addNewDestination(data){
         var longitude = data.list[row].longitude;
         var latlng = new google.maps.LatLng(latitude, longitude);
 
-
         addMarker(latlng, name, description);
 
         // create new block and append to centerContainer
@@ -145,26 +175,37 @@ function addNewDestination(data){
         newBlock.id = ID;
         newBlock.className = 'block';
         document.getElementById('centerContainer').appendChild(newBlock);
-        var ptrNewBlock = document.getElementById(ID);
 
         // create header for block and append to centerContainer
         var blockHeader = document.createElement('div');
         blockHeader.className = 'blockHeader';
         blockHeader.id = ID + 'Header';
-        ptrNewBlock.appendChild(blockHeader);
-        var ptrBlockHeader = document.getElementById(ID + 'Header');
+        newBlock.appendChild(blockHeader);
 
         // create link for url and append to header
         var link = document.createElement('a');
         link.setAttribute('href', url);
         link.setAttribute('target', 'blank');
         link.innerHTML = counter + ') ' + name;
-        ptrBlockHeader.appendChild(link);
+        blockHeader.appendChild(link);
+
+        // create menu
+        var menu = document.createElement('div');
+        menu.className = 'blockHeaderMenu';
+        menu.id = ID + 'Menu';
+        blockHeader.appendChild(menu);
+
+        getDirections(latlng, menu, ID);                 // data about directions from your position to specific destination
+
 
 
         counter++;
       //  ptrNewBlock.innerHTML = data.list[row].description;
     }
+
+
+
+
 }
 
 /*
@@ -211,8 +252,5 @@ $(document).ready(function(){
         } else {
             alert("Geolocation is not supported by this browser.");
         }
-
-
-
 
 });
