@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block js %}
+	<script src="{{ url_for('static', filename='js/home.js') }}"></script>
+{% endblock %}
+
+
+{% block css %}<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/home.css') }}" media="screen" />
+{% endblock %}
+
+
+{% block content %}
+ <div id="map-canvas"></div>
+{% endblock %}
+

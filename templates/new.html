@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block js %}
+	<script src="{{ url_for('static', filename='js/new.js') }}"></script>
+{% endblock %}
+
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+<div class="block">
+    <div class="blockHeader">New</div><br/>
+    <!--<form enctype="multipart/form-data" action="{{ url_for("addNewDestination") }}" method="post" autocomplete="off">-->
+    <input type="text" id="nameIn" name="Name"  placeholder="Name"><br/>
+    <input type="text" id="addressIn" name="Address"  placeholder="Address"><br/>
+    <input type="text" id="URLin"name="URL" placeholder="URL"><br/>
+    <textarea id="descrptionIn" name="Description" value="Description"></textarea><br/>
+    <input id="submitIn" type="submit" value="create"/>
+</div>
+{% endblock %}

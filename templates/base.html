@@ -1,0 +1,44 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+	    <meta name="viewport" content="width=1000px, maximum-scale=1.0" />
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/base.css') }}" media="screen" />
+		<link href='http://fonts.googleapis.com/css?family=Bangers|Satisfy|Roboto+Condensed' rel='stylesheet' type='text/css'>
+
+		<!-- load appropriate jquery javascript -->
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<script type="text/javascript"
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCeWFY0CQcHswP7VOroCgd49bEBI1P6_-4">
+        </script>
+		{% block js %}{% endblock %}
+		<script src="{{ url_for('static', filename='js/base.js') }}"></script>
+
+		<title>Trip Planner</title>
+
+		<!-- load proper cs file -->
+		{% block css %}{% endblock %}
+
+	</head>
+	<body>
+		<div id="menu">
+			<div id="title">
+				<h1>Trip Planner</h1>
+			</div>
+			<div id="menuItemHolder">
+			  <a href="{{ url_for('home') }}" id="homeMenuItem">Home</a>
+			  <a href="{{ url_for('createNew') }}" id="newMenuItem">New</a>
+			</div>
+		</div>
+
+		<div id="centerContainer" class="centerContainerWidth">
+		{% block content %}
+		{% endblock %}
+		</div>
+	</body>
+
+</html>
+
+
+
+
