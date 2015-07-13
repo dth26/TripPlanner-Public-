@@ -15,7 +15,7 @@ function addMarker(myLatlng, title, description){
 
     //create info window for marker when clicked
     var infowindow = new google.maps.InfoWindow({
-        content: description
+        content: title+"<br/>"+description
     });
 
     // add event listener to marker
@@ -191,12 +191,23 @@ function addNewDestination(data){
         blockHeader.id = ID + 'Header';
         newBlock.appendChild(blockHeader);
 
+
+        // put order div into link
+        var order = document.createElement('div');
+        order.setAttribute('class','order');
+        order.id = ID + 'Order';
+        blockHeader.appendChild(order);
+
         // create link for url and append to header
         var link = document.createElement('a');
         link.setAttribute('href', url);
         link.setAttribute('target', 'blank');
+        link.className = 'linkURL';
+        link.id = ID + 'Link';
         link.innerHTML = name;
         blockHeader.appendChild(link);
+
+
 
         // create menu
         var menu = document.createElement('div');
@@ -208,37 +219,44 @@ function addNewDestination(data){
 
     }
 
-
-    var counter = 1;
-    // order destinations
-    while(listOfIDs.length != 0)
-    {
-        var minID, minValue;
-        var currID, currValue;
-
-        for(var i; i<listOfIDs.length;i++)
+    setTimeout(function () {
+        var counter = 1;
+        // order destinations
+        while(listOfIDs.length != 0)
         {
-            currID =  listOfIDs[i];
-            currValue = $('#' + currID + 'Duration').attr('value');
+            var minID = 0, minValue;
+            var currID, currValue;
 
-            if(minID === undefined){
-                minID = currID;
-                minValue = currValue;
-                continue;
-            }
-
-            if(currValue < minValue)
+            for(var i=0; i<listOfIDs.length;i++)
             {
-                minID = currID;
-                minValue = currValue;
+
+                currID =  listOfIDs[i];
+                currValue = $('#' + currID + 'Duration').attr('value');
+                currValue = parseInt(currValue);
+
+
+                if(minID == 0){
+                    minID = currID;
+                    minValue = currValue;
+                    continue;
+                }
+
+                if(currValue < minValue)
+                {
+                    minID = currID;
+                    minValue = currValue;
+                }
             }
+
+            var indexOfMin = listOfIDs.indexOf(minID);
+            listOfIDs.splice(indexOfMin,1);
+
+            $('#'+minID).css('order', counter++);
+            var element = document.getElementById(minID+'Order');
+            element.innerHTML = counter -1 + ')';
         }
 
-        var indexOfMin = listOfIDs.indexOf(minID);
-        listOfIDs.splice(indexOfMin,1);
-
-        $('#'+minID).css('order', counter++);
-    }
+    }, 1000);
 
 
 }

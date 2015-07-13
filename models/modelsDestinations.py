@@ -39,20 +39,6 @@ db.create_all()
 
 
 
-'''
-@app.route('/getDestinations', methods=['GET', 'POST'])
-def getDestinations():
-    destinations = Destinations.query.all()
-
-    dictionary = []
-    columns = ['ID','name','latitude','longitude','address','description','url','imgPath','visited']
-
-    for key in Destinations.__table__.columns.data.values():
-        return key
-
-
-    return jsonify(list = dictionary)
-'''
 
 @app.route('/getDestinations', methods=['GET','POST'])
 def getDestinations():
@@ -61,15 +47,17 @@ def getDestinations():
     query = text("select * from Destinations")
     result = connection.execute(query)
 
-    dictionary = []
+    dictionary = [] # json object that will return to front end
     for row in result:
-        newRow = {}
+        newRow = {}                                 # new row of data/destination from query
         newRow['name'] = row['name']
         newRow['description'] = row['description']
         newRow['address'] = row['address']
         newRow['ID'] = row['ID']
         newRow['url'] = row['url']
         newRow['visited'] = row['visited']
+        newRow['latitude'] = row['latitude']
+        newRow['longitude'] = row['longitude']
         dictionary.append(newRow)
 
     return jsonify(list=dictionary)
