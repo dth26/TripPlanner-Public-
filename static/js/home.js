@@ -3,10 +3,7 @@ var map;
 var yourLatitude;
 var yourLongitude;
 var yourLatlng;
-var blocks = [];
-var orderBlocks = [];
-
-
+var listOfIDs = [];
 
 /* set marker on google maps of current location */
 function addMarker(myLatlng, title, description){
@@ -63,6 +60,8 @@ function initialize(position) {
 //google.maps.event.addDomListener(window, 'load', initialize);
 
 
+
+
 /* get directions */
 function getDirections(destination, ptrBlockMenu, ID)
 {
@@ -112,6 +111,7 @@ function getDirections(destination, ptrBlockMenu, ID)
             var menuItemDuration = document.createElement('div');
             menuItemDuration.className = 'blockMenuItem';
             menuItemDuration.id = ID + 'durationItem';
+
             // convert duration into hrs:mins
             var timeMins = totalDuration/60;
             var hours = Math.floor(timeMins/60);
@@ -119,9 +119,15 @@ function getDirections(destination, ptrBlockMenu, ID)
             menuItemDuration.innerHTML = hours+"hrs:"+mins+"mins";
             ptrBlockMenu.appendChild(menuItemDuration);
 
-            orderBlocks.push[totalDuration];
+            // store duration in hidden input
+            var input = document.createElement('input');
+            input.setAttribute('type','hidden');
+            input.setAttribute('id', ID + 'Duration');
+            input.setAttribute('value',totalDuration);
+            ptrBlockMenu.appendChild(input);
 	    }
 	});
+
 }
 
 
@@ -157,7 +163,7 @@ function getAddress(LATITUDE, LONGITUDE)
    list all destinations
 */
 function addNewDestination(data){
-    var counter = 1;
+
     for(var row in data.list)
     {
         var ID = data.list[row].ID;
@@ -167,6 +173,9 @@ function addNewDestination(data){
         var latitude = data.list[row].latitude;
         var longitude = data.list[row].longitude;
         var latlng = new google.maps.LatLng(latitude, longitude);
+
+        // keep list of ID's so that destinations can later be ordered depending on distance
+        listOfIDs.push(ID);
 
         addMarker(latlng, name, description);
 
@@ -186,7 +195,7 @@ function addNewDestination(data){
         var link = document.createElement('a');
         link.setAttribute('href', url);
         link.setAttribute('target', 'blank');
-        link.innerHTML = counter + ') ' + name;
+        link.innerHTML = name;
         blockHeader.appendChild(link);
 
         // create menu
@@ -197,13 +206,39 @@ function addNewDestination(data){
 
         getDirections(latlng, menu, ID);                 // data about directions from your position to specific destination
 
-
-
-        counter++;
-      //  ptrNewBlock.innerHTML = data.list[row].description;
     }
 
 
+    var counter = 1;
+    // order destinations
+    while(listOfIDs.length != 0)
+    {
+        var minID, minValue;
+        var currID, currValue;
+
+        for(var i; i<listOfIDs.length;i++)
+        {
+            currID =  listOfIDs[i];
+            currValue = $('#' + currID + 'Duration').attr('value');
+
+            if(minID === undefined){
+                minID = currID;
+                minValue = currValue;
+                continue;
+            }
+
+            if(currValue < minValue)
+            {
+                minID = currID;
+                minValue = currValue;
+            }
+        }
+
+        var indexOfMin = listOfIDs.indexOf(minID);
+        listOfIDs.splice(indexOfMin,1);
+
+        $('#'+minID).css('order', counter++);
+    }
 
 
 }
