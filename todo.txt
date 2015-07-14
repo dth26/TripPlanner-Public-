@@ -1,5 +1,8 @@
 1) fix reordering of block destinations
     -   remove block element and add them in order
 2) add 'walking,driving, or transit choice'
+    -   add departure time using drop downs
 3) add visited icon
 4) expandable destination div
+5) tabbed panes for each destination
+    - one for description, transporation, and directions

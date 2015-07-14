@@ -1,3 +1,4 @@
+
 .GetDirections{
     cursor: pointer;
 }
@@ -7,7 +8,8 @@
     top: 0px;
 }
 #map-canvas {
-    height: 450px;
+    height: 600px;
+    width: 900px;
     margin: 0;
     padding: 0;
     display: block;
@@ -16,4 +18,30 @@
 .order{
     width: 30px;
     display: inline-block;
+}
+.submit{
+    position: absolute;
+    top: 50%;
+    transform: translate(-0,-50%);
+    background-color: #3399FF;
+    color: white;
+    width: auto;
+    padding: 0px 10px 0px 10px;
+    height: 40px;
+    line-height: 40px;
+    display: inline-block;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 0px;
+    text-align: center;
+}
+.time{
+    height: 30px;
+    width: 60px;
+    margin: 7px;
+}
+#transitType{
+    height: 30px;
+    margin-left: 75px;
+    margin-right: 15px;
 }

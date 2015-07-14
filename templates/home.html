@@ -12,5 +12,37 @@
 
 {% block content %}
  <div id="map-canvas"></div>
+ <div class="block">
+     Departure Time:
+     <select id="hours" class="time">
+        <option selected="selected">Now</option>
+        {% for i in range(1, 13) %}
+        <option>{{i}}</option>
+        {% endfor %}
+     </select>
+    <select id="mins" class="time">
+        <option selected="selected">Now</option>
+    {% for i in range(0, 60) %}
+        <option>
+            {% if i < 10 %}
+                0{{i}}
+            {% else %}
+                {{i}}
+            {% endif %}
+        </option>
+    {% endfor %}
+    </select>
+    <select id="period" class="time">
+        <option selected="selected">Now</option>
+        <option>AM</option>
+        <option>PM</option>
+    </select>
+    <select id="transitType">
+        <option>Transit</option>
+        <option selected="selected">Walking</option>
+        <option>Driving</option>
+    </select>
+    <a id="update" class="submit">Update Travel Times</a>
+ </div>
 {% endblock %}
 

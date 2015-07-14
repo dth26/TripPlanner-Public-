@@ -14,11 +14,8 @@ var travelModes = {
 
 
 
-
 //http://www.gisgraphy.com/
 $(document).ready(function(){
-
-        //getCoordinates('53 Mulberry Dr, Holland, Pa 18966');
 
         var latitude;
         var longitude;
@@ -26,7 +23,6 @@ $(document).ready(function(){
         /*
             -   get our current location
             -   call 'initialize' to create map and initialize map services
-
         */
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(initialize);
@@ -36,6 +32,75 @@ $(document).ready(function(){
 
 });
 
+
+
+/*
+    event: map icon is clicked
+    add click event to map item to draw path from origin to destination
+    must use function 'on' for dyncamically created elements
+*/
+$(function() {
+    $(document).on("click", '.GetDirections', function() {
+        var destID = $(this).attr('id');
+        var latitude = $('#' + destID + 'Latitude').attr('value');
+        var longitude = $('#' + destID + 'Longitude').attr('value');
+        var latlng = new google.maps.LatLng(latitude, longitude);
+        var transitType = $('#transitType').val();
+        getDirections(latlng, transitType);
+
+    });
+ });
+
+/*
+    event: update transporation button is clicked
+    update time and/or transportation type when 'update transporation button is clicked'
+*/
+$(function() {
+    $(document).on("click", '#update', function() {
+        var transitType = $('#transitType').val();
+        // remove all current destinationBlocks
+        $('.destinationBlock').remove();
+        // delete all markers from map
+        google.maps.Map.prototype.clearMarkers = function() {
+            for(var i=0; i < this.markers.length; i++){
+                this.markers[i].setMap(null);
+            }
+            this.markers = new Array();
+        };
+        // add destinations with new transporation type
+        getDestinations(transitType);
+    });
+});
+
+
+/* set map */
+/* save current position/ coordinates to map */
+function initialize(position) {
+    directionsDisplay = new google.maps.DirectionsRenderer();
+    directionsService = new google.maps.DirectionsService();
+
+    yourLatitude = position.coords.latitude;
+    yourLongitude = position.coords.longitude;
+    yourLatlng = new google.maps.LatLng(yourLatitude,yourLongitude);
+
+    /* set map configuration */
+    var mapOptions = {
+        center: yourLatlng,
+        zoom: 15
+    };
+
+    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    // this enables the display to draw routes on map
+    directionsDisplay.setMap(map);
+
+    // add your current location to map
+    addMarker(yourLatlng,'You','');
+
+    var transitType = $('#transitType').val();
+    // make ajax call and get destinations from server
+    getDestinations(transitType);
+}
+//google.maps.event.addDomListener(window, 'load', initialize);
 
 
 
@@ -67,74 +132,75 @@ function addMarker(myLatlng, title, description){
 }
 
 
-/* add click event to map item to draw path from origin to destination
-    must use function 'on' for dyncamically created elements
-*/
-$(function() {
-    $(document).on("click", '.GetDirections', function() {
-        var destID = $(this).attr('id');
-        var latitude = $('#' + destID + 'Latitude').attr('value');
-        var longitude = $('#' + destID + 'Longitude').attr('value');
-        var latlng = new google.maps.LatLng(latitude, longitude);
+function getTime(hrs,mins){
+    var date;
+    var mins = $('#mins').val();
+    var hrs = $('#hours').val();
+    var period = $('#period').val();
 
-        getDirections(latlng, google.maps.TravelMode.WALKING);
+    if(hrs == 'Now'){
+        date =  new Date();
+    }else{
+        var dateObj = new Date();
+        var year = dateObj.getUTCFullYear();
+        var month = dateObj.getMonth();
+        var day = dateObj.getUTCDate();
 
-    });
- });
+        if(period == 'PM' && hrs != '12')
+        {
+            hrs = 12 + parseInt(hrs);
+        }
+        else if(period == 'AM' && hrs == '12')
+        {
+            hrs = '24';
+        }
 
+        date = new Date(year, month, day, hrs, mins, 0);
+    }
 
-
-/* set map */
-/* save current position/ coordinates to map */
-function initialize(position) {
-    directionsDisplay = new google.maps.DirectionsRenderer();
-    directionsService = new google.maps.DirectionsService();
-
-    yourLatitude = position.coords.latitude;
-    yourLongitude = position.coords.longitude;
- //  alert('Your Current Coordinates: ' + latitude + " " + longitude);
-    yourLatlng = new google.maps.LatLng(yourLatitude,yourLongitude);
-
-    /* set map configuration */
-    var mapOptions = {
-        center: yourLatlng,
-        zoom: 13
-    };
-
-    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-    // this enables the display to draw routes on map
-    directionsDisplay.setMap(map);
-
-    // add your current location to map
-    addMarker(yourLatlng,'You','This is where you are<br/>Zoom out to see other destinations');
-
-    // make ajax call and get destinations from server
-    getDestinations();
+    return date;
 }
-//google.maps.event.addDomListener(window, 'load', initialize);
-
-
 
 
 /* get directions from origin to destination */
 function getDirections(destination, travelMode)
 {
+    departureTime = getTime();
 
-	var directionrequest =
+    travelMode = travelModes[travelMode.toLowerCase()];
+    var directionsText;
+    var directionrequest =
     {
-		origin: yourLatlng,
- 		destination: destination,
-		travelMode: travelMode
-	}
+        origin: yourLatlng,
+        destination: destination,
+        travelMode: travelMode,
+        transitOptions:{
+            departureTime:departureTime
+        }
+    }
 
     // call directionsSerice.route to get directions
-	directionsService.route(directionrequest, function(response, status){
-	   // alert(JSON.stringify(response));
-	    if (status == google.maps.DirectionsStatus.OK) {
-	        // display route on map
-		    directionsDisplay.setDirections(response);
-	    }
-	});
+    directionsService.route(directionrequest, function(response, status){
+       // alert(JSON.stringify(response));
+        if (status == google.maps.DirectionsStatus.OK) {
+            // display route on map
+            directionsDisplay.setDirections(response);
+
+             route = response.routes[0].legs[0];
+            // get individual steps
+            /*
+                say your going to cathedral from bouquet gardens
+                step 1: turn left onto S.Bouquet Street
+                step 2: turn right onto 5th Ave
+                step 3: turn left onto Bigelow Blvd
+            */
+            for(var i=0; i< route.steps.length; i++)
+            {
+                directionsText += route.steps[i].instructions + "\n";
+            }
+           // alert(directionsText);
+        }
+    });
 
 
 }
@@ -149,41 +215,44 @@ function getDirectionInfo(destination, ptrBlockMenu, ID, travelMode)
 {
     var coordinates, latitude, longitude, durationText, durationSeconds,distance, route;
     var totalDistance = 0, totalDuration = 0;
+    travelMode = travelModes[travelMode.toLowerCase()];
 
-	var directionrequest =
+    var directionrequest =
     {
-		origin: yourLatlng,
- 		destination: destination,
-		travelMode: travelMode
-	}
+        origin: yourLatlng,
+        destination: destination,
+        travelMode: travelMode
+    }
+
+
 
     // call directionsSerice.route to get directions info
-	directionsService.route(directionrequest, function(response, status){
+    directionsService.route(directionrequest, function(response, status){
 
-	   // alert(JSON.stringify(response));
-	    if (status == google.maps.DirectionsStatus.OK) {
-		    route = response.routes[0].legs[0];
-		    // get individual steps
+       // alert(JSON.stringify(response));
+        if (status == google.maps.DirectionsStatus.OK) {
+            route = response.routes[0].legs[0];
+            // get individual steps
             /*
                 say your going to cathedral from bouquet gardens
                 step 1: turn left onto S.Bouquet Street
                 step 2: turn right onto 5th Ave
                 step 3: turn left onto Bigelow Blvd
             */
-		    for(var i=0; i< route.steps.length; i++)
-	        {
-	            //directionsText += route.steps[i].instructions + "\n";
-	            /*
-	            coordinates = route.steps[i].start_point.toString();
-        		latitude = coordinates.substring(coordinates.lastIndexOf('(')+1,coordinates.lastIndexOf(','));
-        		longitude = coordinates.substring(coordinates.lastIndexOf(',')+1,coordinates.lastIndexOf(')'));
-        		*/
-        		distance = route.steps[i].distance.value;
-        		durationText = route.steps[i].duration.text;
-        		durationSeconds = route.steps[i].duration.value;
-        		totalDistance += distance;
-        		totalDuration += durationSeconds;
-        	}
+            for(var i=0; i< route.steps.length; i++)
+            {
+                //directionsText += route.steps[i].instructions + "\n";
+                /*
+                coordinates = route.steps[i].start_point.toString();
+                latitude = coordinates.substring(coordinates.lastIndexOf('(')+1,coordinates.lastIndexOf(','));
+                longitude = coordinates.substring(coordinates.lastIndexOf(',')+1,coordinates.lastIndexOf(')'));
+                */
+                distance = route.steps[i].distance.value;
+                durationText = route.steps[i].duration.text;
+                durationSeconds = route.steps[i].duration.value;
+                totalDistance += distance;
+                totalDuration += durationSeconds;
+            }
 
             // create menu items
              /*
@@ -219,8 +288,8 @@ function getDirectionInfo(destination, ptrBlockMenu, ID, travelMode)
             input.setAttribute('id', ID + 'Duration');
             input.setAttribute('value',totalDuration);
             ptrBlockMenu.appendChild(input);
-	    }
-	});
+        }
+    });
 
 }
 
@@ -234,25 +303,25 @@ function getDirectionInfo(destination, ptrBlockMenu, ID, travelMode)
 */
 function getAddress(LATITUDE, LONGITUDE)
 {
-	var address;
-	var geocoder = new google.maps.Geocoder();
-	var latlng = new google.maps.LatLng(LATITUDE, LONGITUDE);
+    var address;
+    var geocoder = new google.maps.Geocoder();
+    var latlng = new google.maps.LatLng(LATITUDE, LONGITUDE);
 
-	if (geocoder) {
-		geocoder.geocode({'latLng': latlng}, function (results, status)
-		{
-			if (status == google.maps.GeocoderStatus.OK)
-			{
-				console.log(results[0].geometry.location);
-				address = results[2].formatted_address;
-         	}
-         	else
-			{
-				console.log('No results found: ' + status);
-         	}
-		});
-	}
-	return address;
+    if (geocoder) {
+        geocoder.geocode({'latLng': latlng}, function (results, status)
+        {
+            if (status == google.maps.GeocoderStatus.OK)
+            {
+                console.log(results[0].geometry.location);
+                address = results[2].formatted_address;
+            }
+            else
+            {
+                console.log('No results found: ' + status);
+            }
+        });
+    }
+    return address;
 }
 
 
@@ -262,7 +331,7 @@ function getAddress(LATITUDE, LONGITUDE)
     -   create new destination block for each destination
     -   add marker for each destination
 */
-function addNewDestinations(data){
+function addNewDestinations(data, travelMode){
 
     for(var row in data.list)
     {
@@ -283,7 +352,7 @@ function addNewDestinations(data){
         // create new block and append to centerContainer
         var newBlock = document.createElement('div');
         newBlock.id = ID;
-        newBlock.className = 'block';
+        newBlock.className = 'block destinationBlock';
         document.getElementById('centerContainer').appendChild(newBlock);
 
         // create header for block and append to centerContainer
@@ -343,7 +412,7 @@ function addNewDestinations(data){
         menu.appendChild(latitudeItem);
         menu.appendChild(longitudeItem);
 
-        getDirectionInfo(latlng, menu, ID, travelModes['walking']);                 // data about directions from your position to specific destination
+        getDirectionInfo(latlng, menu, ID, travelMode);                 // data about directions from your position to specific destination
 
     }
 
@@ -378,7 +447,6 @@ function addNewDestinations(data){
 
             var indexOfMin = listOfIDs.indexOf(minID);
             listOfIDs.splice(indexOfMin,1);
-
             $('#'+minID).css('-webkit-order', counter++);
             $('#'+minID).css('order', counter);
             var element = document.getElementById(minID+'Order');
@@ -394,30 +462,32 @@ function addNewDestinations(data){
     get destinations from server, then call function addNewDestination to add
     destination to map
 */
-function getDestinations(){
+function getDestinations(travelMode){
     $.ajax({
-    		type: 'GET',
-    		url: 'http://tripplanner.pythonanywhere.com/getDestinations',
-    		dataType:'json',
-    		success: addNewDestinations,
-    		error: function(jqXHR, exception) {
-                if (jqXHR.status === 0) {
-                    alert('Not connect.\n Verify Network.');
-                } else if (jqXHR.status == 404) {
-                    alert('Requested page not found. [404]');
-                } else if (jqXHR.status == 500) {
-                    alert('Internal Server Error [500].');
-                } else if (exception === 'parsererror') {
-                    alert('Requested JSON parse failed.');
-                } else if (exception === 'timeout') {
-                    alert('Time out error.');
-                } else if (exception === 'abort') {
-                    alert('Ajax request aborted.');
-                } else {
-                    alert('Uncaught Error.\n' + jqXHR.responseText);
-                }
+        type: 'GET',
+        url: 'http://tripplanner.pythonanywhere.com/getDestinations',
+        dataType:'json',
+        success: function(data) {
+            addNewDestinations(data, travelMode)
+        },
+        error: function(jqXHR, exception) {
+            if (jqXHR.status === 0) {
+                alert('Not connect.\n Verify Network.');
+            } else if (jqXHR.status == 404) {
+                alert('Requested page not found. [404]');
+            } else if (jqXHR.status == 500) {
+                alert('Internal Server Error [500].');
+            } else if (exception === 'parsererror') {
+                alert('Requested JSON parse failed.');
+            } else if (exception === 'timeout') {
+                alert('Time out error.');
+            } else if (exception === 'abort') {
+                alert('Ajax request aborted.');
+            } else {
+                alert('Uncaught Error.\n' + jqXHR.responseText);
             }
-    	});
+        }
+    });
 
 }
 
