@@ -1,7 +1,19 @@
+.GetDirections{
+    cursor: pointer;
+}
+.linkURL{
+    text-decoration: none;
+    display: inline-block;
+    top: 0px;
+}
 #map-canvas {
-    height: 350px;
+    height: 450px;
     margin: 0;
     padding: 0;
     display: block;
     z-index: 1000;
+}
+.order{
+    width: 30px;
+    display: inline-block;
 }

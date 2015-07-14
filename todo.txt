@@ -1,4 +1,5 @@
 1) fix reordering of block destinations
     -   remove block element and add them in order
-2) display path on map
-3) fix input form on new page for mobile platform
+2) add 'walking,driving, or transit choice'
+3) add visited icon
+4) expandable destination div

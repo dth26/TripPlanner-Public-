@@ -2,11 +2,7 @@
 
 
 * {
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: -moz-none;
-    -o-user-select: none;
-    user-select: none;
+
 
    	/* fixed width and height of divs despite paddings*/
      -moz-box-sizing: border-box;
@@ -15,19 +11,6 @@
 }
 a{
     text-decoration: none;
-}
-input{
-    margin-bottom: 10px;
-    margin-left: 10px;
-    margin-top: 10px;
-    height: 40px;
-    width: 600px;
-}
-textarea{
-    width: 600px;
-    height:275px;
-    margin-left: 10px;
-    margin-top: 10px;
 }
 .block{
 	position: relative;
@@ -88,11 +71,6 @@ textarea{
 	-webkit-flex-flow: column;
     flex-flow: column;
 }
-.linkURL{
-    text-decoration: none;
-    display: inline-block;
-    top: 0px;
-}
 #menu{
 	position: relative;
 	width: 100%;
@@ -138,10 +116,7 @@ textarea{
 #menu, #menuItemHolder a{
 border-color: #505863;
 }
-.order{
-    width: 30px;
-    display: inline-block;
-}
+
 #title
 {
 	position: absolute;

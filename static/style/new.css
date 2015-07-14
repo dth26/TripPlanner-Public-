@@ -1,0 +1,13 @@
+input{
+    margin-bottom: 10px;
+    margin-left: 10px;
+    margin-top: 10px;
+    height: 40px;
+    width: 600px;
+}
+textarea{
+    width: 600px;
+    height:275px;
+    margin-left: 10px;
+    margin-top: 10px;
+}
