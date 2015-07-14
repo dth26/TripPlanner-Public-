@@ -1,4 +1,6 @@
 var GEOCODE_KEY = 'AIzaSyBPmuX9h6_BEKfKLWy-Kdc1gQHWZQIUGCQ';
+var directionsDisplay;
+var directionsService;
 var map;
 var yourLatitude;
 var yourLongitude;
@@ -38,7 +40,7 @@ function addMarker(myLatlng, title, description){
 /* set map */
 /* save current position/ coordinates to map */
 function initialize(position) {
-
+    directionsDisplay = new google.maps.DirectionsRenderer();
     yourLatitude = position.coords.latitude;
     yourLongitude = position.coords.longitude;
  //  alert('Your Current Coordinates: ' + latitude + " " + longitude);
@@ -47,11 +49,14 @@ function initialize(position) {
     /* set map configuration */
     var mapOptions = {
         center: yourLatlng,
-        zoom: 16
+        zoom: 13
     };
 
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    // this enables the display to draw routes on map
+    directionsDisplay.setMap(map);
 
+    // add your current location to map
     addMarker(yourLatlng,'You','This is where you are<br/>Zoom out to see other destinations');
 
     // add destinations to map
@@ -62,12 +67,37 @@ function initialize(position) {
 
 
 
-/* get directions */
-function getDirections(destination, ptrBlockMenu, ID)
+/* get directions from origin to destination */
+function getDirections(destination, travelMode)
+{
+
+	var directionrequest =
+    {
+		origin: yourLatlng,
+ 		destination: destination,
+		travelMode: travelMode
+	}
+
+	directionsService.route(directionrequest, function(response, status){
+
+	   // alert(JSON.stringify(response));
+	    if (status == google.maps.DirectionsStatus.OK) {
+		    directionsDisplay.setDirections(response);
+	    }
+	});
+
+
+}
+
+
+
+/* get directions info */
+function getDirectionInfo(destination, ptrBlockMenu, ID)
 {
     var coordinates, latitude, longitude, durationText, durationSeconds,distance, route;
     var totalDistance = 0, totalDuration = 0;
-	var directionsService = new google.maps.DirectionsService();
+
+	directionsService = new google.maps.DirectionsService();
 
 	var directionrequest =
     {
@@ -77,14 +107,19 @@ function getDirections(destination, ptrBlockMenu, ID)
 	}
 
 	directionsService.route(directionrequest, function(response, status){
+
+	   // alert(JSON.stringify(response));
 	    if (status == google.maps.DirectionsStatus.OK) {
 		    route = response.routes[0].legs[0];
 		    // get individual steps
 		    for(var i=0; i< route.steps.length; i++)
 	        {
+	            //directionsText += route.steps[i].instructions + "\n";
+	            /*
 	            coordinates = route.steps[i].start_point.toString();
         		latitude = coordinates.substring(coordinates.lastIndexOf('(')+1,coordinates.lastIndexOf(','));
         		longitude = coordinates.substring(coordinates.lastIndexOf(',')+1,coordinates.lastIndexOf(')'));
+        		*/
         		distance = route.steps[i].distance.value;
         		durationText = route.steps[i].duration.text;
         		durationSeconds = route.steps[i].duration.value;
@@ -128,6 +163,11 @@ function getDirections(destination, ptrBlockMenu, ID)
 	    }
 	});
 
+    /*
+	setTimeout(function(){
+	    alert(directionsText);
+	}, 2000);
+    */
 }
 
 
@@ -215,7 +255,34 @@ function addNewDestination(data){
         menu.id = ID + 'Menu';
         blockHeader.appendChild(menu);
 
-        getDirections(latlng, menu, ID);                 // data about directions from your position to specific destination
+
+        // add menu item for mapping path on map when clicked
+        var menuItemDirections = document.createElement('div');
+        menuItemDirections.className = 'blockMenuItem GetDirections';
+        menuItemDirections.id = ID + 'GetDirections';
+        // create image of map item
+        var directionsImg = document.createElement('img');
+        directionsImg.src = '../static/images/map.png';
+        menuItemDirections.appendChild(directionsImg);
+        menu.appendChild(menuItemDirections);
+
+
+
+        //add hidden input to menu to get coordinates
+        var latitudeItem = document.createElement('input');
+        latitudeItem.className = 'blockMenuItem';
+        latitudeItem.id = ID + 'GetDirections' +  'Latitude';
+        latitudeItem.type = 'hidden';
+        latitudeItem.value = latitude;
+        var longitudeItem = document.createElement('input');
+        longitudeItem.className = 'blockMenuItem';
+        longitudeItem.id = ID + 'GetDirections' + 'Longitude';
+        longitudeItem.type = 'hidden';
+        longitudeItem.value = longitude;
+        menu.appendChild(latitudeItem);
+        menu.appendChild(longitudeItem);
+
+        getDirectionInfo(latlng, menu, ID);                 // data about directions from your position to specific destination
 
     }
 
@@ -251,7 +318,8 @@ function addNewDestination(data){
             var indexOfMin = listOfIDs.indexOf(minID);
             listOfIDs.splice(indexOfMin,1);
 
-            $('#'+minID).css('order', counter++);
+            $('#'+minID).css('-webkit-order', counter++);
+            $('#'+minID).css('order', counter);
             var element = document.getElementById(minID+'Order');
             element.innerHTML = counter -1 + ')';
         }
@@ -289,7 +357,9 @@ function getDestinations(){
                 }
             }
     	});
+
 }
+
 
 //http://www.gisgraphy.com/
 $(document).ready(function(){
@@ -307,3 +377,19 @@ $(document).ready(function(){
         }
 
 });
+
+
+/* add click event to map item to draw path from origin to destination
+    must use function 'on' for dyncamically created elements
+*/
+$(function() {
+    $(document).on("click", '.GetDirections', function() {
+        var destID = $(this).attr('id');
+        var latitude = $('#' + destID + 'Latitude').attr('value');
+        var longitude = $('#' + destID + 'Longitude').attr('value');
+        var latlng = new google.maps.LatLng(latitude, longitude);
+
+        getDirections(latlng, google.maps.TravelMode.WALKING);
+
+    });
+ });
