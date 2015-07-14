@@ -1,11 +1,43 @@
 var GEOCODE_KEY = 'AIzaSyBPmuX9h6_BEKfKLWy-Kdc1gQHWZQIUGCQ';
-var directionsDisplay;
-var directionsService;
-var map;
-var yourLatitude;
-var yourLongitude;
-var yourLatlng;
-var listOfIDs = [];
+var directionsDisplay;      // google display object, display route on map
+var directionsService;      // google direction object , gets directions
+var map;                    // this is the actuall google map
+var yourLatitude;           // latitude of your current position
+var yourLongitude;          // longitude of your current position
+var yourLatlng;             // google.maps.LatLng object
+var listOfIDs = [];         // the id's of the destinations
+var travelModes = {
+    'driving' : google.maps.TravelMode.DRIVING,
+    'walking' : google.maps.TravelMode.WALKING,
+    'transit' : google.maps.TravelMode.TRANSIT
+};
+
+
+
+
+//http://www.gisgraphy.com/
+$(document).ready(function(){
+
+        //getCoordinates('53 Mulberry Dr, Holland, Pa 18966');
+
+        var latitude;
+        var longitude;
+
+        /*
+            -   get our current location
+            -   call 'initialize' to create map and initialize map services
+
+        */
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(initialize);
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+
+});
+
+
+
 
 /* set marker on google maps of current location */
 function addMarker(myLatlng, title, description){
@@ -35,12 +67,29 @@ function addMarker(myLatlng, title, description){
 }
 
 
+/* add click event to map item to draw path from origin to destination
+    must use function 'on' for dyncamically created elements
+*/
+$(function() {
+    $(document).on("click", '.GetDirections', function() {
+        var destID = $(this).attr('id');
+        var latitude = $('#' + destID + 'Latitude').attr('value');
+        var longitude = $('#' + destID + 'Longitude').attr('value');
+        var latlng = new google.maps.LatLng(latitude, longitude);
+
+        getDirections(latlng, google.maps.TravelMode.WALKING);
+
+    });
+ });
+
 
 
 /* set map */
 /* save current position/ coordinates to map */
 function initialize(position) {
     directionsDisplay = new google.maps.DirectionsRenderer();
+    directionsService = new google.maps.DirectionsService();
+
     yourLatitude = position.coords.latitude;
     yourLongitude = position.coords.longitude;
  //  alert('Your Current Coordinates: ' + latitude + " " + longitude);
@@ -59,7 +108,7 @@ function initialize(position) {
     // add your current location to map
     addMarker(yourLatlng,'You','This is where you are<br/>Zoom out to see other destinations');
 
-    // add destinations to map
+    // make ajax call and get destinations from server
     getDestinations();
 }
 //google.maps.event.addDomListener(window, 'load', initialize);
@@ -78,10 +127,11 @@ function getDirections(destination, travelMode)
 		travelMode: travelMode
 	}
 
+    // call directionsSerice.route to get directions
 	directionsService.route(directionrequest, function(response, status){
-
 	   // alert(JSON.stringify(response));
 	    if (status == google.maps.DirectionsStatus.OK) {
+	        // display route on map
 		    directionsDisplay.setDirections(response);
 	    }
 	});
@@ -91,27 +141,35 @@ function getDirections(destination, travelMode)
 
 
 
-/* get directions info */
-function getDirectionInfo(destination, ptrBlockMenu, ID)
+/*
+    -   get directions info
+    -   get distance from origin to destination
+*/
+function getDirectionInfo(destination, ptrBlockMenu, ID, travelMode)
 {
     var coordinates, latitude, longitude, durationText, durationSeconds,distance, route;
     var totalDistance = 0, totalDuration = 0;
-
-	directionsService = new google.maps.DirectionsService();
 
 	var directionrequest =
     {
 		origin: yourLatlng,
  		destination: destination,
-		travelMode: google.maps.TravelMode.WALKING
+		travelMode: travelMode
 	}
 
+    // call directionsSerice.route to get directions info
 	directionsService.route(directionrequest, function(response, status){
 
 	   // alert(JSON.stringify(response));
 	    if (status == google.maps.DirectionsStatus.OK) {
 		    route = response.routes[0].legs[0];
 		    // get individual steps
+            /*
+                say your going to cathedral from bouquet gardens
+                step 1: turn left onto S.Bouquet Street
+                step 2: turn right onto 5th Ave
+                step 3: turn left onto Bigelow Blvd
+            */
 		    for(var i=0; i< route.steps.length; i++)
 	        {
 	            //directionsText += route.steps[i].instructions + "\n";
@@ -125,7 +183,6 @@ function getDirectionInfo(destination, ptrBlockMenu, ID)
         		durationSeconds = route.steps[i].duration.value;
         		totalDistance += distance;
         		totalDuration += durationSeconds;
-         		//getAddress(latitude , longitude);
         	}
 
             // create menu items
@@ -141,13 +198,15 @@ function getDirectionInfo(destination, ptrBlockMenu, ID)
 
             /*
                 duration menuItem
-                totalDuration = seconds
             */
             var menuItemDuration = document.createElement('div');
             menuItemDuration.className = 'blockMenuItem';
             menuItemDuration.id = ID + 'durationItem';
 
-            // convert duration into hrs:mins
+            /*
+                convert duration into hrs:mins
+                unit of totalDuration = seconds
+            */
             var timeMins = totalDuration/60;
             var hours = Math.floor(timeMins/60);
             var mins = Math.floor(timeMins - (hours*60));
@@ -163,18 +222,16 @@ function getDirectionInfo(destination, ptrBlockMenu, ID)
 	    }
 	});
 
-    /*
-	setTimeout(function(){
-	    alert(directionsText);
-	}, 2000);
-    */
 }
 
 
 
 
 
-/* geocode reverse lookup */
+/*
+    -   geocode reverse lookup
+    -   get the address of a given latitude/longitude
+*/
 function getAddress(LATITUDE, LONGITUDE)
 {
 	var address;
@@ -199,13 +256,17 @@ function getAddress(LATITUDE, LONGITUDE)
 }
 
 
-/* ajax callback
-   list all destinations
+/*
+    -   ajax callback
+    -   get data for each destination from database
+    -   create new destination block for each destination
+    -   add marker for each destination
 */
-function addNewDestination(data){
+function addNewDestinations(data){
 
     for(var row in data.list)
     {
+        // save data from database
         var ID = data.list[row].ID;
         var url = data.list[row].url;
         var name = data.list[row].name;
@@ -282,7 +343,7 @@ function addNewDestination(data){
         menu.appendChild(latitudeItem);
         menu.appendChild(longitudeItem);
 
-        getDirectionInfo(latlng, menu, ID);                 // data about directions from your position to specific destination
+        getDirectionInfo(latlng, menu, ID, travelModes['walking']);                 // data about directions from your position to specific destination
 
     }
 
@@ -338,7 +399,7 @@ function getDestinations(){
     		type: 'GET',
     		url: 'http://tripplanner.pythonanywhere.com/getDestinations',
     		dataType:'json',
-    		success: addNewDestination,
+    		success: addNewDestinations,
     		error: function(jqXHR, exception) {
                 if (jqXHR.status === 0) {
                     alert('Not connect.\n Verify Network.');
@@ -361,35 +422,5 @@ function getDestinations(){
 }
 
 
-//http://www.gisgraphy.com/
-$(document).ready(function(){
-
-        //getCoordinates('53 Mulberry Dr, Holland, Pa 18966');
-
-        var latitude;
-        var longitude;
-
-        /* get our current location */
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(initialize);
-        } else {
-            alert("Geolocation is not supported by this browser.");
-        }
-
-});
 
 
-/* add click event to map item to draw path from origin to destination
-    must use function 'on' for dyncamically created elements
-*/
-$(function() {
-    $(document).on("click", '.GetDirections', function() {
-        var destID = $(this).attr('id');
-        var latitude = $('#' + destID + 'Latitude').attr('value');
-        var longitude = $('#' + destID + 'Longitude').attr('value');
-        var latlng = new google.maps.LatLng(latitude, longitude);
-
-        getDirections(latlng, google.maps.TravelMode.WALKING);
-
-    });
- });
