@@ -13,6 +13,11 @@ var travelModes = {
 };
 
 
+function printJSON(json){
+    alert(JSON.stringify(json, null, 2));
+}
+
+
 
 //http://www.gisgraphy.com/
 $(document).ready(function(){
@@ -165,10 +170,14 @@ function getTime(hrs,mins){
 /* get directions from origin to destination */
 function getDirections(destination, travelMode)
 {
+    // remove all previous directions before getting new
+     $('#directions').empty();
+
+
     departureTime = getTime();
 
     travelMode = travelModes[travelMode.toLowerCase()];
-    var directionsText;
+    var directionsText = '', busPath;
     var directionrequest =
     {
         origin: yourLatlng,
@@ -186,6 +195,7 @@ function getDirections(destination, travelMode)
             directionsDisplay.setDirections(response);
 
              route = response.routes[0].legs[0];
+             //alert(response.routes[0].legs[0].transit);
             // get individual steps
             /*
                 say your going to cathedral from bouquet gardens
@@ -193,12 +203,122 @@ function getDirections(destination, travelMode)
                 step 2: turn right onto 5th Ave
                 step 3: turn left onto Bigelow Blvd
             */
+            var step;
+            var transit_name, bus_id, bus_name, departure_time, arrival_time, departure_location, arrival_location; // transit info
+            var description, durationText, distanceText; // step info
+            var transitText = '';
             for(var i=0; i< route.steps.length; i++)
             {
-                directionsText += route.steps[i].instructions + "\n";
+                step = route.steps[i];
+
+                // parse step info
+                durationText = step.duration.text;                              // duration of step, ex: 5 min
+                distanceText = step.distance.text;                              // distance of step, ex: 1mile
+                description = step.instructions;                                //  Bus towards Inbound-FREEPORT ROAD TO PITTSBURGH
+
+                //printJSON(step);
+
+                // this step's transporation is TRANSIT
+                if(step.travel_mode == 'TRANSIT')
+                {
+                   // parse json to get transit info
+                   bus_agency = step.transit.line.agencies[0].name;             // port authority
+                   bus_name = step.transit.line.name;                           // monroeville
+                   bus_id = step.transit.line.short_name;                       // 64
+                   arrival_location = step.transit.arrival_stop.name;           // where the bus will pick you up
+                   arrival_time = step.transit.arrival_time.text;               // when the bus will drop you off at destination
+                   departure_location = step.transit.departure_stop.name;       // where the bus will drop you off
+                   departure_time = step.transit.departure_time.text;           // when bus will pick you up
+
+
+                    /*
+                   alert(
+                        'bus_agency :' + bus_agency + '\n' +
+                        'bus_name: ' + bus_name + '\n' +
+                        'bus_id: ' + bus_id + '\n' +
+                        'departure_location :' + departure_location + '\n' +
+                        'arrival_location :' + arrival_location + '\n' +
+                        'outbound: ' + description + '\n' +
+                        'departure_time: ' + departure_time + '\n' +
+                        'arrival_time: ' + arrival_time
+                        );
+                    */
+
+                    description = '<span class="header">Agency: </span>' + bus_agency + '<br/>' +
+                                  '<span class="header">Bus: </span>' + bus_id + ' - ' + bus_name + ' - ' + description + '<br/>' +
+                                   '<span class="header">' + departure_time + '</span>: ' + departure_location + '<br/>' +
+                                   '<span class="header">' + arrival_time + '</span>: ' + arrival_location;
+
+                }
+                else // walking or driving
+                {
+                    departure_time = 'undefined';
+                }
+
+               // directionsText += '\n\n';
+
+
+                /*
+                    CREATE HTML STEP BLOCKS
+                */
+
+                //
+
+                var subBlock = document.createElement('div');
+                subBlock.className = 'subBlock';
+                subBlock.id = i + 'subBlock';
+
+
+                var innerLeft = document.createElement('div');
+                innerLeft.className = 'innerLeft';
+                innerLeft.id = i + 'innerLeft';
+
+
+                var directionImg = document.createElement('img');
+                directionImg.className = 'directionImg';
+                if(step.travel_mode == 'WALKING'){
+                    directionImg.src = '../static/images/walking.png';
+                }else{
+                    directionImg.src = '../static/images/bus.png';
+                }
+
+                var innerLeftTextOne = document.createElement('div');
+                innerLeftTextOne.className = 'innerLeftText';
+                if(departure_time == 'undefined'){
+                    if(step.travel_mode == 'WALKING'){
+                        innerLeftTextOne.innerHTML = 'Walk for about';
+                    }
+                    else if(step.travel_mode == 'DRIVING'){
+                        innerLeftTextOne.innerHTML = 'Drive for about';
+                    }
+                }else{
+                    innerLeftTextOne.innerHTML = 'Bus arrives at ' + departure_time;
+                }
+
+                var innerLeftTextTwo = document.createElement('div');
+                innerLeftTextTwo.className = 'innerLeftText';
+                innerLeftTextTwo.innerHTML = durationText + ', ' + distanceText ;
+
+
+                var innerRight = document.createElement('innerRight');
+                innerRight.className = 'innerRight';
+                innerRight.innerHTML = description;
+
+
+                // append children to '#directions' block
+                innerLeft.appendChild(directionImg);
+                innerLeft.appendChild(innerLeftTextOne);
+                innerLeft.appendChild(innerLeftTextTwo);
+                subBlock.appendChild(innerLeft);
+                subBlock.appendChild(innerRight);
+                document.getElementById('directions').appendChild(subBlock);
+
+                // set height of innerLeft block so that border-right stretches to bottom
+                var subBlockHeight = $('#' + i + 'subBlock').height();
+                $('#'+i + 'innerLeft').css('height',subBlockHeight);
+
             }
-            //alert(JSON.stringify(response));
-           //alert(directionsText);
+
         }
     });
 
@@ -208,23 +328,24 @@ function getDirections(destination, travelMode)
 
 
 /*
-    -   get directions info
-    -   get distance from origin to destination
+    -   get direction data info from google maps api
+    -   build destination blocks
 */
-function getDirectionInfo(destination, ptrBlockMenu, ID, travelMode)
+function createDestinationBlock(ID, url, name, latitude, longitude, travelMode)
 {
-    var coordinates, latitude, longitude, durationText, durationSeconds,distance, route;
-    var totalDistance = 0, totalDuration = 0;
+    var durationText;
+    var distanceText;
+    var route;
+    var totalDistance = 0;
+    var totalDuration = 0;
     travelMode = travelModes[travelMode.toLowerCase()];
 
     var directionrequest =
     {
         origin: yourLatlng,
-        destination: destination,
+        destination: new google.maps.LatLng(latitude, longitude),
         travelMode: travelMode
     }
-
-
 
     // call directionsSerice.route to get directions info
     directionsService.route(directionrequest, function(response, status){
@@ -232,97 +353,109 @@ function getDirectionInfo(destination, ptrBlockMenu, ID, travelMode)
        // alert(JSON.stringify(response));
         if (status == google.maps.DirectionsStatus.OK) {
             route = response.routes[0].legs[0];
-            // get individual steps
-            /*
-                say your going to cathedral from bouquet gardens
-                step 1: turn left onto S.Bouquet Street
-                step 2: turn right onto 5th Ave
-                step 3: turn left onto Bigelow Blvd
-            */
-            for(var i=0; i< route.steps.length; i++)
-            {
-                //directionsText += route.steps[i].instructions + "\n";
-                /*
-                coordinates = route.steps[i].start_point.toString();
-                latitude = coordinates.substring(coordinates.lastIndexOf('(')+1,coordinates.lastIndexOf(','));
-                longitude = coordinates.substring(coordinates.lastIndexOf(',')+1,coordinates.lastIndexOf(')'));
-                */
-                distance = route.steps[i].distance.value;
-                durationText = route.steps[i].duration.text;
-                durationSeconds = route.steps[i].duration.value;
-                totalDistance += distance;
-                totalDuration += durationSeconds;
-            }
 
-            // create menu items
-             /*
-                totalDistance = meters
-                1 meter = 0.000621371192 mile
-            */
+            // parse json to get travel info
+            totalDistance = route.distance.value;
+            distanceText = route.distance.text;
+            totalDuration = route.duration.value;
+            durationText = route.duration.text;
+
+
+
+            var newBlock = document.createElement('div');
+            newBlock.id = ID;
+            newBlock.className = 'block destinationBlock';
+
+            // create header for block and append to centerContainer
+            var blockHeader = document.createElement('div');
+            blockHeader.className = 'blockHeader';
+            blockHeader.id = ID + 'Header';
+
+
+            // put order div into link
+            var order = document.createElement('div');
+            order.setAttribute('class','order');
+            order.id = ID + 'Order';
+
+
+            // create link for url and append to header
+            var link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('target', 'blank');
+            link.className = 'linkURL';
+            link.id = ID + 'Link';
+            link.innerHTML = name;
+
+
+
+            // create menu
+            var menu = document.createElement('div');
+            menu.className = 'blockHeaderMenu';
+            menu.id = ID + 'Menu';
+
+
+
+            //add hidden input to menu to get coordinates
+            var latitudeItem = document.createElement('input');
+            latitudeItem.className = 'blockMenuItem';
+            latitudeItem.id = ID + 'GetDirections' +  'Latitude';
+            latitudeItem.type = 'hidden';
+            latitudeItem.value = latitude;
+            var longitudeItem = document.createElement('input');
+            longitudeItem.className = 'blockMenuItem';
+            longitudeItem.id = ID + 'GetDirections' + 'Longitude';
+            longitudeItem.type = 'hidden';
+            longitudeItem.value = longitude;
+
+
+            // blockMenuItem for display distance
             var menuItemDistance = document.createElement('div');
             menuItemDistance.className = 'blockMenuItem';
             menuItemDistance.id = ID + 'distanceItem';
-            menuItemDistance.innerHTML = Number(totalDistance*0.000621371192).toFixed(1) + 'mi' ;
-            ptrBlockMenu.appendChild(menuItemDistance);
+            menuItemDistance.innerHTML = distanceText;
 
-            /*
-                duration menuItem
-            */
+
+            // blockMenuItem for display duration
             var menuItemDuration = document.createElement('div');
             menuItemDuration.className = 'blockMenuItem';
             menuItemDuration.id = ID + 'durationItem';
+            menuItemDuration.innerHTML = durationText;
 
-            /*
-                convert duration into hrs:mins
-                unit of totalDuration = seconds
-            */
-            var timeMins = totalDuration/60;
-            var hours = Math.floor(timeMins/60);
-            var mins = Math.floor(timeMins - (hours*60));
-            menuItemDuration.innerHTML = hours+"hrs:"+mins+"mins";
-            ptrBlockMenu.appendChild(menuItemDuration);
+
+            // blockMenuItem for mapping path on map when clicked
+            var menuItemDirections = document.createElement('div');
+            menuItemDirections.className = 'blockMenuItem GetDirections';
+            menuItemDirections.id = ID + 'GetDirections';
+            // create image of map item
+            var directionsImg = document.createElement('img');
+            directionsImg.src = '../static/images/map.png';
+
 
             // store duration in hidden input
             var input = document.createElement('input');
             input.setAttribute('type','hidden');
             input.setAttribute('id', ID + 'Duration');
             input.setAttribute('value',totalDuration);
-            ptrBlockMenu.appendChild(input);
+
+
+            // append children
+            document.getElementById('centerContainer').appendChild(newBlock);
+            newBlock.appendChild(blockHeader);
+            blockHeader.appendChild(order);
+            blockHeader.appendChild(link);
+            blockHeader.appendChild(menu);
+            menu.appendChild(latitudeItem);
+            menu.appendChild(longitudeItem);
+            menu.appendChild(menuItemDistance);
+            menu.appendChild(menuItemDuration);
+            menu.appendChild(menuItemDirections);
+            menuItemDirections.appendChild(directionsImg);
+            menu.appendChild(input);
         }
     });
 
 }
 
-
-
-
-
-/*
-    -   geocode reverse lookup
-    -   get the address of a given latitude/longitude
-*/
-function getAddress(LATITUDE, LONGITUDE)
-{
-    var address;
-    var geocoder = new google.maps.Geocoder();
-    var latlng = new google.maps.LatLng(LATITUDE, LONGITUDE);
-
-    if (geocoder) {
-        geocoder.geocode({'latLng': latlng}, function (results, status)
-        {
-            if (status == google.maps.GeocoderStatus.OK)
-            {
-                console.log(results[0].geometry.location);
-                address = results[2].formatted_address;
-            }
-            else
-            {
-                console.log('No results found: ' + status);
-            }
-        });
-    }
-    return address;
-}
 
 
 /*
@@ -342,77 +475,15 @@ function addNewDestinations(data, travelMode){
         var description =  data.list[row].description;
         var latitude = data.list[row].latitude;
         var longitude = data.list[row].longitude;
-        var latlng = new google.maps.LatLng(latitude, longitude);
+
 
         // keep list of ID's so that destinations can later be ordered depending on distance
         listOfIDs.push(ID);
 
-        addMarker(latlng, name, description);
+        addMarker(new google.maps.LatLng(latitude, longitude) , name, description);
 
-        // create new block and append to centerContainer
-        var newBlock = document.createElement('div');
-        newBlock.id = ID;
-        newBlock.className = 'block destinationBlock';
-        document.getElementById('centerContainer').appendChild(newBlock);
+        createDestinationBlock(ID, url, name, latitude, longitude, travelMode);                 // data about directions from your position to specific destination
 
-        // create header for block and append to centerContainer
-        var blockHeader = document.createElement('div');
-        blockHeader.className = 'blockHeader';
-        blockHeader.id = ID + 'Header';
-        newBlock.appendChild(blockHeader);
-
-
-        // put order div into link
-        var order = document.createElement('div');
-        order.setAttribute('class','order');
-        order.id = ID + 'Order';
-        blockHeader.appendChild(order);
-
-        // create link for url and append to header
-        var link = document.createElement('a');
-        link.setAttribute('href', url);
-        link.setAttribute('target', 'blank');
-        link.className = 'linkURL';
-        link.id = ID + 'Link';
-        link.innerHTML = name;
-        blockHeader.appendChild(link);
-
-
-
-        // create menu
-        var menu = document.createElement('div');
-        menu.className = 'blockHeaderMenu';
-        menu.id = ID + 'Menu';
-        blockHeader.appendChild(menu);
-
-
-        // add menu item for mapping path on map when clicked
-        var menuItemDirections = document.createElement('div');
-        menuItemDirections.className = 'blockMenuItem GetDirections';
-        menuItemDirections.id = ID + 'GetDirections';
-        // create image of map item
-        var directionsImg = document.createElement('img');
-        directionsImg.src = '../static/images/map.png';
-        menuItemDirections.appendChild(directionsImg);
-        menu.appendChild(menuItemDirections);
-
-
-
-        //add hidden input to menu to get coordinates
-        var latitudeItem = document.createElement('input');
-        latitudeItem.className = 'blockMenuItem';
-        latitudeItem.id = ID + 'GetDirections' +  'Latitude';
-        latitudeItem.type = 'hidden';
-        latitudeItem.value = latitude;
-        var longitudeItem = document.createElement('input');
-        longitudeItem.className = 'blockMenuItem';
-        longitudeItem.id = ID + 'GetDirections' + 'Longitude';
-        longitudeItem.type = 'hidden';
-        longitudeItem.value = longitude;
-        menu.appendChild(latitudeItem);
-        menu.appendChild(longitudeItem);
-
-        getDirectionInfo(latlng, menu, ID, travelMode);                 // data about directions from your position to specific destination
 
     }
 
@@ -494,3 +565,30 @@ function getDestinations(travelMode){
 
 
 
+
+/*
+    -   geocode reverse lookup
+    -   get the address of a given latitude/longitude
+*/
+function getAddress(LATITUDE, LONGITUDE)
+{
+    var address;
+    var geocoder = new google.maps.Geocoder();
+    var latlng = new google.maps.LatLng(LATITUDE, LONGITUDE);
+
+    if (geocoder) {
+        geocoder.geocode({'latLng': latlng}, function (results, status)
+        {
+            if (status == google.maps.GeocoderStatus.OK)
+            {
+                console.log(results[0].geometry.location);
+                address = results[2].formatted_address;
+            }
+            else
+            {
+                console.log('No results found: ' + status);
+            }
+        });
+    }
+    return address;
+}
