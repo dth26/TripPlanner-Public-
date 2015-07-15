@@ -2,39 +2,51 @@
 <!DOCTYPE html>
 <html>
 	<head>
-	    <meta name="viewport" content="width=1000px, maximum-scale=1.0" />
+	    <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+
+        <title>Trip Planner</title>
+
 		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/base.css') }}" media="screen" />
 		<link href='http://fonts.googleapis.com/css?family=Bangers|Satisfy|Roboto+Condensed' rel='stylesheet' type='text/css'>
 
-		<!-- load appropriate jquery javascript -->
+		<!-- Jquery -->
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-		<script type="text/javascript"
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCeWFY0CQcHswP7VOroCgd49bEBI1P6_-4">
-        </script>
+
+		<!--Google Map API-->
+		<script type="text/javascript"src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCeWFY0CQcHswP7VOroCgd49bEBI1P6_-4"></script>
+
+        <!-- Bootstrap -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
 		{% block js %}{% endblock %}
 		<script src="{{ url_for('static', filename='js/base.js') }}"></script>
 
-		<title>Trip Planner</title>
-
-		<!-- load proper cs file -->
+		<!-- load proper css file -->
 		{% block css %}{% endblock %}
-
 	</head>
 	<body>
-		<div id="menu">
-			<div id="title">
-				<h1>Trip Planner</h1>
-			</div>
-			<div id="menuItemHolder">
-			  <a href="{{ url_for('home') }}" id="homeMenuItem">Home</a>
-			  <a href="{{ url_for('createNew') }}" id="newMenuItem">New</a>
-			</div>
-		</div>
-
-		<div id="centerContainer" class="centerContainerWidth">
-		{% block content %}
-		{% endblock %}
-		</div>
+	    <div class="navbar navbar-inverse">
+	        <div class="container-fluid">
+	            <div class="navbar-header">
+                    <div class="navbar-brand" href="#">TripPlanner</div>
+	            </div>
+	            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	                <ul class="nav navbar-nav">
+	                    <li class="active"><a href="{{ url_for('home') }}" >Home</a></li>
+	                    <li><a href="{{ url_for('createNew') }}">New</a></li>
+	                </ul>
+	            </div>
+	        </div>
+	    </div>
+	    <div class="container-fluid">
+    		<div id="centerContainer" class="centerContainerWidth">
+    		{% block content %}
+    		{% endblock %}
+    		</div>
+	    </div>
 	</body>
 
 </html>

@@ -197,8 +197,8 @@ function getDirections(destination, travelMode)
             {
                 directionsText += route.steps[i].instructions + "\n";
             }
-            alert(JSON.stringify(response));
-           alert(directionsText);
+            //alert(JSON.stringify(response));
+           //alert(directionsText);
         }
     });
 
