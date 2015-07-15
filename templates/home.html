@@ -1,8 +1,12 @@
 {% extends "base.html" %}
 
+
+
 {% block js %}
 	<script src="{{ url_for('static', filename='js/home.js') }}"></script>
 {% endblock %}
+
+
 
 
 {% block css %}
@@ -11,56 +15,62 @@
 {% endblock %}
 
 
+
+
 {% block content %}
- <div id="map-canvas"></div>
- <div class="block">
+    <div id="map-canvas"></div>
+
+
+    <div class="block">
      Departure Time:
-     <select id="hours" class="time">
-        <option selected="selected">Now</option>
-        {% for i in range(1, 13) %}
-        <option>{{i}}</option>
+         <select id="hours" class="time">
+            <option selected="selected">Now</option>
+            {% for i in range(1, 13) %}
+            <option>{{i}}</option>
+            {% endfor %}
+         </select>
+        <select id="mins" class="time">
+            <option selected="selected">Now</option>
+        {% for i in range(0, 60) %}
+            <option>
+                {% if i < 10 %}
+                    0{{i}}
+                {% else %}
+                    {{i}}
+                {% endif %}
+            </option>
         {% endfor %}
-     </select>
-    <select id="mins" class="time">
-        <option selected="selected">Now</option>
-    {% for i in range(0, 60) %}
-        <option>
-            {% if i < 10 %}
-                0{{i}}
-            {% else %}
-                {{i}}
-            {% endif %}
-        </option>
-    {% endfor %}
-    </select>
-    <select id="period" class="time">
-        <option selected="selected">Now</option>
-        <option>AM</option>
-        <option>PM</option>
-    </select>
-    <select id="transitType">
-        <option>Transit</option>
-        <option selected="selected">Walking</option>
-        <option>Driving</option>
-    </select>
-    <a id="update" class="submit">Update Travel Times</a>
- </div>
+        </select>
+        <select id="period" class="time">
+            <option selected="selected">Now</option>
+            <option>AM</option>
+            <option>PM</option>
+        </select>
+        <select id="transitType">
+            <option>Transit</option>
+            <option selected="selected">Walking</option>
+            <option>Driving</option>
+        </select>
+        <a id="update" class="submit">Update Travel Times</a>
+    </div>
+
+    <div id="directions">
+        <!--
+        <div id="0subBlock" class="subBlock">
+            <div id="0innerLeft" class="innerLeft" style="height: 100px;">
+                <img class="directionImg" src="../static/images/walking.png">
+                <div class="innerLeftText">Walk for about</div>
+                <div class="innerLeftText">2 mins, 423 ft</div>
+            </div>
+            <innerright class="innerRight">Walk to South Commons at Federal St FS</innerright>
+        </div>
+        -->
+    </div>
 {% endblock %}
 
-{% block directions %}
-<div id="directions">
-    <!--
-    <div id="0subBlock" class="subBlock">
-        <div id="0innerLeft" class="innerLeft" style="height: 100px;">
-            <img class="directionImg" src="../static/images/walking.png">
-            <div class="innerLeftText">Walk for about</div>
-            <div class="innerLeftText">2 mins, 423 ft</div>
-        </div>
-        <innerright class="innerRight">Walk to South Commons at Federal St FS</innerright>
-    </div>
-    -->
-</div>
-{% endblock %}
+
+
+
 
 
 
