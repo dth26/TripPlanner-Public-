@@ -221,28 +221,14 @@ function getDirections(destination, travelMode)
                 // this step's transporation is TRANSIT
                 if(step.travel_mode == 'TRANSIT')
                 {
-                   // parse json to get transit info
-                   bus_agency = step.transit.line.agencies[0].name;             // port authority
-                   bus_name = step.transit.line.name;                           // monroeville
-                   bus_id = step.transit.line.short_name;                       // 64
-                   arrival_location = step.transit.arrival_stop.name;           // where the bus will pick you up
-                   arrival_time = step.transit.arrival_time.text;               // when the bus will drop you off at destination
-                   departure_location = step.transit.departure_stop.name;       // where the bus will drop you off
-                   departure_time = step.transit.departure_time.text;           // when bus will pick you up
-
-
-                    /*
-                   alert(
-                        'bus_agency :' + bus_agency + '\n' +
-                        'bus_name: ' + bus_name + '\n' +
-                        'bus_id: ' + bus_id + '\n' +
-                        'departure_location :' + departure_location + '\n' +
-                        'arrival_location :' + arrival_location + '\n' +
-                        'outbound: ' + description + '\n' +
-                        'departure_time: ' + departure_time + '\n' +
-                        'arrival_time: ' + arrival_time
-                        );
-                    */
+                    // parse json to get transit info
+                    bus_agency = step.transit.line.agencies[0].name;             // port authority
+                    bus_name = step.transit.line.name;                           // monroeville
+                    bus_id = step.transit.line.short_name;                       // 64
+                    arrival_location = step.transit.arrival_stop.name;           // where the bus will pick you up
+                    arrival_time = step.transit.arrival_time.text;               // when the bus will drop you off at destination
+                    departure_location = step.transit.departure_stop.name;       // where the bus will drop you off
+                    departure_time = step.transit.departure_time.text;           // when bus will pick you up
 
                     description = '<span class="header">Agency: </span>' + bus_agency + '<br/>' +
                                   '<span class="header">Bus: </span>' + bus_id + ' - ' + bus_name + ' - ' + description + '<br/>' +
@@ -362,9 +348,9 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode)
 
 
 
-            var newBlock = document.createElement('div');
-            newBlock.id = ID;
-            newBlock.className = 'block destinationBlock';
+            var destinationBlock = document.createElement('div');
+            destinationBlock.id = ID;
+            destinationBlock.className = 'block destinationBlock';
 
             // create header for block and append to centerContainer
             var blockHeader = document.createElement('div');
@@ -379,12 +365,12 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode)
 
 
             // create link for url and append to header
-            var link = document.createElement('a');
-            link.setAttribute('href', url);
-            link.setAttribute('target', 'blank');
-            link.className = 'linkURL';
-            link.id = ID + 'Link';
-            link.innerHTML = name;
+            var linkURL = document.createElement('a');
+            linkURL.setAttribute('href', url);
+            linkURL.setAttribute('target', 'blank');
+            linkURL.className = 'linkURL';
+            linkURL.id = ID + 'Link';
+            linkURL.innerHTML = name;
 
 
 
@@ -439,10 +425,10 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode)
 
 
             // append children
-            document.getElementById('centerContainer').appendChild(newBlock);
-            newBlock.appendChild(blockHeader);
+            document.getElementById('centerContainer').appendChild(destinationBlock);
+            destinationBlock.appendChild(blockHeader);
             blockHeader.appendChild(order);
-            blockHeader.appendChild(link);
+            blockHeader.appendChild(linkURL);
             blockHeader.appendChild(menu);
             menu.appendChild(latitudeItem);
             menu.appendChild(longitudeItem);
