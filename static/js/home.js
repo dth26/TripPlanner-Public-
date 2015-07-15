@@ -181,7 +181,6 @@ function getDirections(destination, travelMode)
 
     // call directionsSerice.route to get directions
     directionsService.route(directionrequest, function(response, status){
-       // alert(JSON.stringify(response));
         if (status == google.maps.DirectionsStatus.OK) {
             // display route on map
             directionsDisplay.setDirections(response);
@@ -198,7 +197,8 @@ function getDirections(destination, travelMode)
             {
                 directionsText += route.steps[i].instructions + "\n";
             }
-           // alert(directionsText);
+            alert(JSON.stringify(response));
+           alert(directionsText);
         }
     });
 
