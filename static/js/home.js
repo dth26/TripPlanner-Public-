@@ -403,7 +403,7 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode)
         destinationBlock.id = ID;
         destinationBlock.className = 'block destinationBlock';
 
-        // create header for block and append to centerContainer
+        // create header for block and append to container-fluid
         var blockHeader = document.createElement('div');
         blockHeader.className = 'blockHeader';
         blockHeader.id = ID + 'Header';
@@ -443,7 +443,7 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode)
         longitudeItem.value = longitude;
 
          // append children
-        document.getElementById('centerContainer').appendChild(destinationBlock);
+        document.getElementById('container-fluid').appendChild(destinationBlock);
         destinationBlock.appendChild(blockHeader);
         blockHeader.appendChild(order);
         blockHeader.appendChild(linkURL);
@@ -597,3 +597,5 @@ function getAddress(LATITUDE, LONGITUDE)
     }
     return address;
 }
+
+
