@@ -63,8 +63,13 @@ $(function() {
 $(function() {
     $(document).on("click", '#update', function() {
         var transitType = $('#transitType').val();
+
         // remove all current destinationBlocks
         $('.destinationBlock').remove();
+
+        // remove all previous directions before getting new
+        $('#directions').empty();
+
         // delete all markers from map
         google.maps.Map.prototype.clearMarkers = function() {
             for(var i=0; i < this.markers.length; i++){
@@ -72,6 +77,7 @@ $(function() {
             }
             this.markers = new Array();
         };
+
         // add destinations with new transporation type
         getDestinations(transitType);
     });
@@ -171,7 +177,7 @@ function getTime(hrs,mins){
 function getDirections(destination, travelMode)
 {
     // remove all previous directions before getting new
-     $('#directions').empty();
+    $('#directions').empty();
 
 
     departureTime = getTime();
@@ -204,7 +210,7 @@ function getDirections(destination, travelMode)
                 step 3: turn left onto Bigelow Blvd
             */
             var step;
-            var transit_name, bus_id, bus_name, departure_time, arrival_time, departure_location, arrival_location; // transit info
+            var transit_name, bus_id, bus_name, bus_agency, departure_time, arrival_time, departure_location, arrival_location; // transit info
             var description, durationText, distanceText; // step info
             var transitText = '';
             for(var i=0; i< route.steps.length; i++)
@@ -229,9 +235,7 @@ function getDirections(destination, travelMode)
                     arrival_time = step.transit.arrival_time.text;               // when the bus will drop you off at destination
                     departure_location = step.transit.departure_stop.name;       // where the bus will drop you off
                     departure_time = step.transit.departure_time.text;           // when bus will pick you up
-
-                    description = '<span class="header">Agency: </span>' + bus_agency + '<br/>' +
-                                  '<span class="header">Bus: </span>' + bus_id + ' - ' + bus_name + ' - ' + description + '<br/>' +
+                    description =  '<span class="header">Bus: </span>' + bus_id + ' - ' + bus_name + ' - ' + description + '<br/>' +
                                    '<span class="header">' + departure_time + '</span>: ' + departure_location + '<br/>' +
                                    '<span class="header">' + arrival_time + '</span>: ' + arrival_location;
 
@@ -254,11 +258,13 @@ function getDirections(destination, travelMode)
                 subBlock.className = 'subBlock';
                 subBlock.id = i + 'subBlock';
 
-
                 var innerLeft = document.createElement('div');
                 innerLeft.className = 'innerLeft';
                 innerLeft.id = i + 'innerLeft';
 
+                var centerHorizontally = document.createElement('div');
+                centerHorizontally.className = 'centerHorizontally';
+                centerHorizontally.id = i + 'centerHorizontally';
 
                 var directionImg = document.createElement('img');
                 directionImg.className = 'directionImg';
@@ -285,23 +291,48 @@ function getDirections(destination, travelMode)
                 innerLeftTextTwo.className = 'innerLeftText';
                 innerLeftTextTwo.innerHTML = durationText + ', ' + distanceText ;
 
+                var agency = document.createElement('div');
+                agency.className = 'agency';
+                if(step.travel_mode == 'TRANSIT'){
+                    agency.innerHTML = '<span class="header">' + bus_agency + '</span>';
+                }else if(step.travel_mode == 'WALKING'){
+                    agency.innerHTML = '<span class="header">Walking</span>';
+                }else if(step.travel_mode == 'DRIVING'){
+                    agency.innerHTML = '<span class="header">Driving</span>';
+                }
+
 
                 var innerRight = document.createElement('innerRight');
                 innerRight.className = 'innerRight';
                 innerRight.innerHTML = description;
-
+                innerRight.id = i + 'innerRight';
 
                 // append children to '#directions' block
-                innerLeft.appendChild(directionImg);
-                innerLeft.appendChild(innerLeftTextOne);
-                innerLeft.appendChild(innerLeftTextTwo);
+                centerHorizontally.appendChild(directionImg);
+                centerHorizontally.appendChild(innerLeftTextOne);
+                centerHorizontally.appendChild(innerLeftTextTwo);
+                centerHorizontally.appendChild(agency);
+
+                innerLeft.appendChild(centerHorizontally);
                 subBlock.appendChild(innerLeft);
                 subBlock.appendChild(innerRight);
                 document.getElementById('directions').appendChild(subBlock);
 
+
+                // set height of innerLeft
+                var centerHorizontallyHeight = $('#' + i + 'centerHorizontally').height();
+                $('#' + i + 'innerLeft').css('height', centerHorizontallyHeight);
+
+                 // set height of subBlock so it fits its contents
+                var innerLeftHeight = centerHorizontallyHeight;
+                var innerRightHeight = $('#'+i + 'innerRight').height();
+                var subBlockHeight = (innerLeftHeight > innerRightHeight ? innerLeftHeight : innerRightHeight);
+                $('#'+i + 'subBlock').css('height',subBlockHeight);
+
                 // set height of innerLeft block so that border-right stretches to bottom
-                var subBlockHeight = $('#' + i + 'subBlock').height();
                 $('#'+i + 'innerLeft').css('height',subBlockHeight);
+
+
 
             }
 
@@ -333,6 +364,53 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode)
         travelMode: travelMode
     }
 
+
+    var destinationBlock = document.createElement('div');
+    destinationBlock.id = ID;
+    destinationBlock.className = 'block destinationBlock';
+
+    // create header for block and append to centerContainer
+    var blockHeader = document.createElement('div');
+    blockHeader.className = 'blockHeader';
+    blockHeader.id = ID + 'Header';
+
+
+    // put order div into link
+    var order = document.createElement('div');
+    order.setAttribute('class','order');
+    order.id = ID + 'Order';
+
+
+    // create link for url and append to header
+    var linkURL = document.createElement('a');
+    linkURL.setAttribute('href', url);
+    linkURL.setAttribute('target', 'blank');
+    linkURL.className = 'linkURL';
+    linkURL.id = ID + 'Link';
+    linkURL.innerHTML = name;
+
+
+
+    // create menu
+    var menu = document.createElement('div');
+    menu.className = 'blockHeaderMenu';
+    menu.id = ID + 'Menu';
+
+
+
+    //add hidden input to menu to get coordinates
+    var latitudeItem = document.createElement('input');
+    latitudeItem.className = 'blockMenuItem';
+    latitudeItem.id = ID + 'GetDirections' +  'Latitude';
+    latitudeItem.type = 'hidden';
+    latitudeItem.value = latitude;
+    var longitudeItem = document.createElement('input');
+    longitudeItem.className = 'blockMenuItem';
+    longitudeItem.id = ID + 'GetDirections' + 'Longitude';
+    longitudeItem.type = 'hidden';
+    longitudeItem.value = longitude;
+
+
     // call directionsSerice.route to get directions info
     directionsService.route(directionrequest, function(response, status){
 
@@ -345,53 +423,6 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode)
             distanceText = route.distance.text;
             totalDuration = route.duration.value;
             durationText = route.duration.text;
-
-
-
-            var destinationBlock = document.createElement('div');
-            destinationBlock.id = ID;
-            destinationBlock.className = 'block destinationBlock';
-
-            // create header for block and append to centerContainer
-            var blockHeader = document.createElement('div');
-            blockHeader.className = 'blockHeader';
-            blockHeader.id = ID + 'Header';
-
-
-            // put order div into link
-            var order = document.createElement('div');
-            order.setAttribute('class','order');
-            order.id = ID + 'Order';
-
-
-            // create link for url and append to header
-            var linkURL = document.createElement('a');
-            linkURL.setAttribute('href', url);
-            linkURL.setAttribute('target', 'blank');
-            linkURL.className = 'linkURL';
-            linkURL.id = ID + 'Link';
-            linkURL.innerHTML = name;
-
-
-
-            // create menu
-            var menu = document.createElement('div');
-            menu.className = 'blockHeaderMenu';
-            menu.id = ID + 'Menu';
-
-
-
-            //add hidden input to menu to get coordinates
-            var latitudeItem = document.createElement('input');
-            latitudeItem.className = 'blockMenuItem';
-            latitudeItem.id = ID + 'GetDirections' +  'Latitude';
-            latitudeItem.type = 'hidden';
-            latitudeItem.value = latitude;
-            var longitudeItem = document.createElement('input');
-            longitudeItem.className = 'blockMenuItem';
-            longitudeItem.id = ID + 'GetDirections' + 'Longitude';
-            longitudeItem.type = 'hidden';
-            longitudeItem.value = longitude;
 
 
             // blockMenuItem for display distance
@@ -408,36 +439,49 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode)
             menuItemDuration.innerHTML = durationText;
 
 
-            // blockMenuItem for mapping path on map when clicked
-            var menuItemDirections = document.createElement('div');
-            menuItemDirections.className = 'blockMenuItem GetDirections';
-            menuItemDirections.id = ID + 'GetDirections';
-            // create image of map item
-            var directionsImg = document.createElement('img');
-            directionsImg.src = '../static/images/map.png';
-
-
             // store duration in hidden input
             var input = document.createElement('input');
             input.setAttribute('type','hidden');
             input.setAttribute('id', ID + 'Duration');
             input.setAttribute('value',totalDuration);
 
+              // blockMenuItem for mapping path on map when clicked
+            var menuItemDirections = document.createElement('div');
+            menuItemDirections.className = 'blockMenuItem GetDirections';
+            menuItemDirections.id = ID + 'GetDirections';
+            // create image of map item
+            var directionsImg = document.createElement('img');
+            directionsImg.src = '../static/images/map.png';
+        }
+        else // no route was found from origin to destination
+        {
+            // blockMenuItem for display distance
+            var menuItemNoRoute = document.createElement('div');
+            menuItemNoRoute.className = 'blockMenuItem';
+            menuItemNoRoute.id = ID + 'noRouteItem';
+            menuItemNoRoute.innerHTML = 'No Route Found!';
 
-            // append children
-            document.getElementById('centerContainer').appendChild(destinationBlock);
-            destinationBlock.appendChild(blockHeader);
-            blockHeader.appendChild(order);
-            blockHeader.appendChild(linkURL);
-            blockHeader.appendChild(menu);
-            menu.appendChild(latitudeItem);
-            menu.appendChild(longitudeItem);
+        }
+
+
+
+         // append children
+        document.getElementById('centerContainer').appendChild(destinationBlock);
+        destinationBlock.appendChild(blockHeader);
+        blockHeader.appendChild(order);
+        blockHeader.appendChild(linkURL);
+        blockHeader.appendChild(menu);
+        menu.appendChild(latitudeItem);
+        menu.appendChild(longitudeItem);
+        if(status == google.maps.DirectionsStatus.OK){
             menu.appendChild(menuItemDistance);
             menu.appendChild(menuItemDuration);
-            menu.appendChild(menuItemDirections);
-            menuItemDirections.appendChild(directionsImg);
-            menu.appendChild(input);
+        }else{
+            menu.appendChild(menuItemNoRoute);
         }
+        menu.appendChild(menuItemDirections);
+        menuItemDirections.appendChild(directionsImg);
+        menu.appendChild(input);
     });
 
 }
@@ -461,7 +505,6 @@ function addNewDestinations(data, travelMode){
         var description =  data.list[row].description;
         var latitude = data.list[row].latitude;
         var longitude = data.list[row].longitude;
-
 
         // keep list of ID's so that destinations can later be ordered depending on distance
         listOfIDs.push(ID);

@@ -2,28 +2,34 @@
     width: auto;
     height: auto;
 }
+.agency{
+    padding-top: 10px;
+    width: 100%;
+    font-size: 13px;
+    float: left;
+    font-weight: 700;
+    margin-top: 5px;
+    text-align:center;
+}
 .centerHorizontally{
-    position: relative;
+    position: absolute;
+    top: 50%;
+    -webkit-transform: translate(-0%,-50%);
+    -moz-transform: translate(-0%,-50%);
+    -o-transform: translate(-0%,-50%);
+    -ms-transform: translate(-0%,-50%);
     width: auto;
     height: auto;
-    float: right;
     display: inline-block;
-    top: 50%;
-    transform: translate(-0%, -50%);
-    border: 1px solid black;
-    padding: 0px;
-    margin: 0px;
 }
 .directionImg{
-    position: absolute;
     height: 35px;
     width: 35px;
     margin: 0px;
+    margin-top: 15px;
     padding: 0px;
     float: left;
     display: inline-block;
-    top: 50%;
-    transform: translate(-0%, -50%);
 }
 .header{
     color: #575353;
@@ -32,17 +38,17 @@
 .innerLeft{
     position: relative;
     width: 260px;
+    height: 100%;
     bottom: 0px;
     margin:0px;
     left: 0px;
     display: inline-block;
     border-right: 1px solid #D1CED9;
     background-color: #EFEBFF;
-    padding: 10px;
 }
 .innerLeftText{
     width: 190px;
-    height: 35px;
+    height: 30px;
     line-height: 30px;
     font-size: 15px;
     float: right;
