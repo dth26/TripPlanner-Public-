@@ -529,7 +529,7 @@ function addNewDestinations(data, travelMode){
             element.innerHTML = counter -1 + ')';
         }
 
-    }, 1500);
+    }, 2500);
 
 
 }
