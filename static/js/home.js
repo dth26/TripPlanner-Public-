@@ -505,10 +505,9 @@ function addNewDestinations(data, travelMode){
         addMarker(new google.maps.LatLng(latitude, longitude) , name, description);
 
         createDestinationBlock(ID, url, name, latitude, longitude, travelMode);                 // data about directions from your position to specific destination
-
-
     }
 
+    // this code will start running immediatly if timer isn't added
     setTimeout(function () {
         var counter = 1;
         // order destinations
@@ -546,7 +545,7 @@ function addNewDestinations(data, travelMode){
             element.innerHTML = counter -1 + ')';
         }
 
-    }, 1000);
+    }, 1500);
 
 
 }
