@@ -12,31 +12,12 @@ var travelModes = {
     'transit' : google.maps.TravelMode.TRANSIT
 };
 
+// when window loads load map
+google.maps.event.addDomListener(window, 'load', initialize);
 
 function printJSON(json){
     alert(JSON.stringify(json, null, 2));
 }
-
-
-
-//http://www.gisgraphy.com/
-$(document).ready(function(){
-
-        var latitude;
-        var longitude;
-
-        /*
-            -   get our current location
-            -   call 'initialize' to create map and initialize map services
-        */
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(initialize);
-        } else {
-            alert("Geolocation is not supported by this browser.");
-        }
-
-});
-
 
 
 /*
@@ -86,32 +67,35 @@ $(function() {
 
 /* set map */
 /* save current position/ coordinates to map */
-function initialize(position) {
+function initialize() {
     directionsDisplay = new google.maps.DirectionsRenderer();
     directionsService = new google.maps.DirectionsService();
 
-    yourLatitude = position.coords.latitude;
-    yourLongitude = position.coords.longitude;
-    yourLatlng = new google.maps.LatLng(yourLatitude,yourLongitude);
+    navigator.geolocation.getCurrentPosition(function(position) {
+         yourLatitude = position.coords.latitude;
+        yourLongitude = position.coords.longitude;
+        yourLatlng = new google.maps.LatLng(yourLatitude,yourLongitude);
 
-    /* set map configuration */
-    var mapOptions = {
-        center: yourLatlng,
-        zoom: 15
-    };
+        //set map configuration
+        var mapOptions = {
+            center: yourLatlng,
+            zoom: 15
+        };
 
-    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-    // this enables the display to draw routes on map
-    directionsDisplay.setMap(map);
+        map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+        // this enables the display to draw routes on map
+        directionsDisplay.setMap(map);
 
-    // add your current location to map
-    addMarker(yourLatlng,'You','');
+        // add your current location to map
+        addMarker(yourLatlng,'You','');
+        var transitType = $('#transitType').val();
+        // make ajax call and get destinations from server
+        getDestinations(transitType);
+    });
 
-    var transitType = $('#transitType').val();
-    // make ajax call and get destinations from server
-    getDestinations(transitType);
+
 }
-//google.maps.event.addDomListener(window, 'load', initialize);
+
 
 
 
