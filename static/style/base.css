@@ -1,6 +1,5 @@
 
 
-
 * {
 
    /*	 fixed width and height of divs despite paddings */
@@ -11,6 +10,9 @@
 }
 a{
     text-decoration: none;
+}
+body{
+    font-family: 'Yanone Kaffeesatz', sans-serif !important;
 }
 .block{
 	position: relative;
@@ -59,4 +61,7 @@ a{
 	display: flex;
 	-webkit-flex-flow: column;
     flex-flow: column;
+}
+.navbar{
+    font-weight: 500 !important;
 }
