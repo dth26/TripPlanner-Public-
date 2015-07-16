@@ -365,56 +365,10 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode)
     }
 
 
-    var destinationBlock = document.createElement('div');
-    destinationBlock.id = ID;
-    destinationBlock.className = 'block destinationBlock';
-
-    // create header for block and append to centerContainer
-    var blockHeader = document.createElement('div');
-    blockHeader.className = 'blockHeader';
-    blockHeader.id = ID + 'Header';
-
-
-    // put order div into link
-    var order = document.createElement('div');
-    order.setAttribute('class','order');
-    order.id = ID + 'Order';
-
-
-    // create link for url and append to header
-    var linkURL = document.createElement('a');
-    linkURL.setAttribute('href', url);
-    linkURL.setAttribute('target', 'blank');
-    linkURL.className = 'linkURL';
-    linkURL.id = ID + 'Link';
-    linkURL.innerHTML = name;
-
-
-
-    // create menu
-    var menu = document.createElement('div');
-    menu.className = 'blockHeaderMenu';
-    menu.id = ID + 'Menu';
-
-
-
-    //add hidden input to menu to get coordinates
-    var latitudeItem = document.createElement('input');
-    latitudeItem.className = 'blockMenuItem';
-    latitudeItem.id = ID + 'GetDirections' +  'Latitude';
-    latitudeItem.type = 'hidden';
-    latitudeItem.value = latitude;
-    var longitudeItem = document.createElement('input');
-    longitudeItem.className = 'blockMenuItem';
-    longitudeItem.id = ID + 'GetDirections' + 'Longitude';
-    longitudeItem.type = 'hidden';
-    longitudeItem.value = longitude;
-
-
     // call directionsSerice.route to get directions info
     directionsService.route(directionrequest, function(response, status){
 
-       // alert(JSON.stringify(response));
+       // set duration and distance menuItems of the route
         if (status == google.maps.DirectionsStatus.OK) {
             route = response.routes[0].legs[0];
 
@@ -424,20 +378,17 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode)
             totalDuration = route.duration.value;
             durationText = route.duration.text;
 
-
             // blockMenuItem for display distance
             var menuItemDistance = document.createElement('div');
             menuItemDistance.className = 'blockMenuItem';
             menuItemDistance.id = ID + 'distanceItem';
             menuItemDistance.innerHTML = distanceText;
 
-
             // blockMenuItem for display duration
             var menuItemDuration = document.createElement('div');
             menuItemDuration.className = 'blockMenuItem';
             menuItemDuration.id = ID + 'durationItem';
             menuItemDuration.innerHTML = durationText;
-
 
             // store duration in hidden input
             var input = document.createElement('input');
@@ -463,7 +414,49 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode)
 
         }
 
+        // create new destinationBlock
+        var destinationBlock = document.createElement('div');
+        destinationBlock.id = ID;
+        destinationBlock.className = 'block destinationBlock';
 
+        // create header for block and append to centerContainer
+        var blockHeader = document.createElement('div');
+        blockHeader.className = 'blockHeader';
+        blockHeader.id = ID + 'Header';
+
+        // put order div into link
+        var order = document.createElement('div');
+        order.setAttribute('class','order');
+        order.id = ID + 'Order';
+
+        // create link for url and append to header
+        var linkURL = document.createElement('a');
+        linkURL.setAttribute('href', url);
+        linkURL.setAttribute('target', 'blank');
+        linkURL.className = 'linkURL';
+        linkURL.id = ID + 'Link';
+        linkURL.innerHTML = name;
+
+
+
+        // create menu
+        var menu = document.createElement('div');
+        menu.className = 'blockHeaderMenu';
+        menu.id = ID + 'Menu';
+
+
+
+        //add hidden input to menu to get coordinates
+        var latitudeItem = document.createElement('input');
+        latitudeItem.className = 'blockMenuItem';
+        latitudeItem.id = ID + 'GetDirections' +  'Latitude';
+        latitudeItem.type = 'hidden';
+        latitudeItem.value = latitude;
+        var longitudeItem = document.createElement('input');
+        longitudeItem.className = 'blockMenuItem';
+        longitudeItem.id = ID + 'GetDirections' + 'Longitude';
+        longitudeItem.type = 'hidden';
+        longitudeItem.value = longitude;
 
          // append children
         document.getElementById('centerContainer').appendChild(destinationBlock);
