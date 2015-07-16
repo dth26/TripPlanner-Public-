@@ -12,18 +12,30 @@ var travelModes = {
     'transit' : google.maps.TravelMode.TRANSIT
 };
 
+
+// to set center of map  // map.setCenter(results[0].geometry.location);
+
 // when window loads load map
-google.maps.event.addDomListener(window, 'load', initialize);
+//google.maps.event.addDomListener(window, 'load', initialize);
 
 
 
-function printJSON(json){
-    alert(JSON.stringify(json, null, 2));
-}
 
+/*
+    get users coordinates using geolocation
+*/
 $(document).ready(function(){
-    //alert($('#map-canvas').css('display'));
+     // set first loading dot
+    loadDot();
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(initialize, handle_error);
+    } else {
+        handle_error();
+    }
 });
+
+
 
 var dotLoaded = 1;
 function loadDot(){
@@ -33,14 +45,15 @@ function loadDot(){
         $('#dot' + dotLoaded).css('background-color','blue');
         dotLoaded++;
     }else{
-        setInterval(function(){
+        setInterval(function()
+        {
             $('#dot' + dotLoaded).css('background-color','blue');
             dotLoaded++;
-            if(dotLoaded == 6){
+            if(dotLoaded == 6)
+            {
                // remove loading status
                 setTimeout(function(){
                    $('.overlay').css('display','none');
-                   //$('body').css('overflow','scroll !important');
                 }, 500);
             }
         }, 800);
@@ -93,39 +106,97 @@ $(function() {
 });
 
 
-/* set map */
-/* save current position/ coordinates to map */
-function initialize() {
+/* compute geolocation */
+$(function() {
+
+    $(document).on("click", '#manualGeolocation', function() {
+        // close address modal
+        $('#Modal').modal('toggle');
+
+        var geocoder = new google.maps.Geocoder();
+        var lat, lng;
+        var address = $('#userAddress').val();
+        var city = $('#userCity').val();
+        var state = $('#userState').val();
+        var zip = $('#userZip').val();
+        var location = '';
+
+
+
+        if(address != 'undefined' && address!=undefined)
+        {
+            location += address + ', ';
+        }
+        location += city + ', ' + state + ' ' + zip;
+
+        geocoder.geocode( { 'address': location}, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                lat = results[0].geometry.location.A;
+                lng = results[0].geometry.location.F;
+
+                var position = {coords:{
+                    latitude: lat,
+                    longitude: lng
+                }};
+
+                initialize(position);
+            } else
+            {
+              alert('Not proper address.');
+              handle_error();
+            }
+        });
+
+    });
+
+
+});
+
+
+
+
+/*
+    -   error callback for geolocation
+    -   gelocation does not work on - internet explorer 11
+*/
+function handle_error(){
+    $('.overlay').css('display','none');
+    $('#Modal').modal('show');
+}
+
+
+
+
+
+/*
+    - set map
+    - save current position/ coordinates to map
+*/
+function initialize(position) {
     loadDot();
     directionsDisplay = new google.maps.DirectionsRenderer();
     directionsService = new google.maps.DirectionsService();
 
-    navigator.geolocation.getCurrentPosition(function(position) {
+    yourLatitude = position.coords.latitude;
+    yourLongitude = position.coords.longitude;
 
-        // set first loading dot
-        loadDot();
+    yourLatlng = new google.maps.LatLng(yourLatitude,yourLongitude);
 
-         yourLatitude = position.coords.latitude;
-        yourLongitude = position.coords.longitude;
-        yourLatlng = new google.maps.LatLng(yourLatitude,yourLongitude);
+    //set map configuration
+    var mapOptions = {
+        center: yourLatlng,
+        zoom: 15
+    };
 
-        //set map configuration
-        var mapOptions = {
-            center: yourLatlng,
-            zoom: 15
-        };
+    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    // this enables the display to draw routes on map
+    directionsDisplay.setMap(map);
 
-        map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-        // this enables the display to draw routes on map
-        directionsDisplay.setMap(map);
-
-        // add your current location to map
-        addMarker(yourLatlng,'You','');
-        var transitType = $('#transitType').val();
-        // make ajax call and get destinations from server
-        getDestinations(transitType);
-    });
-
+    // add your current location to map
+    addMarker(yourLatlng,'You','');
+    var transitType = $('#transitType').val();
+    // make ajax call and get destinations from server
+    getDestinations(transitType);
 
 }
 
@@ -626,4 +697,9 @@ function getAddress(LATITUDE, LONGITUDE)
     return address;
 }
 
+
+function printJSON(json){
+    alert(JSON.stringify(json, null, 2));
+    console.log(JSON.stringify(json, null, 2));
+}
 
