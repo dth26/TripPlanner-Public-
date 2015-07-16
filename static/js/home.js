@@ -15,10 +15,38 @@ var travelModes = {
 // when window loads load map
 google.maps.event.addDomListener(window, 'load', initialize);
 
+
+
 function printJSON(json){
     alert(JSON.stringify(json, null, 2));
 }
 
+$(document).ready(function(){
+    //alert($('#map-canvas').css('display'));
+});
+
+var dotLoaded = 1;
+function loadDot(){
+
+    // do not want to delay load dot for geolocation since it takes forever to load
+    if(dotLoaded==20){
+        $('#dot' + dotLoaded).css('background-color','blue');
+        dotLoaded++;
+    }else{
+        setInterval(function(){
+            $('#dot' + dotLoaded).css('background-color','blue');
+            dotLoaded++;
+            if(dotLoaded == 6){
+               // remove loading status
+                setTimeout(function(){
+                   $('.overlay').css('display','none');
+                   //$('body').css('overflow','scroll !important');
+                }, 500);
+            }
+        }, 800);
+    }
+
+}
 
 /*
     event: map icon is clicked
@@ -68,10 +96,15 @@ $(function() {
 /* set map */
 /* save current position/ coordinates to map */
 function initialize() {
+    loadDot();
     directionsDisplay = new google.maps.DirectionsRenderer();
     directionsService = new google.maps.DirectionsService();
 
     navigator.geolocation.getCurrentPosition(function(position) {
+
+        // set first loading dot
+        loadDot();
+
          yourLatitude = position.coords.latitude;
         yourLongitude = position.coords.longitude;
         yourLatlng = new google.maps.LatLng(yourLatitude,yourLongitude);
@@ -229,15 +262,10 @@ function getDirections(destination, travelMode)
                     departure_time = 'undefined';
                 }
 
-               // directionsText += '\n\n';
-
 
                 /*
                     CREATE HTML STEP BLOCKS
                 */
-
-                //
-
                 var subBlock = document.createElement('div');
                 subBlock.className = 'subBlock';
                 subBlock.id = i + 'subBlock';
@@ -315,8 +343,6 @@ function getDirections(destination, travelMode)
 
                 // set height of innerLeft block so that border-right stretches to bottom
                 $('#'+i + 'innerLeft').css('height',subBlockHeight);
-
-
 
             }
 
@@ -490,9 +516,10 @@ function addNewDestinations(data, travelMode){
 
         createDestinationBlock(ID, url, name, latitude, longitude, travelMode);                 // data about directions from your position to specific destination
     }
-
+    loadDot();
     // this code will start running immediatly if timer isn't added
     setTimeout(function () {
+
         var counter = 1;
         // order destinations
         while(listOfIDs.length != 0)
@@ -529,8 +556,8 @@ function addNewDestinations(data, travelMode){
             element.innerHTML = counter -1 + ')';
         }
 
+         loadDot();
     }, 2500);
-
 
 }
 
@@ -544,6 +571,7 @@ function getDestinations(travelMode){
         url: 'http://tripplanner.pythonanywhere.com/getDestinations',
         dataType:'json',
         success: function(data) {
+            loadDot();
             addNewDestinations(data, travelMode)
         },
         error: function(jqXHR, exception) {

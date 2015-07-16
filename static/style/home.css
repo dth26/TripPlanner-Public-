@@ -1,4 +1,11 @@
-
+/*do not delete: for loading bar*/
+body{
+    /*overflow: hidden;*/
+}
+#map-canvas, #destinationDiv, #directions{
+    position: relative;
+    z-index: 1 !important;
+}
 .GetDirections{
     cursor: pointer;
 }
@@ -18,6 +25,58 @@
 .order{
     width: 30px;
     display: inline-block;
+}
+.overlay{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    margin: 0px;
+    padding: 0px;
+    z-index: 1000;
+    background-color: white;
+    position: fixed;
+}
+.overlayInner, .overlayInnerBar, overlayInnerLoading{
+    width: 300px;
+}
+.overlayInner{
+    position: absolute;
+    height: auto;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform:  translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -o-transform:  translate(-50%, -50%);
+    -ms-transform:  translate(-50%, -50%);
+}
+.overlayInnerLoading,.overlayInnerDotHolder{
+    height: 50px;
+    text-align: center;
+}
+.overlayInnerLoading{
+    font-size: 17px;
+    font-weight: 600;
+}
+.overlayInnerDotHolder{
+    width: 59px;
+    float: left;
+}
+.overlayInnerDot{
+    position: relative;
+    height: 14px;
+    width: 14px;
+    border-radius: 7px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform:  translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -o-transform:  translate(-50%, -50%);
+    -ms-transform:  translate(-50%, -50%);
+    border: 1px solid blue;
 }
 .submit{
     position: absolute;
