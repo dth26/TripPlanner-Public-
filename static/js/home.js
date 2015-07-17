@@ -25,6 +25,7 @@ var travelModes = {
     get users coordinates using geolocation
 */
 $(document).ready(function(){
+
      // set first loading dot
     loadDot();
 
@@ -102,6 +103,17 @@ $(function() {
 
         // add destinations with new transporation type
         getDestinations(transitType);
+    });
+});
+
+
+/* clear direction block if exit clicked */
+$(function(){
+    $('.innerLeftHeader').click(function(){
+        var exitID = '#' + $(this).attr('id');
+        var subBlockID = exitID.substring(0, exitID.length-5);
+        subBlockID += 'subBlock';
+        $(subBlockID).hide();
     });
 });
 

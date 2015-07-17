@@ -49,6 +49,43 @@
     border-right: 1px solid #D1CED9;
     background-color: #EFEBFF;
 }
+.innerLeftHeader{
+    position: relative;
+    margin: 0px;
+    width: 60px;
+    min-height: 83px;
+    bottom: 0px;
+    display: inline-block;
+    float: left;
+    background-color: #625D75;
+    cursor: pointer;
+}
+.innerLeftHeaderBlock{
+
+}
+.innerLeftHeaderBlock:nth-child(1){
+    top: 1px;
+    left:0px;
+    width: auto;
+    height: auto;
+    padding: 5px;
+    font-size: 14px;
+    color: white;
+}
+.innerLeftHeaderBlock:nth-child(2){
+    position: absolute;
+    width: auto;
+    height: auto;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    font-size: 30px;
+    font-weight: 1000;
+    color: white;
+}
+.innerLeftHeader:hover{
+    background-color: #837E96;
+}
 .innerLeftText{
     width: 190px;
     height: 25px;
