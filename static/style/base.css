@@ -12,7 +12,8 @@ a{
     text-decoration: none;
 }
 body{
-    font-family: 'Yanone Kaffeesatz', sans-serif !important;
+    font-family: 'Arial' !important;
+    font-size: 18px !important;
 }
 .block{
 	position: relative;
@@ -51,9 +52,9 @@ body{
 .blockMenuItem{
     float:left;
     width: auto;
-    padding-left: 7px;
-    padding-right: 7px;
-    border-left: 1px solid black;
+    /*padding-left: 7px;*/
+    padding-right: 20px;
+    /*border-left: 1px solid black;*/
     text-align: center;
 }
 .container-fluid{
@@ -64,4 +65,16 @@ body{
 }
 .navbar{
     font-weight: 500 !important;
+}
+.navbar-brand{
+    font-size: 30px !important;
+    margin-left: 5px !important;
+}
+.panel-heading{
+    padding: 0 15px !important;
+}
+.glyphicon-map-marker{
+    color: #CC0000;
+    font-size: 25px;
+    margin-top: 7px;
 }

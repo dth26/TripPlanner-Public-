@@ -4,6 +4,7 @@
 
 {% block js %}
 	<script src="{{ url_for('static', filename='js/home.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/directions.js')}}"></script>
 {% endblock %}
 
 
@@ -81,39 +82,85 @@
 
     <div id="map-canvas"></div>
 
-
-    <div id="destinationDiv" class="block">
-     Departure Time:
-         <select id="hours" class="time">
-            <option selected="selected">Now</option>
-            {% for i in range(1, 13) %}
-            <option>{{i}}</option>
-            {% endfor %}
-         </select>
-        <select id="mins" class="time">
-            <option selected="selected">Now</option>
-        {% for i in range(0, 60) %}
-            <option>
-                {% if i < 10 %}
-                    0{{i}}
-                {% else %}
-                    {{i}}
-                {% endif %}
-            </option>
-        {% endfor %}
-        </select>
-        <select id="period" class="time">
-            <option selected="selected">Now</option>
-            <option>AM</option>
-            <option>PM</option>
-        </select>
-        <select id="transitType">
-            <option>Transit</option>
-            <option selected="selected">Walking</option>
-            <option>Driving</option>
-        </select>
-        <a id="update" class="submit">Update Travel Times</a>
+    <div class="panel panel-default" id="destinationDiv" class="block" >
+        <div class="panel-body">
+            <div class="inlineForm">                                            <!--"inlineForm keep dropdown and buttons in line-->
+                <form class="form-inline">
+                    <div class="form-group">
+                        <p class="form-control-static"><strong>Departure Time:</strong></p>
+                        <select class="form-control time" id="hours">
+                            <option>Now</option>
+                            {% for i in range(1, 13) %}
+                            <option>{{i}}</option>
+                            {% endfor %}
+                        </select>
+                        <select class="form-control time" id="mins">
+                            <option>Now</option>
+                            {% for i in range(0, 60) %}
+                            <option>
+                                {% if i < 10 %}
+                                    0{{i}}
+                                {% else %}
+                                    {{i}}
+                                {% endif %}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <select class="form-control time" id="period">
+                            <option>Now</option>
+                            <option>AM</option>
+                            <option>PM</option>
+                        </select>
+                        <select class="form-control" id="transitType">
+                            <option>Walking</option>
+                            <option>Transit</option>
+                            <option>Driving</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="inlineForm" id="left-inline-form">
+                <button class="btn btn-default btn-lg" class="submit" type="submit" id="update">Update</button>
+                <button id="saveDirections" class="btn btn-success btn-lg" type="submit">Save</button>
+            </div>
+        </div>
     </div>
+
+    <!--<div id="destinationDiv" class="block">-->
+    <!--    Departure Time:-->
+    <!--     <select id="hours" class="time">-->
+    <!--        <option selected="selected">Now</option>-->
+    <!--        {% for i in range(1, 13) %}-->
+    <!--        <option>{{i}}</option>-->
+    <!--        {% endfor %}-->
+    <!--     </select>-->
+    <!--    <select id="mins" class="time">-->
+    <!--        <option selected="selected">Now</option>-->
+    <!--    {% for i in range(0, 60) %}-->
+    <!--        <option>-->
+    <!--            {% if i < 10 %}-->
+    <!--                0{{i}}-->
+    <!--            {% else %}-->
+    <!--                {{i}}-->
+    <!--            {% endif %}-->
+    <!--        </option>-->
+    <!--    {% endfor %}-->
+    <!--    </select>-->
+    <!--    <select id="period" class="time">-->
+    <!--        <option selected="selected">Now</option>-->
+    <!--        <option>AM</option>-->
+    <!--        <option>PM</option>-->
+    <!--    </select>-->
+    <!--    <select id="transitType">-->
+    <!--        <option>Transit</option>-->
+    <!--        <option selected="selected">Walking</option>-->
+    <!--        <option>Driving</option>-->
+    <!--    </select>-->
+    <!--    <button class="btn btn-default" class="submit" type="submit" id="update">Update Travel Time</button>-->
+    <!--    <button class="btn btn-success" type="submit">Update Travel Time</button>-->
+
+        <!--<a id="update" class="submit">Update Travel Times</a>-->
+    <!--</div>-->
 
     <div id="directions">
         <div id="0subBlock" class="subBlock" style="height: 84px;">

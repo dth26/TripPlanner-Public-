@@ -15,7 +15,7 @@ body{
     top: 0px;
 }
 #map-canvas {
-    height: 600px;
+    height: 450px; /*originally 600px*/
     width: 100%;
     margin: 0;
     padding: 0;
@@ -94,13 +94,23 @@ body{
     margin: 0px;
     text-align: center;
 }
-.time{
+.form-control{
     height: 30px;
-    width: 60px;
+    width: 70px;
     margin: 7px;
 }
+.inlineForm{
+    display: inline-block;
+}
+#left-inline-form{
+    float: right;
+}
 #transitType{
-    height: 30px;
-    margin-left: 75px;
-    margin-right: 15px;
+    width: 90px;
+}
+.checkbox{
+    float: right;
+}
+.panel-default{
+    margin-top: 10px;
 }

@@ -68,15 +68,15 @@ function loadDot(){
     must use function 'on' for dyncamically created elements
 */
 $(function() {
-    $(document).on("click", '.GetDirections', function() {
-        var destID = $(this).attr('id');
-        var latitude = $('#' + destID + 'Latitude').attr('value');
-        var longitude = $('#' + destID + 'Longitude').attr('value');
-        var latlng = new google.maps.LatLng(latitude, longitude);
-        var transitType = $('#transitType').val();
-        getDirections(latlng, transitType);
+    // $(document).on("click", '.GetDirections', function() {
+    //     var destID = $(this).attr('id');
+    //     var latitude = $('#' + destID + 'Latitude').attr('value');
+    //     var longitude = $('#' + destID + 'Longitude').attr('value');
+    //     var latlng = new google.maps.LatLng(latitude, longitude);
+    //     var transitType = $('#transitType').val();
+    //     getDirections(latlng, transitType);
 
-    });
+    // });
  });
 
 /*
@@ -272,168 +272,6 @@ function getTime(hrs,mins){
     return date;
 }
 
-
-/* get directions from origin to destination */
-function getDirections(destination, travelMode)
-{
-    // remove all previous directions before getting new
-    $('#directions').empty();
-
-
-    departureTime = getTime();
-
-    travelMode = travelModes[travelMode.toLowerCase()];
-    var directionsText = '', busPath;
-    var directionrequest =
-    {
-        origin: yourLatlng,
-        destination: destination,
-        travelMode: travelMode,
-        transitOptions:{
-            departureTime:departureTime
-        }
-    }
-
-    // call directionsSerice.route to get directions
-    directionsService.route(directionrequest, function(response, status){
-        if (status == google.maps.DirectionsStatus.OK) {
-            // display route on map
-            directionsDisplay.setDirections(response);
-
-             route = response.routes[0].legs[0];
-             //alert(response.routes[0].legs[0].transit);
-            // get individual steps
-            /*
-                say your going to cathedral from bouquet gardens
-                step 1: turn left onto S.Bouquet Street
-                step 2: turn right onto 5th Ave
-                step 3: turn left onto Bigelow Blvd
-            */
-            var step;
-            var transit_name, bus_id, bus_name, bus_agency, departure_time, arrival_time, departure_location, arrival_location; // transit info
-            var description, durationText, distanceText; // step info
-            var transitText = '';
-            for(var i=0; i< route.steps.length; i++)
-            {
-                step = route.steps[i];
-
-                // parse step info
-                durationText = step.duration.text;                              // duration of step, ex: 5 min
-                distanceText = step.distance.text;                              // distance of step, ex: 1mile
-                description = step.instructions;                                //  Bus towards Inbound-FREEPORT ROAD TO PITTSBURGH
-
-                //printJSON(step);
-
-                // this step's transporation is TRANSIT
-                if(step.travel_mode == 'TRANSIT')
-                {
-                    // parse json to get transit info
-                    bus_agency = step.transit.line.agencies[0].name;             // port authority
-                    bus_name = step.transit.line.name;                           // monroeville
-                    bus_id = step.transit.line.short_name;                       // 64
-                    arrival_location = step.transit.arrival_stop.name;           // where the bus will pick you up
-                    arrival_time = step.transit.arrival_time.text;               // when the bus will drop you off at destination
-                    departure_location = step.transit.departure_stop.name;       // where the bus will drop you off
-                    departure_time = step.transit.departure_time.text;           // when bus will pick you up
-                    description =  '<span class="header">Bus: </span>' + bus_id + ' - ' + bus_name + ' - ' + description + '<br/>' +
-                                   '<span class="header">' + departure_time + '</span>: ' + departure_location + '<br/>' +
-                                   '<span class="header">' + arrival_time + '</span>: ' + arrival_location;
-
-                }
-                else // walking or driving
-                {
-                    departure_time = 'undefined';
-                }
-
-
-                /*
-                    CREATE HTML STEP BLOCKS
-                */
-                var subBlock = document.createElement('div');
-                subBlock.className = 'subBlock';
-                subBlock.id = i + 'subBlock';
-
-                var innerLeft = document.createElement('div');
-                innerLeft.className = 'innerLeft';
-                innerLeft.id = i + 'innerLeft';
-
-                var centerHorizontally = document.createElement('div');
-                centerHorizontally.className = 'centerHorizontally';
-                centerHorizontally.id = i + 'centerHorizontally';
-
-                var directionImg = document.createElement('img');
-                directionImg.className = 'directionImg';
-                if(step.travel_mode == 'WALKING'){
-                    directionImg.src = '../static/images/walking.png';
-                }else{
-                    directionImg.src = '../static/images/bus.png';
-                }
-
-                var innerLeftTextOne = document.createElement('div');
-                innerLeftTextOne.className = 'innerLeftText';
-                if(departure_time == 'undefined'){
-                    if(step.travel_mode == 'WALKING'){
-                        innerLeftTextOne.innerHTML = 'Walk for about';
-                    }
-                    else if(step.travel_mode == 'DRIVING'){
-                        innerLeftTextOne.innerHTML = 'Drive for about';
-                    }
-                }else{
-                    innerLeftTextOne.innerHTML = 'Bus arrives at ' + departure_time;
-                }
-
-                var innerLeftTextTwo = document.createElement('div');
-                innerLeftTextTwo.className = 'innerLeftText';
-                innerLeftTextTwo.innerHTML = durationText + ', ' + distanceText ;
-
-                var agency = document.createElement('div');
-                agency.className = 'agency';
-                if(step.travel_mode == 'TRANSIT'){
-                    agency.innerHTML = '<span class="header">' + bus_agency + '</span>';
-                }else if(step.travel_mode == 'WALKING'){
-                    agency.innerHTML = '<span class="header">Walking</span>';
-                }else if(step.travel_mode == 'DRIVING'){
-                    agency.innerHTML = '<span class="header">Driving</span>';
-                }
-
-
-                var innerRight = document.createElement('innerRight');
-                innerRight.className = 'innerRight';
-                innerRight.innerHTML = description;
-                innerRight.id = i + 'innerRight';
-
-                // append children to '#directions' block
-                centerHorizontally.appendChild(directionImg);
-                centerHorizontally.appendChild(innerLeftTextOne);
-                centerHorizontally.appendChild(innerLeftTextTwo);
-                centerHorizontally.appendChild(agency);
-
-                innerLeft.appendChild(centerHorizontally);
-                subBlock.appendChild(innerLeft);
-                subBlock.appendChild(innerRight);
-                document.getElementById('directions').appendChild(subBlock);
-
-
-                // set height of innerLeft
-                var centerHorizontallyHeight = $('#' + i + 'centerHorizontally').height();
-                $('#' + i + 'innerLeft').css('height', centerHorizontallyHeight);
-
-                 // set height of subBlock so it fits its contents
-                var innerLeftHeight = centerHorizontallyHeight;
-                var innerRightHeight = $('#'+i + 'innerRight').height();
-                var subBlockHeight = (innerLeftHeight > innerRightHeight ? innerLeftHeight : innerRightHeight);
-                $('#'+i + 'subBlock').css('height',subBlockHeight);
-
-                // set height of innerLeft block so that border-right stretches to bottom
-                $('#'+i + 'innerLeft').css('height',subBlockHeight);
-
-            }
-
-        }
-    });
-
-
-}
 
 
 

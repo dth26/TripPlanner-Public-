@@ -1,8 +1,21 @@
-1) fix reordering of block destinations
-    -   remove block element and add them in order
-2) add 'walking,driving, or transit choice'
-    -   add departure time using drop downs
-3) add visited icon
-4) expandable destination div
-5) tabbed panes for each destination
+
+
+
+
+Charlotte
+---------
+1) log-in button
+2) expandable destination div
+3) panes for each destination
     - one for description, transporation, and directions
+4) save directions button
+
+Dan
+------
+1) Reasons for popup address modal if geolocation fails.
+    - location services is turned off
+    - your browser does not support geolocation
+2) login model
+3) visited model
+4) save directions
+    - try to save json into database or text file
