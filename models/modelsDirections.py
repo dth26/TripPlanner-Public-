@@ -6,7 +6,8 @@ from flask import request, url_for, render_template, redirect, session, jsonify
 from app import app
 import sys
 import os
-
+import json
+import requests
 
 
 basedir = "/home/tripplanner/mysite"
@@ -74,17 +75,34 @@ class Steps(db.Model):
 db.create_all()
 
 
+'''
+    flask 0.9
+    http://flask.pocoo.org/docs/0.9/api/
+        -> ctrl-f 'json'
+'''
 
 @app.route('/saveDirections', methods=['GET','POST'])
 def saveDirections():
 
     # get json passed from ajax call
     # use request.json() if this fails
-    directions = request.get_json(force=True)
-    steps = directions['steps']
+    #directions = request.get_json()
+    parsedJSON = request.json
+    ############################
+    #save parsedJSON to a file##
+    ############################
+    return render_template('home.html',parsedJSON=parsedJSON)
+
+    name = parseJSON['travelMode']
 
     engine = create_engine('sqlite:///' + os.path.join(basedir, 'db_file.db'), echo=True)
     connection = engine.connect()
+    testQuery = text('INSERT INTO Steps(`travelMode`) VALUES(:name)')
+    connection.execute(testQuery,
+        name=name)
+    connection.close()
+
+    steps = directions['steps']
     querySteps = text('INSERT INTO Steps(`order`,`travelMode`,`transit_name`,`bus_id`,`bus_name`,`bus_agency`,`departure_time`,`arrival_time`,`departure_location`,`arrival_location`,`instruction`,`duration`, `distance`,`lat`,`lng`) VALUES(:order, :travelMode, :transit_name, :bus_id, :bus_name, :bus_agency, :departure_time, :arrival_time, :departure_location, :arrival_location, :instruction, :duration, :distance, :lat, :lng)')
     queryDirections = text('INSERT INTO Directions(`destinationID`,`name`, `travelMode`) VALUES(:destinationID, :name, :travelMode)')
 

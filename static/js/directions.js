@@ -19,6 +19,12 @@ $(document).ready(function(){
 
     });
 
+      $(document).on("click",'#saveDirections',function(){
+         destinationID =  destID = $(this).attr('id');
+         travelMode = $('#transitType').val();
+        saveDirections();
+    })
+
     /* get directions from origin to destination */
     function getDirections(destination, travelMode)
     {
@@ -95,6 +101,7 @@ $(document).ready(function(){
                     else // walking or driving does not have departure time
                     {
                         step['departure_time'] = 'undefined';
+                        descriptionText = step['description'];
                     }
 
 
@@ -126,10 +133,10 @@ $(document).ready(function(){
                     // there's no departure time for walking or driving
                     if(step['departure_time'] == 'undefined')
                     {
-                        if(step.travel_mode == 'WALKING'){
+                        if(step['travel_mode'] == 'WALKING'){
                             innerLeftTextOne.innerHTML = 'Walk for about';
                         }
-                        else if(step.travel_mode == 'DRIVING'){
+                        else if(step['travel_mode'] == 'DRIVING'){
                             innerLeftTextOne.innerHTML = 'Drive for about';
                         }
 
@@ -203,14 +210,18 @@ $(document).ready(function(){
 	    data['destinationID'] = destinationID;
 	    data['travelMode'] = travelMode;
 
+	    //alert(printJSON(data));
+
 	    $.ajax({
-	        type: 'GET',
+	        type: 'POST',
 	        url: 'http://tripplanner.pythonanywhere.com/saveDirections',
 	        dataType:'json',
-	        data: JSON.stringify(data),
+	        contentType: "application/json",
+	        //data: {data: JSON.stringify(data)},
+	        data: JSON.stringify({data:'data'}),
 	        success: function(data) {
-	            loadDot();
-	            addNewDestinations(data, travelMode)
+	           // loadDot();
+	           // addNewDestinations(data, travelMode)
 	        },
 	        error: function(jqXHR, exception) {
 	            if (jqXHR.status === 0) {

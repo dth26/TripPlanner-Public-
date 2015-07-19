@@ -7,6 +7,7 @@ from app import app
 import sys
 import os
 
+
 basedir = "/home/tripplanner/mysite"
 
 
