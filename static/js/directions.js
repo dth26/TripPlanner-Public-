@@ -124,6 +124,8 @@ $(document).ready(function(){
                     directionImg.className = 'directionImg';
                     if(step['travel_mode'] == 'WALKING'){
                         directionImg.src = '../static/images/walking.png';
+                    }else if(step['travel_mode'] == 'DRIVING'){
+                        directionImg.src = '../static/images/car.png';
                     }else{
                         directionImg.src = '../static/images/bus.png';
                     }
