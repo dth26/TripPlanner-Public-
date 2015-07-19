@@ -478,7 +478,7 @@ function addNewDestinations(data, travelMode){
         }
 
          loadDot();
-    }, 2500);
+    }, 2800);
 
 }
 

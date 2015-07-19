@@ -1,7 +1,4 @@
 
-$(document).ready(function(){
-
-    });
 
 (function(){ // scope of directions info
     var steps = [];
@@ -10,18 +7,18 @@ $(document).ready(function(){
     var destinationID;
 
     $(document).on("click", '.GetDirections', function() {
-        var destID = $(this).attr('id');
-        var latitude = $('#' + destID + 'Latitude').attr('value');
-        var longitude = $('#' + destID + 'Longitude').attr('value');
+        destinationID = $(this).attr('id');
+        destinationID = destinationID.substring(0, destinationID.length - 13);
+        var latitude = $('#' + $(this).attr('id') + 'Latitude').attr('value');
+        var longitude = $('#' + $(this).attr('id') + 'Longitude').attr('value');
         var latlng = new google.maps.LatLng(latitude, longitude);
         var transitType = $('#transitType').val();
         getDirections(latlng, transitType);
 
     });
 
-      $(document).on("click",'#saveDirections',function(){
-         destinationID =  destID = $(this).attr('id');
-         travelMode = $('#transitType').val();
+    $(document).on("click",'#saveDirections',function(){
+        travelMode = $('#transitType').val();
         saveDirections();
     })
 
@@ -76,8 +73,9 @@ $(document).ready(function(){
                     step['distanceText'] = currStep.distance.text;                              // distance of step, ex: 1mile
                     step['description'] = currStep.instructions;                                //  Bus towards Inbound-FREEPORT ROAD TO PITTSBURGH
                     step['travel_mode'] = currStep.travel_mode;									// WALKING, DRIVING, TRANSIT
-                    step['lat'] = currStep.start_location.lat;
-                    step['lng'] = currStep.start_location.lng;
+                    step['lat'] = currStep.start_location.A;
+                    step['lng'] = currStep.start_location.F;
+                    step['order'] = i;
 
                     //printJSON(step);
 
@@ -212,18 +210,15 @@ $(document).ready(function(){
 	    data['destinationID'] = destinationID;
 	    data['travelMode'] = travelMode;
 
-	    //alert(printJSON(data));
-
 	    $.ajax({
 	        type: 'POST',
 	        url: 'http://tripplanner.pythonanywhere.com/saveDirections',
 	        dataType:'json',
 	        contentType: "application/json",
-	        //data: {data: JSON.stringify(data)},
-	        data: JSON.stringify({data:'data'}),
+	        //data: JSON.stringify(data),
+	        data: JSON.stringify(data),
 	        success: function(data) {
-	           // loadDot();
-	           // addNewDestinations(data, travelMode)
+	           alert(data['message']);
 	        },
 	        error: function(jqXHR, exception) {
 	            if (jqXHR.status === 0) {

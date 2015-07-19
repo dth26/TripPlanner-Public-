@@ -38,7 +38,6 @@ class Steps(db.Model):
     destinationID = Column(Integer)
     order = Column(Integer)
     travelMode = Column(String)
-    transit_name = Column(String)
     bus_id = Column(String)
     bus_name = Column(String)
     bus_agency = Column(String)
@@ -52,12 +51,11 @@ class Steps(db.Model):
     lat = Column(DECIMAL)
     lng = Column(DECIMAL)
 
-    def __init__(self, ID, destinationID, order, travelMode, transit_name, bus_id, bus_name, bus_agency, departure_time, arrival_time, departure_location, arrival_location, instruction, distance, duration, lat, lng):
+    def __init__(self, ID, destinationID, order, travelMode, bus_id, bus_name, bus_agency, departure_time, arrival_time, departure_location, arrival_location, instruction, distance, duration, lat, lng):
         self.ID = ID
         self.destinationID = destinationID
         self.order = order
         self.travelMode = travelMode
-        self.transit_name = transit_name
         self.bus_id = bus_id
         self.bus_name = bus_name
         self.bus_agency = bus_agency
@@ -85,42 +83,45 @@ db.create_all()
 def saveDirections():
 
     # get json passed from ajax call
-    # use request.json() if this fails
-    #directions = request.get_json()
     parsedJSON = request.json
-    ############################
-    #save parsedJSON to a file##
-    ############################
-    return render_template('home.html',parsedJSON=parsedJSON)
-
-    name = parseJSON['travelMode']
 
     engine = create_engine('sqlite:///' + os.path.join(basedir, 'db_file.db'), echo=True)
     connection = engine.connect()
-    testQuery = text('INSERT INTO Steps(`travelMode`) VALUES(:name)')
-    connection.execute(testQuery,
-        name=name)
-    connection.close()
 
-    steps = directions['steps']
-    querySteps = text('INSERT INTO Steps(`order`,`travelMode`,`transit_name`,`bus_id`,`bus_name`,`bus_agency`,`departure_time`,`arrival_time`,`departure_location`,`arrival_location`,`instruction`,`duration`, `distance`,`lat`,`lng`) VALUES(:order, :travelMode, :transit_name, :bus_id, :bus_name, :bus_agency, :departure_time, :arrival_time, :departure_location, :arrival_location, :instruction, :duration, :distance, :lat, :lng)')
-    queryDirections = text('INSERT INTO Directions(`destinationID`,`name`, `travelMode`) VALUES(:destinationID, :name, :travelMode)')
+    steps = parsedJSON['steps']
+    querySteps = text('INSERT INTO Steps(`destinationID`,`order`,`travelMode`,`bus_id`,`bus_name`,`bus_agency`,`departure_time`,`arrival_time`,`departure_location`,`arrival_location`,`instruction`,`duration`, `distance`,`lat`,`lng`) VALUES(:destinationID, :order, :travelMode, :bus_id, :bus_name, :bus_agency, :departure_time, :arrival_time, :departure_location, :arrival_location, :instruction, :duration, :distance, :lat, :lng)')
+    queryDirections = text('INSERT INTO Directions(`destinationID`, `travelMode`) VALUES(:destinationID,:travelMode)')
 
     # insert direction info into Directions table
     connection.execute(
         queryDirections,
-        destinationID = directions['destinationID'],
-        travelMode = directions['travelMode']
+        destinationID = parsedJSON['destinationID'],
+        travelMode = parsedJSON['travelMode'],
     )
+
+    attributes = ['bus_agency','bus_name','bus_id','departure_time','arrival_time','departure_location','arrival_location']
 
     # insert each individual step into steps table
     for step in steps:
+        '''
+        if 'bus_agency' not in step:
+            step['bus_agency'] = 'none'
+        if 'bus_name' not in step:
+            step['bus_name'] = 'none'
+        if 'bus_id' not in step:
+            step['bus_id'] = 'none'
+        '''
+        # make sure keys are not null or else it wull throw error
+        for attr in attributes:
+            if attr not in step:
+                step[attr] = 'none'
+
         connection.execute(
             querySteps,
-            destinationID = directions['destinationID'],
+            destinationID = parsedJSON['destinationID'],
             travelMode = step['travel_mode'],
             order = step['order'],
-            transit_name = Column(String),
+            transit_name = step['bus_agency'],
             bus_id = step['bus_id'],
             bus_name = step['bus_name'],
             bus_agency = step['bus_agency'],
@@ -129,14 +130,14 @@ def saveDirections():
             departure_location = step['departure_location'],
             arrival_location = step['arrival_location'],
             instruction = step['description'],
-            duration = step['distanceText'],
+            duration = step['durationText'],
             distance = step['distanceText'],
             lat = step['lat'],
             lng = step['lng']
         )
     connection.close()
 
-
+    return jsonify({ 'message': 'Directions Saved Succesfully!'})
 
 
 
