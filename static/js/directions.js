@@ -80,7 +80,7 @@ $(document).ready(function(){
             step 2: turn right onto 5th Ave
             step 3: turn left onto Bigelow Blvd
         */
-         printJSON(route);
+       //  printJSON(route);
         var currStep;
         var descriptionText; 						// step instructions: ex. head northwest onto springtide pl
         var transitText = '';

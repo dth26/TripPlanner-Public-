@@ -19,3 +19,6 @@ Dan
 3) visited model
 4) save directions
     - try to save json into database or text file
+5) clean up loading 'ordering divs' part
+6) fix form on new page
+7) fix input size on address modal for failed geolocation

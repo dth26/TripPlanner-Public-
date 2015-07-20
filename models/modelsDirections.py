@@ -90,7 +90,7 @@ def saveDirections():
     connection = engine.connect()
 
     steps = parsedJSON['steps']
-    querySteps = text('INSERT INTO Steps(`destinationID`,`order`,`travelMode`,`bus_id`,`bus_name`,`bus_agency`,`departure_time`,`arrival_time`,`departure_location`,`arrival_location`,`instruction`,`duration`, `distance`,`lat`,`lng`) VALUES(:destinationID, :order, :travelMode, :bus_id, :bus_name, :bus_agency, :departure_time, :arrival_time, :departure_location, :arrival_location, :instruction, :duration, :distance, :lat, :lng)')
+    querySteps = text('INSERT INTO Steps(`destinationID`,`order`,`travelMode`,`bus_id`,`bus_name`,`bus_agency`,`departure_time`,`arrival_time`,`departure_location`,`arrival_location`,`instruction`,`duration`, `distance`,`lat`,`lng`,`description`) VALUES(:destinationID, :order, :travelMode, :bus_id, :bus_name, :bus_agency, :departure_time, :arrival_time, :departure_location, :arrival_location, :instruction, :duration, :distance, :lat, :lng, :description)')
     queryDirections = text('INSERT INTO Directions(`destinationID`, `travelMode`) VALUES(:destinationID,:travelMode)')
 
     # insert direction info into Directions table
@@ -104,14 +104,6 @@ def saveDirections():
 
     # insert each individual step into steps table
     for step in steps:
-        '''
-        if 'bus_agency' not in step:
-            step['bus_agency'] = 'none'
-        if 'bus_name' not in step:
-            step['bus_name'] = 'none'
-        if 'bus_id' not in step:
-            step['bus_id'] = 'none'
-        '''
         # make sure keys are not null or else it wull throw error
         for attr in attributes:
             if attr not in step:
@@ -134,11 +126,12 @@ def saveDirections():
             duration = step['durationText'],
             distance = step['distanceText'],
             lat = step['lat'],
-            lng = step['lng']
+            lng = step['lng'],
+            description = step['description']
         )
     connection.close()
 
-    return jsonify({ 'message': 'Directions Saved Succesfully!'})
+    return jsonify({'message': 'Directions Saved Succesfully!'})
 
 
 # get list of destinations for saved directions
@@ -166,27 +159,37 @@ def getDirectionsForDestination():
 
     for s in resultSteps:
         step, duration, distance, start_location  = {}, {}, {}, {}
-        transit, arrival_stop, arrival_location, departure_stop, departure_location = {}, {}, {}, {}, {}
-        line, agencies = {}, []
+        transit, arrival_stop, arrival_time, departure_stop, departure_time = {}, {}, {}, {}, {}
+        line, agencies, agencyObject = {}, [], {}
 
 
         duration['text'] = s.duration
         distance['text'] = s.distance
         start_location['A'] = s.lat
         start_location['F'] = s.lng
+
+        # set transit info
+        agencyObject['name'] = s.bus_agency
+        agencies.append(agencyObject)
+        arrival_stop['name'] = s.arrival_location
+        arrival_time['text'] =  s.arrival_time
+        departure_stop['name'] = s.departure_location
+        departure_time['text'] = s.departure_time
+        line['name'] = s.bus_name
+        line['short_name'] = s.bus_id
+        line['agencies'] = agencies
+        transit['line'] = line
+        transit['arrival_stop'] = arrival_stop
+        transit['arrival_time'] = arrival_time
+        transit['departure_stop'] = departure_stop
+        transit['departure_time'] = departure_time
+
+        step['transit'] = transit
         step['distance'] = distance
         step['duration'] = duration
         step['start_location'] = start_location
-
         step['order'] = s.order
         step['travel_mode'] = s.travelMode
-        step['bus_agency'] = s.bus_agency
-        step['bus_id'] = s.bus_id
-        step['bus_name'] = s.bus_name
-        step['departure_time'] = s.departure_time
-        step['arrival_time'] = s.arrival_time
-        step['departure_location'] = s.departure_location
-        step['arrival_location'] = s.arrival_location
         step['instructions'] = s.description
 
         steps.append(step)
