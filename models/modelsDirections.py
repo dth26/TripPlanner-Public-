@@ -166,6 +166,17 @@ def getDirectionsForDestination():
 
     for s in resultSteps:
         step = {}
+        duration = {}
+        distance = {}
+        start_location = {}
+        duration['text'] = s.duration
+        distance['text'] = s.distance
+        start_location['A'] = s.lat
+        start_location['F'] = s.lng
+        step['distance'] = distance
+        step['duration'] = duration
+        step['start_location'] = start_location
+
         step['order'] = s.order
         step['travel_mode'] = s.travelMode
         step['bus_agency'] = s.bus_agency
@@ -175,16 +186,13 @@ def getDirectionsForDestination():
         step['arrival_time'] = s.arrival_time
         step['departure_location'] = s.departure_location
         step['arrival_location'] = s.arrival_location
-        step['description'] = s.description
-        step['durationText'] = s.duration
-        step['distanceText'] = s.distance
-        step['lat'] = s.lat
-        step['lng'] = s.lng
+        step['instructions'] = s.description
+
         steps.append(step)
 
     connection.close()
 
-    return jsonify(directions=steps)
+    return jsonify(steps=steps)
 
 
 

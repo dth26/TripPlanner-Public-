@@ -80,7 +80,7 @@ $(document).ready(function(){
             step 2: turn right onto 5th Ave
             step 3: turn left onto Bigelow Blvd
         */
-
+         printJSON(route);
         var currStep;
         var descriptionText; 						// step instructions: ex. head northwest onto springtide pl
         var transitText = '';
@@ -232,7 +232,8 @@ $(document).ready(function(){
 	        data: JSON.stringify(data),
 	        //data: JSON.stringify(data),
 	        success: function(data) {
-	          alert(JSON.stringify(data));
+	          //alert(JSON.stringify(data));
+	          createDirectionBlock(data);
 	        },
 	        error: function(jqXHR, exception) {
 	            alert('exception: ' + exception +'\njqXHR: ' + jqXHR.status);
@@ -282,3 +283,9 @@ $(document).ready(function(){
 
 
 })(); // end of scope of directions info
+
+
+function printJSON(json){
+    alert(JSON.stringify(json, null, 2));
+    console.log(JSON.stringify(json, null, 2));
+}
