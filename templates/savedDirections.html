@@ -23,24 +23,51 @@
 
 <!--class="panel-body"-->
     <div class="panel panel-default">
-        <div class="inlineForm">
-            <form class="form-inline">
-                <div id="form-group-data" class="form-group">
-                    <p class="form-control-static">
-                        <strong>Departure Time:</strong>
-                    </p>
-                    <select id="directionsFor"class="form-control time">
-                    {% for d in destinations %}
-                            <option id="{{d.directionID}}"><div>{{d.name}} ({{d.travelMode}})</div></option>
-                    {% endfor %}
-                    </select>
-
-                </div>
-                <button id="getSavedDirections" style="float:right; margin-right:30px;" class="btn btn-default btn-lg"  type="submit">Get Saved Directions</button>
-            </form>
+        <div class="panel-body">
+            <div class="inlineForm">
+                <form class="form-inline">
+                    <div id="form-group-data" class="form-group">
+                        <p class="form-control-static">
+                            <strong>Departure Time:</strong>
+                        </p>
+                        <select id="directionsFor"class="form-control time">
+                        {% for d in destinations %}
+                                <option id="{{d.directionID}}"><div>{{d.name}} ({{d.travelMode}})</div></option>
+                        {% endfor %}
+                        </select>
+                        <br/><br/>
+                    </div>
+                    <button id="getSavedDirections" style="float:right; margin-right:30px;" class="btn btn-default btn-lg"  type="submit">Get Saved Directions</button>
+                </form>
+            </div>
         </div>
     </div>
     <div id="directions">
+        <!-- <div id="1subBlock" class="subBlock">-->
+        <!--    <div class="innerLeftHeader">-->
+        <!--        <div class="innerLeftHeaderBlock">1</div>-->
+        <!--        <img class="directionImg" src="../static/images/bus.png">-->
+        <!--    </div>-->
+        <!--    <div id="1innerLeft" class="innerLeft">-->
+        <!--        <div id="1centerHorizontally" class="centerHorizontally">-->
+        <!--            <div class="innerLeftText">Bus arrives at 1:07pm</div>-->
+        <!--            <div class="innerLeftText">31 mins, 5.2 mi</div>-->
+        <!--            <div class="agency">-->
+        <!--                <span class="header">Port Authority of Allegheny County</span>-->
+        <!--            </div>-->
+        <!--        </div>-->
+        <!--    </div>-->
+        <!--    <div id="1innerRight" class="innerRight" style="">-->
+        <!--        <span class="header">Bus: </span>-->
+        <!--        54 - North Side-Oakland-South Side - Bus towards Outbound-OAKLAND-SOUTH SIDE BON AIR VIA POLISH HILL-->
+        <!--        <br>-->
+        <!--        <span class="header">1:07pm</span>-->
+        <!--        : Ridge Ave at Arch St NS-->
+        <!--        <br>-->
+        <!--        <span class="header">1:38pm</span>-->
+        <!--        : Millvale Ave at Baum Blvd-->
+        <!--    </div>-->
+        <!--</div>-->
     </div>
 
 {% endblock %}

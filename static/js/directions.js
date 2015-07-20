@@ -151,6 +151,15 @@ $(document).ready(function(){
             subBlock.className = 'subBlock';
             subBlock.id = i + 'subBlock';
 
+            var innerLeftHeader = document.createElement('div');
+            innerLeftHeader.className = 'innerLeftHeader';
+            innerLeftHeader.id = i + 'innerLeftHeader';
+
+            var innerLeftHeaderBlock = document.createElement('div');
+            innerLeftHeaderBlock.className = 'innerLeftHeaderBlock';
+            innerLeftHeaderBlock.innerHTML = step['order'];
+
+
             var innerLeft = document.createElement('div');
             innerLeft.className = 'innerLeft';
             innerLeft.id = i + 'innerLeft';
@@ -200,35 +209,48 @@ $(document).ready(function(){
             }
 
 
-            var innerRight = document.createElement('innerRight');
+            var innerRight = document.createElement('div');
             innerRight.className = 'innerRight';
             innerRight.innerHTML = descriptionText;
             innerRight.id = i + 'innerRight';
+            innerRight.style.cssText = '';
 
             // append children to '#directions' block
-            centerHorizontally.appendChild(directionImg);
+           // centerHorizontally.appendChild(directionImg);
             centerHorizontally.appendChild(innerLeftTextOne);
             centerHorizontally.appendChild(innerLeftTextTwo);
             centerHorizontally.appendChild(agency);
 
             innerLeft.appendChild(centerHorizontally);
+            innerLeftHeader.appendChild(innerLeftHeaderBlock);
+            innerLeftHeader.appendChild(directionImg);
+            subBlock.appendChild(innerLeftHeader);
             subBlock.appendChild(innerLeft);
             subBlock.appendChild(innerRight);
             document.getElementById('directions').appendChild(subBlock);
 
 
             // set height of innerLeft
-            var centerHorizontallyHeight = $('#' + i + 'centerHorizontally').height();
-            $('#' + i + 'innerLeft').css('height', centerHorizontallyHeight);
+            // var centerHorizontallyHeight = $('#' + i + 'centerHorizontally').height();
+            // $('#' + i + 'innerLeft').css('height', centerHorizontallyHeight);
 
              // set height of subBlock so it fits its contents
-            var innerLeftHeight = centerHorizontallyHeight;
+            // var innerLeftHeight = centerHorizontallyHeight;
+            // var innerRightHeight = $('#'+i + 'innerRight').height();
+            // var subBlockHeight = (innerLeftHeight > innerRightHeight ? innerLeftHeight : innerRightHeight);
+            // $('#'+i + 'subBlock').css('height',subBlockHeight);
+
+            var innerLeftHeight = $('#' + i + 'innerLeft').height();
             var innerRightHeight = $('#'+i + 'innerRight').height();
-            var subBlockHeight = (innerLeftHeight > innerRightHeight ? innerLeftHeight : innerRightHeight);
-            $('#'+i + 'subBlock').css('height',subBlockHeight);
+            var maxHeight = (innerLeftHeight > innerRightHeight ? innerLeftHeight : innerRightHeight);
+
+            $('#' + i + 'innerLeft').css('height',maxHeight);
+            $('#' + i + 'innerRight').css('height',maxHeight);
+            $('#' + i + 'innerLeft').css('height',maxHeight);
+            $('#' + i + 'innerLeftHeader').css('height',maxHeight);
 
             // set height of innerLeft block so that border-right stretches to bottom
-            $('#'+i + 'innerLeft').css('height',subBlockHeight);
+            // $('#'+i + 'innerLeft').css('height',subBlockHeight);
 
             // save step into steps array
             steps.push(step);

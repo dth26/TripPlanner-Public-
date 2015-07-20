@@ -174,7 +174,7 @@ def getDirectionsForDestination():
     engine = create_engine('sqlite:///' + os.path.join(basedir, 'db_file.db'), echo=True)
     connection = engine.connect()
 
-    querySteps = text('SELECT * FROM Steps WHERE directionID=:directionID')
+    querySteps = text('SELECT * FROM Steps as S WHERE S.directionID=:directionID')
     resultSteps = connection.execute(querySteps, directionID = directionID)
 
     queryDirectionsInfo = text('SELECT * FROM Directions WHERE ID=:directionID')
