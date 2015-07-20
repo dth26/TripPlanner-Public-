@@ -106,7 +106,7 @@
 .innerRight{
     position: relative;
     /*width: 460px;*/
-    width: auto;
+    width: 500px;
     height: 100%;
     float: left;
     display: inline-block;

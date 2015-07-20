@@ -66,7 +66,6 @@ def getDestinations():
 
 @app.route('/newDestination', methods=['GET','POST'])
 def addNewDestination():
-
     description = request.args.get('Description', type=str)
     address = request.args.get('Address', type=str)
     URL = request.args.get('URL', type=str)
@@ -89,7 +88,7 @@ def addNewDestination():
                   url = URL)
     connection.close()
 
-    return redirect(url_for('createNew'))
+    return jsonify(name=name)
 
 
 
