@@ -154,10 +154,14 @@ def saveDirections():
 
 
 # get list of destinations for saved directions
+# populate select tag with destination names
 def getDirectionsDestinations():
     engine = create_engine('sqlite:///' + os.path.join(basedir, 'db_file.db'), echo=True)
     connection = engine.connect()
-    query = text('select A.ID as directionID, A.destinationID, A.travelMode, A.total_distance, A.total_duration, A.start_address, A.end_address, B.name from Directions as A INNER JOIN Destinations as B on A.destinationID = B.ID')
+    query = text('select A.ID as directionID, A.destinationID as destinationID, A.travelMode, A.total_distance as distance, A.total_duration as duration, A.start_address as start, A.end_address as end, B.name as name  \
+                  from Directions as A   \
+                  INNER JOIN Destinations as B \
+                  on A.destinationID = B.ID')
     results = connection.execute(query)
     return results
 
@@ -170,12 +174,25 @@ def getDirectionsForDestination():
     engine = create_engine('sqlite:///' + os.path.join(basedir, 'db_file.db'), echo=True)
     connection = engine.connect()
 
-    query = text('SELECT * FROM Steps WHERE directionID=:directionID')
-    resultSteps = connection.execute(query, directionID = directionID)
+    querySteps = text('SELECT * FROM Steps WHERE directionID=:directionID')
+    resultSteps = connection.execute(querySteps, directionID = directionID)
 
-    dictionary = []     #json object
+    queryDirectionsInfo = text('SELECT * FROM Directions WHERE ID=:directionID')
+    resultDirections = connection.execute(queryDirectionsInfo, directionID = directionID)
+
+    # parse directionsInfo
+    # create json object
+    directionsInfo = {}
+    for row in resultDirections:
+        directionsInfo['total_distance'] = row['total_distance']
+        directionsInfo['total_duration'] = row['total_duration']
+        directionsInfo['end_address'] = row['end_address']
+        directionsInfo['start_address'] = row['start_address']
+
+
+
+    # parse steps into json object
     steps = []
-
     for s in resultSteps:
         step, duration, distance, start_location  = {}, {}, {}, {}
         transit, arrival_stop, arrival_time, departure_stop, departure_time = {}, {}, {}, {}, {}
@@ -215,8 +232,7 @@ def getDirectionsForDestination():
 
     connection.close()
 
-    return jsonify(steps=steps)
-
+    return jsonify(steps=steps, directionsInfo=directionsInfo)
 
 
 

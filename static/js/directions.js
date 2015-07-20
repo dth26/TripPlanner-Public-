@@ -19,11 +19,10 @@ $(document).ready(function(){
     // get saved directions
     $(document).on("click", '#getSavedDirections',function(e) {
         e.preventDefault();
-        // destinationName = $('#directionsFor').val();                 // destination the user wants to get the directions for
-        // var splice_index = destinationName.indexOf(' (');
-        // destinationName = destinationName.substring(0, splice_index);
+        destinationName = $('#directionsFor').val();                 // destination the user wants to get the directions for
+        var splice_index = destinationName.indexOf(' (');
+        destinationName = destinationName.substring(0, splice_index);
         directionID = $('#directionsFor').find('option:selected').attr('id');
-        alert('directionID ' + directionID);
         getSavedDirections(parseInt(directionID));
 
     });
@@ -254,8 +253,23 @@ $(document).ready(function(){
 	        data: JSON.stringify(data),
 	        //data: JSON.stringify(data),
 	        success: function(data) {
-	          //alert(JSON.stringify(data));
-	          createDirectionBlock(data);
+
+	            // remove current text
+	            $('#directionInfoDiv').remove();
+
+                var directionInfoDiv = document.createElement('div');
+                directionInfoDiv.id = 'directionInfoDiv';
+
+                var directionInfoText = "Destination:   <span style=\"color:#4F629C\">" + destinationName + "</span><br/>" +
+                                        "Start Address: <span style=\"color:#4F629C\">" + data.directionsInfo['start_address'] + "</span><br/>" +
+                                        "End Address:   <span style=\"color:#4F629C\">" + data.directionsInfo['start_address'] + "</span><br/>" +
+                                        "Distance:      <span style=\"color:#4F629C\">" + data.directionsInfo['total_distance'] + "</span><br/>" +
+                                        "Duration:      <span style=\"color:#4F629C\">" + data.directionsInfo['total_duration'] + "</span><br/>";
+
+
+                directionInfoDiv.innerHTML = directionInfoText;
+                document.getElementById('form-group-data').appendChild(directionInfoDiv);
+	            createDirectionBlock(data);
 	        },
 	        error: function(jqXHR, exception) {
 	            alert('exception: ' + exception +'\njqXHR: ' + jqXHR.status);
