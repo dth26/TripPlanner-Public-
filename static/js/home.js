@@ -70,7 +70,7 @@ function loadDot(){
 $(function(){
    $('#update').click(function(){
        // hide text that says 'Your browser doesn't support Geolocation.'
-       $('#geolocationFailModal-title').hide();
+       document.getElementById('geolocationFailModal-title').innerHTML = "Enter your location: ";
        $('#Modal').modal('show');
    });
 });
@@ -204,7 +204,8 @@ function initialize(position) {
     //set map configuration
     var mapOptions = {
         center: yourLatlng,
-        zoom: 15
+        zoom: 15,
+        scrollwheel: false
     };
 
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
