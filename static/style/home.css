@@ -94,9 +94,9 @@ body{
     margin: 0px;
     text-align: center;
 }
-.form-control{
-    height: 30px;
-    width: 70px;
+#form-group-data .form-control{
+    height: 35px;
+    width: 100px;
     margin: 7px;
 }
 .inlineForm{
@@ -113,4 +113,7 @@ body{
 }
 .panel-default{
     margin-top: 10px;
+}
+#transitDeparture{
+    display: none;
 }

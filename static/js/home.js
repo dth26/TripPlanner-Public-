@@ -62,30 +62,41 @@ function loadDot(){
 
 }
 
-/*
-    event: map icon is clicked
-    add click event to map item to draw path from origin to destination
-    must use function 'on' for dyncamically created elements
-*/
-$(function() {
-    // $(document).on("click", '.GetDirections', function() {
-    //     var destID = $(this).attr('id');
-    //     var latitude = $('#' + destID + 'Latitude').attr('value');
-    //     var longitude = $('#' + destID + 'Longitude').attr('value');
-    //     var latlng = new google.maps.LatLng(latitude, longitude);
-    //     var transitType = $('#transitType').val();
-    //     getDirections(latlng, transitType);
-
-    // });
- });
 
 /*
-    event: update transporation button is clicked
-    update time and/or transportation type when 'update transporation button is clicked'
+    event: #update on click
+    update user's current addresss
+*/
+$(function(){
+   $('#update').click(function(){
+       // hide text that says 'Your browser doesn't support Geolocation.'
+       $('#geolocationFailModal-title').hide();
+       $('#Modal').modal('show');
+   });
+});
+
+
+/*
+    event: update transporation when select option is changed
+    update time and/or transportation type when 'update transporation button is changed'
 */
 $(function() {
-    $(document).on("click", '#update', function() {
-        var transitType = $('#transitType').val();
+
+    // when document is ready show departure time if transit is already selected
+    if($('#transitType').val() == 'Transit'){
+        $('#transitDeparture').show();
+    }
+
+    $('#transitType').on( "change", function(){
+         var transitType = $('#transitType').val();
+
+        // if travel mode is transit show  departure time
+        if(transitType == 'Transit'){
+            $('#transitDeparture').show();
+        }else{
+            $('#transitDeparture').hide();
+        }
+
 
         // remove all current destinationBlocks
         $('.destinationBlock').remove();
@@ -107,15 +118,7 @@ $(function() {
 });
 
 
-/* clear direction block if exit clicked */
-$(function(){
-    $('.innerLeftHeader').click(function(){
-        var exitID = '#' + $(this).attr('id');
-        var subBlockID = exitID.substring(0, exitID.length-5);
-        subBlockID += 'subBlock';
-        $(subBlockID).hide();
-    });
-});
+
 
 
 /* compute geolocation */
@@ -426,6 +429,9 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode)
     -   add marker for each destination
 */
 function addNewDestinations(data, travelMode){
+
+    // remove all current destination blocks if they exist
+    $('.destinationBlock').remove();
 
     for(var row in data.list)
     {

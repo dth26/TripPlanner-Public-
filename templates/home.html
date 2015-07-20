@@ -49,7 +49,10 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Your browser doesn't support Geolocation. Please enter your location:</h4>
+                <h4 class="modal-title">Your browser doesn't support Geolocation.
+                    <!--(<a href="../templates/geolocationFail.html" target="blank">Why?</a>)-->
+                     Please enter your location:
+                </h4>
              </div>
             <div class="modal-body">
                 <div class="form-group">
@@ -68,7 +71,6 @@
                     <label for="exampleInputPassword1">Zip</label>
                     <input type="text" class="form-control" id="userZip" placeholder="Zip">
                 </div>
-
             </div>
             <div class="modal-footer">
                 <button id="manualGeolocation" type="button" class="btn btn-primary">Submit</button>
@@ -87,40 +89,44 @@
             <div class="inlineForm">                                            <!--"inlineForm keep dropdown and buttons in line-->
                 <form class="form-inline">
                     <div id="form-group-data" class="form-group">
-                        <p class="form-control-static"><strong>Departure Time:</strong></p>
-                        <select class="form-control time" id="hours">
-                            <option>Now</option>
-                            {% for i in range(1, 13) %}
-                            <option>{{i}}</option>
-                            {% endfor %}
-                        </select>
-                        <select class="form-control time" id="mins">
-                            <option>Now</option>
-                            {% for i in range(0, 60) %}
-                            <option>
-                                {% if i < 10 %}
-                                    0{{i}}
-                                {% else %}
-                                    {{i}}
-                                {% endif %}
-                            </option>
-                            {% endfor %}
-                        </select>
-                        <select class="form-control time" id="period">
-                            <option>Now</option>
-                            <option>AM</option>
-                            <option>PM</option>
-                        </select>
+                        <div id="transitDeparture">
+                            <p class="form-control-static"><strong>Departure Time:</strong></p>
+                            <select class="form-control time" id="hours">
+                                <option>Now</option>
+                                {% for i in range(1, 13) %}
+                                <option>{{i}}</option>
+                                {% endfor %}
+                            </select>
+                            <select class="form-control time" id="mins">
+                                <option>Now</option>
+                                {% for i in range(0, 60) %}
+                                <option>
+                                    {% if i < 10 %}
+                                        0{{i}}
+                                    {% else %}
+                                        {{i}}
+                                    {% endif %}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <select class="form-control time" id="period">
+                                <option>Now</option>
+                                <option>AM</option>
+                                <option>PM</option>
+                            </select>
+                        </div>
+                        <p class="form-control-static"><strong>Travel Type:</strong></p>
                         <select class="form-control" id="transitType">
                             <option>Walking</option>
                             <option>Transit</option>
                             <option>Driving</option>
                         </select>
+                        <br/><br/>
                     </div>
                 </form>
             </div>
             <div class="inlineForm" id="left-inline-form">
-                <button class="btn btn-default btn-lg" class="submit" type="submit" id="update">Update Travel Times</button>
+                <button class="btn btn-default btn-lg" class="submit" type="submit" id="update">Update Your Address</button>
                 <button id="saveDirections" class="btn btn-success btn-lg" type="submit">Save Directions</button>
             </div>
         </div>
