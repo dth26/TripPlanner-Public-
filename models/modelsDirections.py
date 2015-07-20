@@ -19,14 +19,20 @@ class Directions(db.Model):
 
     ID = Column(Integer, primary_key=True)
     destinationID = Column(Integer)
-    name = Column(String)
     travelMode = Column(String)
+    total_distance = Column(String)
+    total_duration = Column(String)
+    start_address = Column(String)
+    end_address = Column(String)
 
-    def __init__(self, ID, destinationID, name, travelMode):
+    def __init__(self, ID, destinationID, travelMode, total_distance, total_duration, start_address, end_address):
         self.ID = ID
         self.destinationID = destinationID
-        self.name = name
         self.travelMode = travelMode
+        self.total_distance = total_distance
+        self.total_duration = total_duration
+        self.end_address = end_address
+        self.start_address = start_address
 
 
 class Steps(db.Model):
@@ -34,7 +40,7 @@ class Steps(db.Model):
     __table_args__ = {'extend_existing': True}
 
     ID = Column(Integer, primary_key=True)
-    destinationID = Column(Integer)
+    directionID = Column(Integer)
     order = Column(Integer)
     travelMode = Column(String)
     bus_id = Column(String)
@@ -51,9 +57,9 @@ class Steps(db.Model):
     lng = Column(DECIMAL)
     description = Column(String)
 
-    def __init__(self, ID, destinationID, order, travelMode, bus_id, bus_name, bus_agency, departure_time, arrival_time, departure_location, arrival_location, instruction, distance, duration, lat, lng, description):
+    def __init__(self, ID, directionID, order, travelMode, bus_id, bus_name, bus_agency, departure_time, arrival_time, departure_location, arrival_location, instruction, distance, duration, lat, lng, description):
         self.ID = ID
-        self.destinationID = destinationID
+        self.directionID = directionID
         self.order = order
         self.travelMode = travelMode
         self.bus_id = bus_id
@@ -90,15 +96,28 @@ def saveDirections():
     connection = engine.connect()
 
     steps = parsedJSON['steps']
-    querySteps = text('INSERT INTO Steps(`destinationID`,`order`,`travelMode`,`bus_id`,`bus_name`,`bus_agency`,`departure_time`,`arrival_time`,`departure_location`,`arrival_location`,`instruction`,`duration`, `distance`,`lat`,`lng`,`description`) VALUES(:destinationID, :order, :travelMode, :bus_id, :bus_name, :bus_agency, :departure_time, :arrival_time, :departure_location, :arrival_location, :instruction, :duration, :distance, :lat, :lng, :description)')
-    queryDirections = text('INSERT INTO Directions(`destinationID`, `travelMode`) VALUES(:destinationID,:travelMode)')
+    querySteps = text('INSERT INTO Steps(`directionID`,`order`,`travelMode`,`bus_id`,`bus_name`,`bus_agency`,`departure_time`,`arrival_time`,`departure_location`,`arrival_location`,`instruction`,`duration`, `distance`,`lat`,`lng`,`description`) VALUES(:directionID, :order, :travelMode, :bus_id, :bus_name, :bus_agency, :departure_time, :arrival_time, :departure_location, :arrival_location, :instruction, :duration, :distance, :lat, :lng, :description)')
+    queryDirections = text('INSERT INTO Directions(`destinationID`, `travelMode`, `total_distance`, `total_duration`, `start_address`, `end_address`) VALUES(:destinationID,:travelMode, :total_distance, :total_duration, :start_address, :end_address)')
+
 
     # insert direction info into Directions table
     connection.execute(
         queryDirections,
         destinationID = parsedJSON['destinationID'],
         travelMode = parsedJSON['travelMode'],
+        total_distance = parsedJSON['total_distance'],
+        total_duration = parsedJSON['total_duration'],
+        start_address = parsedJSON['start_address'],
+        end_address = parsedJSON['end_address']
     )
+
+    # now get id of newly created Directions row
+    queryDirectionID = text('SELECT MAX(ID) as ID FROM Directions')
+    directionIDResult = connection.execute(queryDirectionID)
+    directionID = 0 # intitialize
+
+    for row in directionIDResult:
+        directionID = row['ID']
 
     attributes = ['bus_agency','bus_name','bus_id','departure_time','arrival_time','departure_location','arrival_location']
 
@@ -111,7 +130,7 @@ def saveDirections():
 
         connection.execute(
             querySteps,
-            destinationID = parsedJSON['destinationID'],
+            directionID = directionID,
             travelMode = step['travel_mode'],
             order = step['order'],
             transit_name = step['bus_agency'],
@@ -138,21 +157,21 @@ def saveDirections():
 def getDirectionsDestinations():
     engine = create_engine('sqlite:///' + os.path.join(basedir, 'db_file.db'), echo=True)
     connection = engine.connect()
-    query = text('select A.destinationID,B.name from Directions as A INNER JOIN Destinations as B on A.destinationID = B.ID')
+    query = text('select A.ID as directionID, A.destinationID, A.travelMode, A.total_distance, A.total_duration, A.start_address, A.end_address, B.name from Directions as A INNER JOIN Destinations as B on A.destinationID = B.ID')
     results = connection.execute(query)
     return results
 
 
-# get directions for destinationID
+# get directions for directionID
 @app.route('/getDirectionsForDestination', methods=['GET','POST'])
 def getDirectionsForDestination():
     parsedJSON = request.json
-    destination_name = parsedJSON['destination_name']
+    directionID = int(parsedJSON['directionID'])
     engine = create_engine('sqlite:///' + os.path.join(basedir, 'db_file.db'), echo=True)
     connection = engine.connect()
 
-    query = text('SELECT * FROM Steps WHERE destinationID=(SELECT ID FROM Destinations WHERE name=:destination_name)')
-    resultSteps = connection.execute(query, destination_name = destination_name)
+    query = text('SELECT * FROM Steps WHERE directionID=:directionID')
+    resultSteps = connection.execute(query, directionID = directionID)
 
     dictionary = []     #json object
     steps = []

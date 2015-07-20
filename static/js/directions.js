@@ -4,17 +4,27 @@ $(document).ready(function(){
 
 
 (function(){ // scope of directions info
+    // variables for current destination selected
     var steps = [];
     var travelMode;					// TRANSIT, DRIVING, WALKING
     var destinationName;			// ex. Cathedral of Learning
     var destinationID;
+    var directionID;
+    var total_distance;             // total distance of route
+    var total_duration;             // total duration of route
+    var start_address;              // start address of route
+    var end_address;                // end address of route
 
 
     // get saved directions
     $(document).on("click", '#getSavedDirections',function(e) {
         e.preventDefault();
-        var destination_name = $('#directionsFor').val();                 // destination the user wants to get the directions for
-        getSavedDirections(destination_name);
+        // destinationName = $('#directionsFor').val();                 // destination the user wants to get the directions for
+        // var splice_index = destinationName.indexOf(' (');
+        // destinationName = destinationName.substring(0, splice_index);
+        directionID = $('#directionsFor').find('option:selected').attr('id');
+        alert('directionID ' + directionID);
+        getSavedDirections(parseInt(directionID));
 
     });
 
@@ -61,6 +71,15 @@ $(document).ready(function(){
                 // display route on map
                 directionsDisplay.setDirections(response);
                 route = response.routes[0].legs[0];
+
+                // save directions info
+                total_distance = route.distance.text;            // total distance of route
+                total_duration = route.duration.text;            // total duration of route
+                start_address = route.start_address;             // start address of route
+                end_address = route.end_address;                 // end address of route
+
+
+                //printJSON(route);
                 createDirectionBlock(route);
             }else{
                 alert('google.maps.DirectionsStatus not okay');
@@ -218,10 +237,13 @@ $(document).ready(function(){
         }
     }
 
-    function getSavedDirections(destination_name)
+    function getSavedDirections(directionID)
     {
         var data = {};
-        data['destination_name'] = destination_name;
+        data['directionID'] = parseInt(directionID);
+
+         // remove all previous directions before getting new
+        $('#directions').empty();
 
         // now get directions json data from server
         $.ajax({
@@ -249,6 +271,10 @@ $(document).ready(function(){
 	    data['steps'] = steps;
 	    data['destinationID'] = destinationID;
 	    data['travelMode'] = travelMode;
+	    data['total_distance'] = total_distance;
+	    data['total_duration'] = total_duration;
+	    data['start_address'] = start_address;
+	    data['end_address'] = end_address;
 
         $.ajax({
 	        type: 'POST',
@@ -259,6 +285,8 @@ $(document).ready(function(){
 	        data: JSON.stringify(data),
 	        success: function(data) {
 	           alert(data['message']);
+	           // reset steps
+	           steps = [];
 	        },
 	        error: function(jqXHR, exception) {
 	            if (jqXHR.status === 0) {
