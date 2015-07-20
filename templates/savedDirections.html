@@ -3,7 +3,8 @@
 
 
 {% block js %}
-	<script src="{{ url_for('static', filename='js/ savedDirections.js')}}"></script>
+	<script src="{{ url_for('static', filename='js/savedDirections.js')}}"></script>
+	<script src="{{ url_for('static', filename='js/directions.js')}}"></script>
 {% endblock %}
 
 
@@ -18,6 +19,27 @@
 
 {% block content %}
 
+
+<!--class="panel-body"-->
+    <div class="panel panel-default">
+        <div class="inlineForm">
+            <form class="form-inline">
+                <div class="form-group">
+                    <p class="form-control-static">
+                        <strong>Departure Time:</strong>
+                    </p>
+                    <select id="directionsFor"class="form-control time">
+                    {% for d in destinations %}
+                            <option><div>{{d.name}}</div></option>
+                    {% endfor %}
+                    </select>
+                    <button id="getSavedDirections" class="btn btn-default btn-lg"  type="submit">Get Directions</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="directions">
+    </div>
 
 {% endblock %}
 

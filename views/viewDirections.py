@@ -5,5 +5,7 @@ from model import *
 @app.route('/savedDirections')
 @app.route('/savedDirections/')
 def savedDirections():
-	return render_template('savedDirections.html')
+    # get list of saved directions
+    destinations = getDirectionsDestinations()
+    return render_template('savedDirections.html', destinations=destinations)
 

@@ -493,7 +493,7 @@ function getDestinations(travelMode){
         dataType:'json',
         success: function(data) {
             loadDot();
-            addNewDestinations(data, travelMode)
+            addNewDestinations(data, travelMode);
         },
         error: function(jqXHR, exception) {
             if (jqXHR.status === 0) {

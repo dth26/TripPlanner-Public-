@@ -9,7 +9,6 @@ import os
 import json
 import requests
 
-
 basedir = "/home/tripplanner/mysite"
 
 
@@ -50,8 +49,9 @@ class Steps(db.Model):
     distance = Column(String)
     lat = Column(DECIMAL)
     lng = Column(DECIMAL)
+    description = Column(String)
 
-    def __init__(self, ID, destinationID, order, travelMode, bus_id, bus_name, bus_agency, departure_time, arrival_time, departure_location, arrival_location, instruction, distance, duration, lat, lng):
+    def __init__(self, ID, destinationID, order, travelMode, bus_id, bus_name, bus_agency, departure_time, arrival_time, departure_location, arrival_location, instruction, distance, duration, lat, lng, description):
         self.ID = ID
         self.destinationID = destinationID
         self.order = order
@@ -68,6 +68,7 @@ class Steps(db.Model):
         self.duration = duration
         self.lat = lat
         self.lng = lng
+        self.description = description
 
 
 db.create_all()
@@ -138,6 +139,57 @@ def saveDirections():
     connection.close()
 
     return jsonify({ 'message': 'Directions Saved Succesfully!'})
+
+
+# get list of destinations for saved directions
+def getDirectionsDestinations():
+    engine = create_engine('sqlite:///' + os.path.join(basedir, 'db_file.db'), echo=True)
+    connection = engine.connect()
+    query = text('select A.destinationID,B.name from Directions as A INNER JOIN Destinations as B on A.destinationID = B.ID')
+    results = connection.execute(query)
+    return results
+
+
+# get directions for destinationID
+@app.route('/getDirectionsForDestination', methods=['GET','POST'])
+def getDirectionsForDestination():
+    parsedJSON = request.json
+    destination_name = parsedJSON['destination_name']
+    engine = create_engine('sqlite:///' + os.path.join(basedir, 'db_file.db'), echo=True)
+    connection = engine.connect()
+
+    query = text('SELECT * FROM Steps WHERE destinationID=(SELECT ID FROM Destinations WHERE name=:destination_name)')
+    resultSteps = connection.execute(query, destination_name = destination_name)
+
+    dictionary = []     #json object
+    steps = []
+
+    for s in resultSteps:
+        step = {}
+        step['order'] = s.order
+        step['travel_mode'] = s.travelMode
+        step['bus_agency'] = s.bus_agency
+        step['bus_id'] = s.bus_id
+        step['bus_name'] = s.bus_name
+        step['departure_time'] = s.departure_time
+        step['arrival_time'] = s.arrival_time
+        step['departure_location'] = s.departure_location
+        step['arrival_location'] = s.arrival_location
+        step['description'] = s.description
+        step['durationText'] = s.duration
+        step['distanceText'] = s.distance
+        step['lat'] = s.lat
+        step['lng'] = s.lng
+        steps.append(step)
+
+    connection.close()
+
+    return jsonify(directions=steps)
+
+
+
+
+
 
 
 
