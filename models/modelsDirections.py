@@ -165,10 +165,11 @@ def getDirectionsForDestination():
     steps = []
 
     for s in resultSteps:
-        step = {}
-        duration = {}
-        distance = {}
-        start_location = {}
+        step, duration, distance, start_location  = {}, {}, {}, {}
+        transit, arrival_stop, arrival_location, departure_stop, departure_location = {}, {}, {}, {}, {}
+        line, agencies = {}, []
+
+
         duration['text'] = s.duration
         distance['text'] = s.distance
         start_location['A'] = s.lat
