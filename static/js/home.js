@@ -295,7 +295,6 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode)
         travelMode: travelMode
     }
 
-
     // call directionsSerice.route to get directions info
     directionsService.route(directionrequest, function(response, status){
 
@@ -389,6 +388,13 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode)
         longitudeItem.type = 'hidden';
         longitudeItem.value = longitude;
 
+        //add hidden input to get name of destination
+        var destinationNameInput = document.createElement('input');
+        destinationNameInput.className = 'blockMenuItem';
+        destinationNameInput.id = ID + 'destinationNameInput';
+        destinationNameInput.type = 'hidden';
+        destinationNameInput.value = name;
+
          // append children
         document.getElementById('container-fluid').appendChild(destinationBlock);
         destinationBlock.appendChild(blockHeader);
@@ -397,6 +403,7 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode)
         blockHeader.appendChild(menu);
         menu.appendChild(latitudeItem);
         menu.appendChild(longitudeItem);
+        menu.appendChild(destinationNameInput);
         if(status == google.maps.DirectionsStatus.OK){
             menu.appendChild(menuItemDistance);
             menu.appendChild(menuItemDuration);

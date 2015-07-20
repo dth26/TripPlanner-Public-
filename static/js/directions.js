@@ -30,6 +30,7 @@ $(document).ready(function(){
     $(document).on("click", '.GetDirections', function() {
         destinationID = $(this).attr('id');
         destinationID = destinationID.substring(0, destinationID.length - 13);
+        destinationName = $('#' + destinationID + 'destinationNameInput').attr('value');
         var latitude = $('#' + $(this).attr('id') + 'Latitude').attr('value');
         var longitude = $('#' + $(this).attr('id') + 'Longitude').attr('value');
         var latlng = new google.maps.LatLng(latitude, longitude);
@@ -77,9 +78,24 @@ $(document).ready(function(){
                 start_address = route.start_address;             // start address of route
                 end_address = route.end_address;                 // end address of route
 
-
-                //printJSON(route);
+                // display directions to screen
                 createDirectionBlock(route);
+
+                // remove current text
+	            $('#directionInfoDiv').remove();
+
+                var directionInfoDiv = document.createElement('div');
+                directionInfoDiv.id = 'directionInfoDiv';
+
+                var directionInfoText = "Destination:   <span style=\"color:#4F629C\">" + destinationName + "</span><br/>" +
+                                        "Start Address: <span style=\"color:#4F629C\">" + start_address + "</span><br/>" +
+                                        "End Address:   <span style=\"color:#4F629C\">" + end_address + "</span><br/>" +
+                                        "Distance:      <span style=\"color:#4F629C\">" + total_distance + "</span><br/>" +
+                                        "Duration:      <span style=\"color:#4F629C\">" + total_duration + "</span><br/>";
+
+
+                directionInfoDiv.innerHTML = directionInfoText;
+                document.getElementById('form-group-data').appendChild(directionInfoDiv);
             }else{
                 alert('google.maps.DirectionsStatus not okay');
             }
@@ -230,16 +246,7 @@ $(document).ready(function(){
             document.getElementById('directions').appendChild(subBlock);
 
 
-            // set height of innerLeft
-            // var centerHorizontallyHeight = $('#' + i + 'centerHorizontally').height();
-            // $('#' + i + 'innerLeft').css('height', centerHorizontallyHeight);
-
-             // set height of subBlock so it fits its contents
-            // var innerLeftHeight = centerHorizontallyHeight;
-            // var innerRightHeight = $('#'+i + 'innerRight').height();
-            // var subBlockHeight = (innerLeftHeight > innerRightHeight ? innerLeftHeight : innerRightHeight);
-            // $('#'+i + 'subBlock').css('height',subBlockHeight);
-
+            // set height of divs after elements are appended and rendered
             var innerLeftHeight = $('#' + i + 'innerLeft').height();
             var innerRightHeight = $('#'+i + 'innerRight').height();
             var maxHeight = (innerLeftHeight > innerRightHeight ? innerLeftHeight : innerRightHeight);
@@ -248,9 +255,6 @@ $(document).ready(function(){
             $('#' + i + 'innerRight').css('height',maxHeight);
             $('#' + i + 'innerLeft').css('height',maxHeight);
             $('#' + i + 'innerLeftHeader').css('height',maxHeight);
-
-            // set height of innerLeft block so that border-right stretches to bottom
-            // $('#'+i + 'innerLeft').css('height',subBlockHeight);
 
             // save step into steps array
             steps.push(step);
@@ -284,7 +288,7 @@ $(document).ready(function(){
 
                 var directionInfoText = "Destination:   <span style=\"color:#4F629C\">" + destinationName + "</span><br/>" +
                                         "Start Address: <span style=\"color:#4F629C\">" + data.directionsInfo['start_address'] + "</span><br/>" +
-                                        "End Address:   <span style=\"color:#4F629C\">" + data.directionsInfo['start_address'] + "</span><br/>" +
+                                        "End Address:   <span style=\"color:#4F629C\">" + data.directionsInfo['end_address'] + "</span><br/>" +
                                         "Distance:      <span style=\"color:#4F629C\">" + data.directionsInfo['total_distance'] + "</span><br/>" +
                                         "Duration:      <span style=\"color:#4F629C\">" + data.directionsInfo['total_duration'] + "</span><br/>";
 
