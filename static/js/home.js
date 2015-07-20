@@ -87,8 +87,9 @@ $(function() {
         $('#transitDeparture').show();
     }
 
+
     $('#transitType').on( "change", function(){
-         var transitType = $('#transitType').val();
+        var transitType = $('#transitType').val();
 
         // if travel mode is transit show  departure time
         if(transitType == 'Transit'){
@@ -100,6 +101,9 @@ $(function() {
 
         // remove all current destinationBlocks
         $('.destinationBlock').remove();
+        // remove directions info div
+        $('#directionInfoDiv').remove();
+
 
         // remove all previous directions before getting new
         $('#directions').empty();

@@ -40,6 +40,12 @@ $(document).ready(function(){
     });
 
     $(document).on("click",'#saveDirections',function(){
+        // if no directions are available to save return
+        if($('#directionInfoDiv').length == 0){
+            alert("Sorry. No directions to save! (Click the map pin by the destination)");
+            return;
+        }
+
         travelMode = $('#transitType').val();
         saveDirections();
     })
