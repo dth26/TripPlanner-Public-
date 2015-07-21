@@ -124,6 +124,8 @@ $(document).ready(function(){
         var currStep;
         var descriptionText; 						// step instructions: ex. head northwest onto springtide pl
         var transitText = '';
+        // reset steps
+        steps = [];
         for(var i=0; i< route.steps.length; i++)
         {
 

@@ -16,17 +16,7 @@
 {% endblock %}
 
 {% block content %}
-<!--<div class="block">-->
-<!--    <div class="blockHeader">New</div><br/>-->
-    <!--<form enctype="multipart/form-data" action="{{ url_for("addNewDestination") }}" method="post" autocomplete="off">-->
-<!--    <input type="text" id="nameIn" name="Name"  placeholder="Name"><br/>-->
-<!--    <input type="text" id="addressIn" name="Address"  placeholder="Address"><br/>-->
-<!--    <input type="text" id="URLin"name="URL" placeholder="URL"><br/>-->
-<!--    <textarea id="descrptionIn" name="Description" value="Description" placeholder="Notes"></textarea><br/>-->
-<!--    <button id="submitIn" type="button" class="btn btn-primary">Create</button>-->
-<!--</div>-->
-<div class="container">
-
+<div class="panel-body">
       <div class="form-group">
         <label for="nameIn">Destination name:</label>
         <input type="text" name="Name"  class="form-control" id="nameIn" placeholder="Name">
@@ -43,7 +33,8 @@
          <label for="descrptionIn">Notes:</label>
         <textarea id="descrptionIn" name="Description" value="Description" placeholder="Notes" class="form-control" rows="3"></textarea>
       </div>
-      <button id="submitIn" type="button" class="btn btn-default">Create</button>
-
+      <div class="form-group">
+        <button id="submitIn" type="button" class="btn btn-default">Create</button>
+      </div>
 </div>
 {% endblock %}
