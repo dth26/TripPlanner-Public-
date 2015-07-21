@@ -11,8 +11,6 @@ var travelModes = {
     'walking' : google.maps.TravelMode.WALKING,
     'transit' : google.maps.TravelMode.TRANSIT
 };
-var listDestinationBlocks = {};
-var destinationBlocksDuration = [];
 
 
 // to set center of map  // map.setCenter(results[0].geometry.location);
@@ -48,7 +46,7 @@ function loadDot(){
         $('#dot' + dotLoaded).css('background-color','blue');
         dotLoaded++;
     }else{
-        setTimeout(function()
+        setInterval(function()
         {
             $('#dot' + dotLoaded).css('background-color','blue');
             dotLoaded++;
@@ -59,7 +57,7 @@ function loadDot(){
                    $('.overlay').css('display','none');
                 }, 500);
             }
-        }, 500);
+        }, 800);
     }
 
 }
@@ -216,9 +214,9 @@ function initialize(position) {
 
     // add your current location to map
     addMarker(yourLatlng,'You','');
-
+    var transitType = $('#transitType').val();
     // make ajax call and get destinations from server
-    getDestinations($('#transitType').val());
+    getDestinations(transitType);
 
 }
 
@@ -289,7 +287,7 @@ function getTime(hrs,mins){
     -   get direction data info from google maps api
     -   build destination blocks
 */
-function createDestinationBlock(ID, url, name, latitude, longitude, travelMode, numDestinations)
+function createDestinationBlock(ID, url, name, latitude, longitude, travelMode)
 {
     var durationText;
     var distanceText;
@@ -308,15 +306,7 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode, 
     // call directionsSerice.route to get directions info
     directionsService.route(directionrequest, function(response, status){
 
-        var menuItemDistance = document.createElement('div');
-        var menuItemDuration = document.createElement('div');
-        var menuItemDirections = document.createElement('div');
-        var directionsImg = document.createElement('img');
-        var input = document.createElement('input');
-
-
-
-        // set duration and distance menuItems of the route
+       // set duration and distance menuItems of the route
         if (status == google.maps.DirectionsStatus.OK) {
             route = response.routes[0].legs[0];
 
@@ -327,34 +317,30 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode, 
             durationText = route.duration.text;
 
             // blockMenuItem for display distance
+            var menuItemDistance = document.createElement('div');
             menuItemDistance.className = 'blockMenuItem';
             menuItemDistance.id = ID + 'distanceItem';
             menuItemDistance.innerHTML = distanceText;
 
             // blockMenuItem for display duration
+            var menuItemDuration = document.createElement('div');
             menuItemDuration.className = 'blockMenuItem';
             menuItemDuration.id = ID + 'durationItem';
             menuItemDuration.innerHTML = durationText;
 
             // store duration in hidden input
+            var input = document.createElement('input');
             input.setAttribute('type','hidden');
             input.setAttribute('id', ID + 'Duration');
             input.setAttribute('value',totalDuration);
 
               // blockMenuItem for mapping path on map when clicked
+            var menuItemDirections = document.createElement('div');
             menuItemDirections.className = 'blockMenuItem GetDirections';
             menuItemDirections.id = ID + 'GetDirections';
             // create image of map item
+            var directionsImg = document.createElement('img');
             directionsImg.src = '../static/images/map.png';
-        }
-        else if(status == google.maps.DirectionsStatus.OVER_QUERY_LIMIT)
-        {
-            alert(name + ' ' + status);
-            console.log('OVER_QUERY_LIMIT');
-            // setTimeout(function(){
-            //     createDestinationBlock(ID, url, name, latitude, longitude, travelMode, numDestinations);
-            // }, 100);
-            // createDestinationBlock(ID, url, name, latitude, longitude, travelMode, numDestinations);
         }
         else // no route was found from origin to destination
         {
@@ -429,28 +415,12 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode, 
         if(status == google.maps.DirectionsStatus.OK){
             menu.appendChild(menuItemDistance);
             menu.appendChild(menuItemDuration);
-            menu.appendChild(menuItemDirections);
-            menuItemDirections.appendChild(directionsImg);
-            menu.appendChild(input);
         }else{
             menu.appendChild(menuItemNoRoute);
         }
-
-        listDestinationBlocks[totalDuration] = destinationBlock;
-        destinationBlocksDuration.push(totalDuration);
-
-        if(numDestinations == Object.keys(listDestinationBlocks).length )
-        {
-            loadDot();
-            // order the durations
-            destinationBlocksDuration.sort(function(a,b){return a - b});
-            for(var z=0; z<numDestinations; z++){
-                // pull keys in order
-                var keyOfNextBlock = destinationBlocksDuration[z];
-                // append next block
-                document.getElementById('container-fluid').appendChild(listDestinationBlocks[keyOfNextBlock]);
-            }
-        }
+        menu.appendChild(menuItemDirections);
+        menuItemDirections.appendChild(directionsImg);
+        menu.appendChild(input);
     });
 
 }
@@ -478,13 +448,56 @@ function addNewDestinations(data, travelMode){
         var latitude = data.list[row].latitude;
         var longitude = data.list[row].longitude;
 
+        // keep list of ID's so that destinations can later be ordered depending on distance
+        listOfIDs.push(ID);
 
         addMarker(new google.maps.LatLng(latitude, longitude) , name, description);
 
-        createDestinationBlock(ID, url, name, latitude, longitude, travelMode, data.list.length);                 // data about directions from your position to specific destination
-        loadDot();
-
+        createDestinationBlock(ID, url, name, latitude, longitude, travelMode);                 // data about directions from your position to specific destination
     }
+    loadDot();
+    // this code will start running immediatly if timer isn't added
+
+    setTimeout(function () {
+
+        var counter = 1;
+        // order destinations
+        while(listOfIDs.length != 0)
+        {
+            var minID = 0, minValue;
+            var currID, currValue;
+
+            for(var i=0; i<listOfIDs.length;i++)
+            {
+
+                currID =  listOfIDs[i];
+                currValue = $('#' + currID + 'Duration').attr('value');
+                currValue = parseInt(currValue);
+
+
+                if(minID == 0){
+                    minID = currID;
+                    minValue = currValue;
+                    continue;
+                }
+
+                if(currValue < minValue)
+                {
+                    minID = currID;
+                    minValue = currValue;
+                }
+            }
+
+            var indexOfMin = listOfIDs.indexOf(minID);
+            listOfIDs.splice(indexOfMin,1);
+            $('#'+minID).css('-webkit-order', counter++);
+            $('#'+minID).css('order', counter);
+            var element = document.getElementById(minID+'Order');
+            element.innerHTML = counter -1 + ')';
+        }
+
+         loadDot();
+    }, 2800);
 
 }
 
@@ -558,6 +571,4 @@ function printJSON(json){
     alert(JSON.stringify(json, null, 2));
     console.log(JSON.stringify(json, null, 2));
 }
-
-
 

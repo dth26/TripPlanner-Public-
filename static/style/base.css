@@ -58,10 +58,10 @@ body{
     text-align: center;
 }
 .container-fluid{
-    display: -webkit-flex;
-	display: flex;
-	-webkit-flex-flow: column;
-    flex-flow: column;
+ /*   display: -webkit-flex;*/
+	/*display: flex;*/
+	/*-webkit-flex-flow: column;*/
+ /*   flex-flow: column;*/
 }
 .navbar{
     font-weight: 500 !important;
