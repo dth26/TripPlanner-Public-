@@ -22,7 +22,6 @@ $(document).ready(function(){
                 coordinates['latitude'] = results[0].geometry.location.lat();
                 coordinates['longitude'] = results[0].geometry.location.lng();
                 // send data to server and store data
-
                 $.getJSON('/newDestination', {
                     Name: name,
                     Description: description,

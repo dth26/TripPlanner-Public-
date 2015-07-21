@@ -457,6 +457,7 @@ function addNewDestinations(data, travelMode){
     }
     loadDot();
     // this code will start running immediatly if timer isn't added
+
     setTimeout(function () {
 
         var counter = 1;

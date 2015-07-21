@@ -43,9 +43,9 @@
                 <a class="navbar-brand">TripPlanner</a>
                 <div class="collapse navbar-collapse" id="myNavbar">
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="{{ url_for('home') }}" >Home</a></li>
-                        <li><a href="{{ url_for('createNew') }}">New</a></li>
-                        <li><a href="{{ url_for('savedDirections') }}">Directions</a></li>
+                        <li><a id="menuItemHome" href="{{ url_for('home') }}" >Home</a></li>
+                        <li><a id="menuItemNew" href="{{ url_for('createNew') }}">New</a></li>
+                        <li><a id="menuItemDirections" href="{{ url_for('savedDirections') }}">Directions</a></li>
                     </ul>
                 </div>
             </div>

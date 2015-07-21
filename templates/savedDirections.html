@@ -5,6 +5,11 @@
 {% block js %}
 	<script src="{{ url_for('static', filename='js/savedDirections.js')}}"></script>
 	<script src="{{ url_for('static', filename='js/directions.js')}}"></script>
+	<script>
+	    $(document).ready(function(){
+            $('#menuItemDirections').css('color','white');
+        });
+	</script>
 {% endblock %}
 
 

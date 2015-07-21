@@ -2,6 +2,11 @@
 
 {% block js %}
 	<script src="{{ url_for('static', filename='js/new.js') }}"></script>
+	<script>
+	    $(document).ready(function(){
+            $('#menuItemNew').css('color','white');
+        });
+	</script>
 {% endblock %}
 
 
@@ -11,13 +16,34 @@
 {% endblock %}
 
 {% block content %}
-<div class="block">
-    <div class="blockHeader">New</div><br/>
+<!--<div class="block">-->
+<!--    <div class="blockHeader">New</div><br/>-->
     <!--<form enctype="multipart/form-data" action="{{ url_for("addNewDestination") }}" method="post" autocomplete="off">-->
-    <input type="text" id="nameIn" name="Name"  placeholder="Name"><br/>
-    <input type="text" id="addressIn" name="Address"  placeholder="Address"><br/>
-    <input type="text" id="URLin"name="URL" placeholder="URL"><br/>
-    <textarea id="descrptionIn" name="Description" value="Description" placeholder="Notes"></textarea><br/>
-    <button id="submitIn" type="button" class="btn btn-primary">Create</button>
+<!--    <input type="text" id="nameIn" name="Name"  placeholder="Name"><br/>-->
+<!--    <input type="text" id="addressIn" name="Address"  placeholder="Address"><br/>-->
+<!--    <input type="text" id="URLin"name="URL" placeholder="URL"><br/>-->
+<!--    <textarea id="descrptionIn" name="Description" value="Description" placeholder="Notes"></textarea><br/>-->
+<!--    <button id="submitIn" type="button" class="btn btn-primary">Create</button>-->
+<!--</div>-->
+<div class="container">
+
+      <div class="form-group">
+        <label for="nameIn">Destination name:</label>
+        <input type="text" name="Name"  class="form-control" id="nameIn" placeholder="Name">
+      </div>
+      <div class="form-group">
+        <label for="addressIn">Address:</label>
+        <input type="text" name="Address"  class="form-control" id="addressIn" placeholder="Address">
+      </div>
+      <div class="form-group">
+        <label for="URLin">URL:</label>
+        <input type="text"  name="URL" class="form-control"  id="URLin" placeholder="URL">
+      </div>
+      <div class="form-group">
+         <label for="descrptionIn">Notes:</label>
+        <textarea id="descrptionIn" name="Description" value="Description" placeholder="Notes" class="form-control" rows="3"></textarea>
+      </div>
+      <button id="submitIn" type="button" class="btn btn-default">Create</button>
+
 </div>
 {% endblock %}
