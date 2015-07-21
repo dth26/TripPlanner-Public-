@@ -1,6 +1,7 @@
 var GEOCODE_KEY = 'AIzaSyBPmuX9h6_BEKfKLWy-Kdc1gQHWZQIUGCQ';
 var directionsDisplay;      // google display object, display route on map
 var directionsService;      // google direction object , gets directions
+var distanceService;
 var map;                    // this is the actuall google map
 var yourLatitude;           // latitude of your current position
 var yourLongitude;          // longitude of your current position
@@ -27,9 +28,12 @@ var destinationBlocksDuration = [];
     get users coordinates using geolocation
 */
 $(document).ready(function(){
-
-     // set first loading dot
+      // set first loading dot
     loadDot();
+
+    directionsDisplay = new google.maps.DirectionsRenderer();
+    directionsService = new google.maps.DirectionsService();
+    distanceService = new google.maps.DistanceMatrixService();
 
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(initialize, handle_error);
@@ -195,8 +199,6 @@ function handle_error(){
 */
 function initialize(position) {
     loadDot();
-    directionsDisplay = new google.maps.DirectionsRenderer();
-    directionsService = new google.maps.DirectionsService();
 
     yourLatitude = position.coords.latitude;
     yourLongitude = position.coords.longitude;
@@ -300,13 +302,14 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode, 
 
     var directionrequest =
     {
-        origin: yourLatlng,
-        destination: new google.maps.LatLng(latitude, longitude),
+        origins: [yourLatlng],
+        destinations: [new google.maps.LatLng(latitude, longitude)],
+        unitSystem: google.maps.UnitSystem.IMPERIAL,
         travelMode: travelMode
     }
 
     // call directionsSerice.route to get directions info
-    directionsService.route(directionrequest, function(response, status){
+    distanceService.getDistanceMatrix(directionrequest, function(response, status){
 
         var menuItemDistance = document.createElement('div');
         var menuItemDuration = document.createElement('div');
@@ -314,17 +317,17 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode, 
         var directionsImg = document.createElement('img');
         var input = document.createElement('input');
 
-
+       // printJSON(response);
 
         // set duration and distance menuItems of the route
         if (status == google.maps.DirectionsStatus.OK) {
-            route = response.routes[0].legs[0];
+            // route = response.routes[0].legs[0];
 
-            // parse json to get travel info
-            totalDistance = route.distance.value;
-            distanceText = route.distance.text;
-            totalDuration = route.duration.value;
-            durationText = route.duration.text;
+           // parse json to get travel info
+            totalDistance = response.rows[0].elements[0].distance.value;
+            distanceText = response.rows[0].elements[0].distance.text;
+            totalDuration = response.rows[0].elements[0].duration.value;
+            durationText = response.rows[0].elements[0].duration.text;
 
             // blockMenuItem for display distance
             menuItemDistance.className = 'blockMenuItem';
@@ -351,10 +354,6 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode, 
         {
             alert(name + ' ' + status);
             console.log('OVER_QUERY_LIMIT');
-            // setTimeout(function(){
-            //     createDestinationBlock(ID, url, name, latitude, longitude, travelMode, numDestinations);
-            // }, 100);
-            // createDestinationBlock(ID, url, name, latitude, longitude, travelMode, numDestinations);
         }
         else // no route was found from origin to destination
         {
