@@ -425,6 +425,7 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode, 
         menu.appendChild(latitudeItem);
         menu.appendChild(longitudeItem);
         menu.appendChild(destinationNameInput);
+        // only show distance and duration if a route is found
         if(status == google.maps.DirectionsStatus.OK){
             menu.appendChild(menuItemDistance);
             menu.appendChild(menuItemDuration);
@@ -432,6 +433,7 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode, 
             menuItemDirections.appendChild(directionsImg);
             menu.appendChild(input);
         }else{
+            // show no route found
             menu.appendChild(menuItemNoRoute);
         }
 
@@ -457,44 +459,15 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode, 
 
 
 
-/*
-    -   ajax callback
-    -   get data for each destination from database
-    -   create new destination block for each destination
-    -   add marker for each destination
-*/
-function addNewDestinations(data, travelMode){
-
-    // remove all current destination blocks if they exist
-    $('.destinationBlock').remove();
-
-    // reset data
-    listDestinationBlocks = {};
-    destinationBlocksDuration = [];
-
-    for(var row in data.list)
-    {
-        // save data from database
-        var ID = data.list[row].ID;
-        var url = data.list[row].url;
-        var name = data.list[row].name;
-        var description =  data.list[row].description;
-        var latitude = data.list[row].latitude;
-        var longitude = data.list[row].longitude;
-
-
-        addMarker(new google.maps.LatLng(latitude, longitude) , name, description);
-
-        createDestinationBlock(ID, url, name, latitude, longitude, travelMode, data.list.length);                 // data about directions from your position to specific destination
-        loadDot();
-
-    }
-
-}
 
 /*
     get destinations from server, then call function addNewDestination to add
     destination to map
+
+    -   ajax callback
+    -   get data for each destination from database
+    -   create new destination block for each destination
+    -   add marker for each destination
 */
 function getDestinations(travelMode){
     $.ajax({
@@ -503,7 +476,30 @@ function getDestinations(travelMode){
         dataType:'json',
         success: function(data) {
             loadDot();
-            addNewDestinations(data, travelMode);
+
+            // remove all current destination blocks if they exist
+            $('.destinationBlock').remove();
+
+            // reset data
+            listDestinationBlocks = {};
+            destinationBlocksDuration = [];
+
+            for(var row in data.list)
+            {
+                // save data from database
+                var ID = data.list[row].ID;
+                var url = data.list[row].url;
+                var name = data.list[row].name;
+                var description =  data.list[row].description;
+                var latitude = data.list[row].latitude;
+                var longitude = data.list[row].longitude;
+
+
+                addMarker(new google.maps.LatLng(latitude, longitude) , name, description);
+
+                createDestinationBlock(ID, url, name, latitude, longitude, travelMode, data.list.length);                 // data about directions from your position to specific destination
+            }
+            loadDot();
         },
         error: function(jqXHR, exception) {
             if (jqXHR.status === 0) {
