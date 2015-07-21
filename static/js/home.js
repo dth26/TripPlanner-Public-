@@ -443,6 +443,7 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode, 
             loadDot();
             // order the durations
             destinationBlocksDuration.sort(function(a,b){return a - b});
+
             for(var z=0; z<numDestinations; z++){
                 // pull keys in order
                 var keyOfNextBlock = destinationBlocksDuration[z];
@@ -466,6 +467,10 @@ function addNewDestinations(data, travelMode){
 
     // remove all current destination blocks if they exist
     $('.destinationBlock').remove();
+
+    // reset data
+    listDestinationBlocks = {};
+    destinationBlocksDuration = [];
 
     for(var row in data.list)
     {
