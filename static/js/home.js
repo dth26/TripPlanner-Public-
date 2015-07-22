@@ -12,8 +12,9 @@ var travelModes = {
     'walking' : google.maps.TravelMode.WALKING,
     'transit' : google.maps.TravelMode.TRANSIT
 };
-var listDestinationBlocks = {};
-var destinationBlocksDuration = [];
+var listDestinationBlocks = {};         // stores destination blocks
+var destinationBlocksDuration = [];     // contains duration of every destination
+var numDestinations = 0;                // number of destinations
 
 
 // to set center of map  // map.setCenter(results[0].geometry.location);
@@ -63,7 +64,7 @@ function loadDot(){
                    $('.overlay').css('display','none');
                 }, 500);
             }
-        }, 500);
+        }, 800);
     }
 
 }
@@ -284,14 +285,11 @@ function getTime(hrs,mins){
     return date;
 }
 
-
-
-
 /*
     -   get direction data info from google maps api
     -   build destination blocks
 */
-function createDestinationBlock(ID, url, name, latitude, longitude, travelMode, numDestinations)
+function createDestinationBlock(ID, url, name, latitude, longitude, travelMode)
 {
     var durationText;
     var distanceText;
@@ -311,134 +309,137 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode, 
     // call directionsSerice.route to get directions info
     distanceService.getDistanceMatrix(directionrequest, function(response, status){
 
-        var menuItemDistance = document.createElement('div');
-        var menuItemDuration = document.createElement('div');
-        var menuItemDirections = document.createElement('div');
-        var directionsImg = document.createElement('img');
-        var input = document.createElement('input');
-
-       // printJSON(response);
+       //printJSON(response);
 
         // set duration and distance menuItems of the route
-        if (status == google.maps.DirectionsStatus.OK) {
+        if (response.rows[0].elements[0].status == "OK") {
             // route = response.routes[0].legs[0];
 
-           // parse json to get travel info
             totalDistance = response.rows[0].elements[0].distance.value;
             distanceText = response.rows[0].elements[0].distance.text;
             totalDuration = response.rows[0].elements[0].duration.value;
             durationText = response.rows[0].elements[0].duration.text;
 
+            /* Create html elements */
+
+            // create new destinationBlock
+            var destinationBlock = document.createElement('div');
+            destinationBlock.id = ID;
+            destinationBlock.className = 'block destinationBlock';
+
+
+            // create menu
+            var menu = document.createElement('div');
+            menu.className = 'blockHeaderMenu';
+            menu.id = ID + 'Menu';
+
+            // create header for block and append to container-fluid
+            var blockHeader = document.createElement('div');
+            blockHeader.className = 'blockHeader';
+            blockHeader.id = ID + 'Header';
+
+
             // blockMenuItem for display distance
+            var menuItemDistance = document.createElement('div');
             menuItemDistance.className = 'blockMenuItem';
             menuItemDistance.id = ID + 'distanceItem';
             menuItemDistance.innerHTML = distanceText;
 
             // blockMenuItem for display duration
+            var menuItemDuration = document.createElement('div');
             menuItemDuration.className = 'blockMenuItem';
             menuItemDuration.id = ID + 'durationItem';
             menuItemDuration.innerHTML = durationText;
 
             // store duration in hidden input
+            var input = document.createElement('input');
             input.setAttribute('type','hidden');
             input.setAttribute('id', ID + 'Duration');
             input.setAttribute('value',totalDuration);
 
-              // blockMenuItem for mapping path on map when clicked
+            // blockMenuItem for mapping path on map when clicked
+            var menuItemDirections = document.createElement('div');
             menuItemDirections.className = 'blockMenuItem GetDirections';
             menuItemDirections.id = ID + 'GetDirections';
             // create image of map item
+            directionsImg = document.createElement('img');
             directionsImg.src = '../static/images/map.png';
-        }
-        else if(status == google.maps.DirectionsStatus.OVER_QUERY_LIMIT)
-        {
-            alert(name + ' ' + status);
-            console.log('OVER_QUERY_LIMIT');
-        }
-        else // no route was found from origin to destination
-        {
-            // blockMenuItem for display distance
-            var menuItemNoRoute = document.createElement('div');
-            menuItemNoRoute.className = 'blockMenuItem';
-            menuItemNoRoute.id = ID + 'noRouteItem';
-            menuItemNoRoute.innerHTML = 'No Route Found!';
 
-        }
 
-        // create new destinationBlock
-        var destinationBlock = document.createElement('div');
-        destinationBlock.id = ID;
-        destinationBlock.className = 'block destinationBlock';
+            // put order div into link
+            var order = document.createElement('div');
+            order.setAttribute('class','order');
+            order.id = ID + 'Order';
 
-        // create header for block and append to container-fluid
-        var blockHeader = document.createElement('div');
-        blockHeader.className = 'blockHeader';
-        blockHeader.id = ID + 'Header';
+            // create link for url and append to header
+            var linkURL = document.createElement('a');
+            linkURL.setAttribute('href', url);
+            linkURL.setAttribute('target', 'blank');
+            linkURL.className = 'linkURL';
+            linkURL.id = ID + 'Link';
+            linkURL.innerHTML = name;
 
-        // put order div into link
-        var order = document.createElement('div');
-        order.setAttribute('class','order');
-        order.id = ID + 'Order';
 
-        // create link for url and append to header
-        var linkURL = document.createElement('a');
-        linkURL.setAttribute('href', url);
-        linkURL.setAttribute('target', 'blank');
-        linkURL.className = 'linkURL';
-        linkURL.id = ID + 'Link';
-        linkURL.innerHTML = name;
+            //add hidden input to menu to get coordinates
+            var latitudeItem = document.createElement('input');
+            latitudeItem.className = 'blockMenuItem';
+            latitudeItem.id = ID + 'GetDirections' +  'Latitude';
+            latitudeItem.type = 'hidden';
+            latitudeItem.value = latitude;
+            var longitudeItem = document.createElement('input');
+            longitudeItem.className = 'blockMenuItem';
+            longitudeItem.id = ID + 'GetDirections' + 'Longitude';
+            longitudeItem.type = 'hidden';
+            longitudeItem.value = longitude;
+
+
+            //add hidden input to get name of destination
+            var destinationNameInput = document.createElement('input');
+            destinationNameInput.className = 'blockMenuItem';
+            destinationNameInput.id = ID + 'destinationNameInput';
+            destinationNameInput.type = 'hidden';
+            destinationNameInput.value = name;
 
 
 
-        // create menu
-        var menu = document.createElement('div');
-        menu.className = 'blockHeaderMenu';
-        menu.id = ID + 'Menu';
+             // append children
+            destinationBlock.appendChild(blockHeader);
+            blockHeader.appendChild(order);
+            blockHeader.appendChild(linkURL);
+            blockHeader.appendChild(menu);
+            menu.appendChild(latitudeItem);
+            menu.appendChild(longitudeItem);
+            menu.appendChild(destinationNameInput);
 
-
-
-        //add hidden input to menu to get coordinates
-        var latitudeItem = document.createElement('input');
-        latitudeItem.className = 'blockMenuItem';
-        latitudeItem.id = ID + 'GetDirections' +  'Latitude';
-        latitudeItem.type = 'hidden';
-        latitudeItem.value = latitude;
-        var longitudeItem = document.createElement('input');
-        longitudeItem.className = 'blockMenuItem';
-        longitudeItem.id = ID + 'GetDirections' + 'Longitude';
-        longitudeItem.type = 'hidden';
-        longitudeItem.value = longitude;
-
-        //add hidden input to get name of destination
-        var destinationNameInput = document.createElement('input');
-        destinationNameInput.className = 'blockMenuItem';
-        destinationNameInput.id = ID + 'destinationNameInput';
-        destinationNameInput.type = 'hidden';
-        destinationNameInput.value = name;
-
-         // append children
-        document.getElementById('container-fluid').appendChild(destinationBlock);
-        destinationBlock.appendChild(blockHeader);
-        blockHeader.appendChild(order);
-        blockHeader.appendChild(linkURL);
-        blockHeader.appendChild(menu);
-        menu.appendChild(latitudeItem);
-        menu.appendChild(longitudeItem);
-        menu.appendChild(destinationNameInput);
-        // only show distance and duration if a route is found
-        if(status == google.maps.DirectionsStatus.OK){
             menu.appendChild(menuItemDistance);
             menu.appendChild(menuItemDuration);
             menu.appendChild(menuItemDirections);
             menuItemDirections.appendChild(directionsImg);
             menu.appendChild(input);
-        }else{
-            // show no route found
-            menu.appendChild(menuItemNoRoute);
+
+            listDestinationBlocks[totalDuration] = destinationBlock;
+            destinationBlocksDuration.push(totalDuration);
+
+        }
+        else if(response.rows[0].elements[0].status == 'ZERO_RESULTS') // no route was found from origin to destination
+        {
+            numDestinations--;
+            // blockMenuItem for display distance
+            // var menuItemNoRoute = document.createElement('div');
+            // menuItemNoRoute.className = 'blockMenuItem';
+            // menuItemNoRoute.id = ID + 'noRouteItem';
+            // menuItemNoRoute.innerHTML = 'No Route Found!';
+           // numDestinations--;
+
+        }
+        else if(response.rows[0].elements[0].status == "OVER_QUERY_LIMIT")
+        {
+            alert(name + ' ' + status);
+            console.log('OVER_QUERY_LIMIT');
         }
 
-        listDestinationBlocks[totalDuration] = destinationBlock;
-        destinationBlocksDuration.push(totalDuration);
+
+
 
         if(numDestinations == Object.keys(listDestinationBlocks).length )
         {
@@ -483,6 +484,7 @@ function getDestinations(travelMode){
             // reset data
             listDestinationBlocks = {};
             destinationBlocksDuration = [];
+            numDestinations = data.list.length;
 
             for(var row in data.list)
             {
@@ -497,9 +499,10 @@ function getDestinations(travelMode){
 
                 addMarker(new google.maps.LatLng(latitude, longitude) , name, description);
 
-                createDestinationBlock(ID, url, name, latitude, longitude, travelMode, data.list.length);                 // data about directions from your position to specific destination
+                createDestinationBlock(ID, url, name, latitude, longitude, travelMode);                 // data about directions from your position to specific destination
+                loadDot();
             }
-            loadDot();
+
         },
         error: function(jqXHR, exception) {
             if (jqXHR.status === 0) {
