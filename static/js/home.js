@@ -29,8 +29,8 @@ var numDestinations = 0;                // number of destinations
     get users coordinates using geolocation
 */
 $(document).ready(function(){
-      // set first loading dot
-    loadDot();
+
+    loadDots();
 
     directionsDisplay = new google.maps.DirectionsRenderer();
     directionsService = new google.maps.DirectionsService();
@@ -45,27 +45,40 @@ $(document).ready(function(){
 
 
 
+
+function loadDots(){
+    var dot = 1;
+
+    var dotInterval = setInterval(function(){
+        $('#dot' + dot).css('background-color','blue');
+        dot++;
+        if(dot == 6)
+        {
+            clearInterval(dotInterval);
+           setTimeout(function(){
+                $('.overlay').css('display','none');
+           }, 500);
+        }
+    }, 800);
+}
+
+
 var dotLoaded = 1;
 function loadDot(){
 
     // do not want to delay load dot for geolocation since it takes forever to load
-    if(dotLoaded==20){
+    setTimeout(function()
+    {
         $('#dot' + dotLoaded).css('background-color','blue');
         dotLoaded++;
-    }else{
-        setTimeout(function()
+        if(dotLoaded == 6)
         {
-            $('#dot' + dotLoaded).css('background-color','blue');
-            dotLoaded++;
-            if(dotLoaded == 6)
-            {
-               // remove loading status
-                setTimeout(function(){
-                   $('.overlay').css('display','none');
-                }, 500);
-            }
-        }, 800);
-    }
+          // remove loading status
+            setTimeout(function(){
+              $('.overlay').css('display','none');
+            }, 500);
+        }
+    }, 800);
 
 }
 
@@ -199,7 +212,6 @@ function handle_error(){
     - save current position/ coordinates to map
 */
 function initialize(position) {
-    loadDot();
 
     yourLatitude = position.coords.latitude;
     yourLongitude = position.coords.longitude;
@@ -309,7 +321,7 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode)
     // call directionsSerice.route to get directions info
     distanceService.getDistanceMatrix(directionrequest, function(response, status){
 
-       //printJSON(response);
+    //   printJSON(response);
 
         // set duration and distance menuItems of the route
         if (response.rows[0].elements[0].status == "OK") {
@@ -362,9 +374,8 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode)
             menuItemDirections.className = 'blockMenuItem GetDirections';
             menuItemDirections.id = ID + 'GetDirections';
             // create image of map item
-            directionsImg = document.createElement('img');
-            directionsImg.src = '../static/images/map.png';
-
+            directionsImg = document.createElement('span');
+            directionsImg.className = 'glyphicon glyphicon-map-marker';
 
             // put order div into link
             var order = document.createElement('div');
@@ -443,7 +454,6 @@ function createDestinationBlock(ID, url, name, latitude, longitude, travelMode)
 
         if(numDestinations == Object.keys(listDestinationBlocks).length )
         {
-            loadDot();
             // order the durations
             destinationBlocksDuration.sort(function(a,b){return a - b});
 
@@ -476,7 +486,6 @@ function getDestinations(travelMode){
         url: 'http://tripplanner.pythonanywhere.com/getDestinations',
         dataType:'json',
         success: function(data) {
-            loadDot();
 
             // remove all current destination blocks if they exist
             $('.destinationBlock').remove();
@@ -500,7 +509,6 @@ function getDestinations(travelMode){
                 addMarker(new google.maps.LatLng(latitude, longitude) , name, description);
 
                 createDestinationBlock(ID, url, name, latitude, longitude, travelMode);                 // data about directions from your position to specific destination
-                loadDot();
             }
 
         },
@@ -561,6 +569,4 @@ function printJSON(json){
     alert(JSON.stringify(json, null, 2));
     console.log(JSON.stringify(json, null, 2));
 }
-
-
 

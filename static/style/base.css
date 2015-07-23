@@ -25,8 +25,9 @@ body{
 	margin-bottom: 20px;
 	margin-top: 20px;
 	float: left;
-	border: 1px solid black;
+	border: 1px solid #91C2F2;
 	border-radius: 10px;
+
 }
 .blockHeader{
     width: 100%;
@@ -36,7 +37,7 @@ body{
     top: 0px;
     left: 0px;
     display: inline-block;
-    border-radius: 10px 10px 0px 0px;
+    border-radius: 10px;
     padding-left: 10px;
 }
 .blockHeader, .blockHeaderMenu, .blockMenuItem, .order,.linkURL{
@@ -52,17 +53,12 @@ body{
 .blockMenuItem{
     float:left;
     width: auto;
-    /*padding-left: 7px;*/
+    padding-left: 7px;
     padding-right: 20px;
     /*border-left: 1px solid black;*/
     text-align: center;
 }
-.container-fluid{
- /*   display: -webkit-flex;*/
-	/*display: flex;*/
-	/*-webkit-flex-flow: column;*/
- /*   flex-flow: column;*/
-}
+
 .navbar{
     font-weight: 500 !important;
 }
@@ -70,11 +66,8 @@ body{
     font-size: 30px !important;
     margin-left: 5px !important;
 }
-.panel-heading{
-    padding: 0 15px !important;
-}
 .glyphicon-map-marker{
-    color: #CC0000;
-    font-size: 25px;
+    color: white;
+    font-size: 30px;
     margin-top: 7px;
 }
