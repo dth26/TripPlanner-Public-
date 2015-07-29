@@ -7,3 +7,4 @@ app = Flask(__name__)
 from viewHome import *
 from viewNew import *
 from viewDirections import *
+from viewLayout import *

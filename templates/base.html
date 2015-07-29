@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html>
+<html ng-app="trip">
 	<head>
 	    <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -22,8 +22,10 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
+        <script src="{{ url_for('static', filename='node_modules/angular/angular.js' )}}"></script>
+        <script src="{{ url_for('static', filename='node_modules/angular-sanitize/angular-sanitize.js' )}}"></script>
+        <script src="{{ url_for('static', filename='js/base.js') }}"></script>
 		{% block js %}{% endblock %}
-		<script src="{{ url_for('static', filename='js/base.js') }}"></script>
 
 		<!-- load proper css file -->
 		{% block css %}{% endblock %}
@@ -46,6 +48,7 @@
                         <li><a id="menuItemHome" href="{{ url_for('home') }}" >Home</a></li>
                         <li><a id="menuItemNew" href="{{ url_for('createNew') }}">New</a></li>
                         <li><a id="menuItemDirections" href="{{ url_for('savedDirections') }}">Directions</a></li>
+                        <li><a id="menuItemDirections" href="{{ url_for('layout') }}">Layout</a></li>
                     </ul>
                 </div>
             </div>

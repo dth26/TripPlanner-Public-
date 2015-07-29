@@ -75,6 +75,24 @@
         <!--</div>-->
     </div>
 
+    <div id="directionsCtrl" ng-controller="directionsCtrl">
+        <div id="[[d.order]]subBlock" class="subBlock" ng-repeat="d in directionBlocks">
+            <div id="[[d.order]]innerLeftHeader" class="innerLeftHeader">
+                <div class="innerLeftHeaderBlock">[[d.order]]</div>
+                <img class="directionImg" src="../static/images/[[d.imagePath]]">
+            </div>
+            <div id="[[d.order]]innerLeft" class="innerLeft">
+                <div id="[[d.order]]centerHorizontally" class="centerHorizontally">
+                    <div class="innerLeftText">[[d.short_description]]</div>
+                    <div class="innerLeftText">[[d.durationText]], [[d.distanceText]]</div>
+                    <div class="agency">
+                        <span class="header">[[d.travel_description]]</span>
+                    </div>
+                </div>
+            </div>
+            <div ng-bind-html="d.descriptionText" id="[[d.order]]innerRight" class="innerRight" >[[d.descriptionText]]</div>
+        </div>
+    </div>
 {% endblock %}
 
 

@@ -15,7 +15,7 @@ basedir = "/home/tripplanner/mysite"
 
 class Directions(db.Model):
     __tablename__ = 'Directions'
-    __table_args__ = {'extend_existing': True}
+   # __table_args__ = {'extend_existing': True}
 
     ID = Column(Integer, primary_key=True)
     destinationID = Column(Integer)
@@ -37,7 +37,7 @@ class Directions(db.Model):
 
 class Steps(db.Model):
     __tablename__ = 'Steps'
-    __table_args__ = {'extend_existing': True}
+    #__table_args__ = {'extend_existing': True}
 
     ID = Column(Integer, primary_key=True)
     directionID = Column(Integer)

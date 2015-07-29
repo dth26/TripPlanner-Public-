@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta id="subpage" data-name="{{subpage}}" >
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Trip Planner</title>
+
+	<!--Google Map API-->
+	<script type="text/javascript"src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCeWFY0CQcHswP7VOroCgd49bEBI1P6_-4"></script>
+
+     <!--CSS-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/layout.css') }}" media="screen" />
+    <link href='http://fonts.googleapis.com/css?family=Bangers|Satisfy|Roboto+Condensed' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:300' rel='stylesheet' type='text/css'>
+
+    <!--JavaScript-->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	 <script src="{{ url_for('static', filename='node_modules/angular/angular.js' )}}"></script>
+	<script src="{{ url_for('static', filename='js/base.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/home.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/directions.js')}}"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+       <div class="col-xs-12">
+           <p class="header">Trip Planner</p>
+       </div>
+    </div>
+    <div class="row" >
+        <div class="col-xs-3">
+            <div id="navtab1"></div>
+        </div>
+        <div class="col-xs-3">
+            <div id="navtab2"></div>
+        </div>
+        <div class="col-xs-3">
+            <div id="navtab3"></div>
+        </div>
+        <div class="col-xs-3">
+            <div id="navtab4"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div id="map-canvas"></div>
+    </div>
+</div>
+</body>
+</html>

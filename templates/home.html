@@ -5,6 +5,7 @@
 {% block js %}
 	<script src="{{ url_for('static', filename='js/home.js') }}"></script>
 	<script src="{{ url_for('static', filename='js/directions.js')}}"></script>
+	<!--<script src="{{ url_for('static', filename='js/angular.js' )}}"></script>-->
 	<script>
 	    $(document).ready(function(){
             $('#menuItemHome').css('color','white');
@@ -31,7 +32,7 @@
                 Getting your coordinates and loading map
             </div>
             <div class="overlayInnerDotHolder">
-                 <div id="dot1"  class="overlayInnerDot"></div>
+                 <div id="dot1" class="overlayInnerDot"></div>
             </div>
             <div class="overlayInnerDotHolder">
                  <div id="dot2" class="overlayInnerDot"></div>
@@ -47,6 +48,11 @@
             </div>
         </div>
     </div>
+    <!--<div class="progress">-->
+    <!--    <div class="progress-bar progress-bar-info progress-bar-striped active">-->
+    <!--        <div class="bar" style="width: 0%;"></div>-->
+    <!--    </div>-->
+    <!--</div>-->
 
     <!-- if geolocation fails. open this to get users current address -->
     <div class="modal fade bs-example-modal-lg" id="Modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
@@ -173,26 +179,45 @@
         <!--<a id="update" class="submit">Update Travel Times</a>-->
     <!--</div>-->
 
-    <div id="directions">
-        <!--
-        <div id="0subBlock" class="subBlock" style="height: 84px;">
-            <a id="0Clear" class="innerLeftHeader">
-                <div class="innerLeftHeaderBlock">1</div>
-                <div class="innerLeftHeaderBlock">X</div>
-            </a>
-            <div id="0innerLeft" class="innerLeft" style="height: 84px;">
-                <div id="0centerHorizontally" class="centerHorizontally">
-                    <img class="directionImg" src="../static/images/walking.png">
-                    <div class="innerLeftText">Walk for about</div>
-                    <div class="innerLeftText">4 mins, 0.2 mi</div>
+
+    <div id="directionsCtrl" ng-controller="directionsCtrl">
+        <div id="[[d.order]]subBlock" class="subBlock" ng-repeat="d in directionBlocks">
+            <div id="[[d.order]]innerLeftHeader" class="innerLeftHeader">
+                <div class="innerLeftHeaderBlock">[[d.order]]</div>
+                <img class="directionImg" src="../static/images/[[d.imagePath]]">
+            </div>
+            <div id="[[d.order]]innerLeft" class="innerLeft">
+                <div id="[[d.order]]centerHorizontally" class="centerHorizontally">
+                    <div class="innerLeftText">[[d.short_description]]</div>
+                    <div class="innerLeftText">[[d.durationText]], [[d.distanceText]]</div>
                     <div class="agency">
-                        <span class="header">Walking</span>
+                        <span class="header">[[d.travel_description]]</span>
                     </div>
                 </div>
             </div>
-            <innerright id="0innerRight" class="innerRight">Walk to Sandusky St at Underpass</innerright>
+            <div ng-bind-html="d.descriptionText" id="[[d.order]]innerRight" class="innerRight" >[[d.descriptionText]]</div>
         </div>
-        -->
+    </div>
+
+
+    <div id="destinationBlockCtrl" ng-controller="destinationBlockCtrl">
+        <div id="[[d.ID]]" ng-repeat="d in destinations" class="block destinationBlock">
+            <div id="[[d.ID]]Header" class="blockHeader">
+                <div id="[[d.ID]]Order" class="order">[[$index + 1]]</div>
+                <a id="[[d.ID]]Link" class="linkURL" href="[[d.url]]" target="blank">[[d.name]]</a>
+                <div id="[[d.ID]]Menu" class="blockHeaderMenu">
+                    <input id="[[d.ID]]GetDirectionsLatitude" class="blockMenuItem" type="hidden" value="[[d.latitude]]">
+                    <input id="[[d.ID]]GetDirectionsLongitude" class="blockMenuItem" type="hidden" value="[[d.longitude]]">
+                    <input id="[[d.ID]]destinationNameInput" class="blockMenuItem" type="hidden" value="[[d.name]]">
+                    <div id="[[d.ID]]distanceItem" class="blockMenuItem">[[d.distanceText]]</div>
+                    <div id="[[d.ID]]durationItem" class="blockMenuItem">[[d.durationText]]</div>
+                    <div id="[[d.ID]]GetDirections" class="blockMenuItem GetDirections">
+                        <span class="glyphicon glyphicon-map-marker"></span>
+                    </div>
+                    <input id="[[d.ID]]Duration" type="hidden" value="[[d.totalDuration]]">
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
 

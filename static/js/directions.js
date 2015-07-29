@@ -1,6 +1,3 @@
-$(document).ready(function(){
-
-});
 
 
 (function(){ // scope of directions info
@@ -14,6 +11,113 @@ $(document).ready(function(){
     var total_duration;             // total duration of route
     var start_address;              // start address of route
     var end_address;                // end address of route
+
+
+    tripplanner.controller('directionsCtrl', function($scope,$http){
+
+        $scope.createDirectionBlock = function(route){
+            // get individual steps
+            /*
+                say your going to cathedral from bouquet gardens
+                step 1: turn left onto S.Bouquet Street
+                step 2: turn right onto 5th Ave
+                step 3: turn left onto Bigelow Blvd
+            */
+            var currStep;
+            var descriptionText; 						// step instructions: ex. head northwest onto springtide pl
+            var transitText = '';
+
+            $scope.directionBlocks = [];
+
+            // reset steps
+            steps = [];
+            for(var i=0; i< route.steps.length; i++)
+            {
+
+            	var step = {};														// step object containing data for step. to be saved into steps array. so we can save directions later on
+            	currStep = route.steps[i];
+
+                // parse step info
+                // save variables into step object which will then be stored globally in steps[]
+                step['durationText'] = currStep.duration.text;                              // duration of step, ex: 5 min
+                step['distanceText'] = currStep.distance.text;                              // distance of step, ex: 1mile
+                step['travel_mode'] = currStep.travel_mode;									// WALKING, DRIVING, TRANSIT
+                step['lat'] = currStep.start_location.G;
+                step['lng'] = currStep.start_location.K;
+
+                if(step['lat'] == undefined || step['lng'] == undefined){
+                    step['lat'] = 0.0;
+                    step['lng'] = 0.0;
+                }
+
+                //alert(currStep.start_location.A + ' ' +currStep.start_location.F);
+                step['description'] = currStep.instructions;                                //  Bus towards Inbound-FREEPORT ROAD TO PITTSBURGH
+                step['order'] = i;
+
+
+                // this step's transporation is TRANSIT
+                if(step['travel_mode'] == 'TRANSIT')
+                {
+                    // parse json to get transit info
+                    step['bus_agency'] = currStep.transit.line.agencies[0].name;             // port authority
+                    step['bus_name'] = currStep.transit.line.name;                           // monroeville
+                    step['bus_id'] = currStep.transit.line.short_name;                       // 64
+                    step['arrival_location'] = currStep.transit.arrival_stop.name;           // where the bus will pick you up
+                    step['arrival_time'] = currStep.transit.arrival_time.text;               // when the bus will drop you off at destination
+                    step['departure_location'] = currStep.transit.departure_stop.name;       // where the bus will drop you off
+                    step['departure_time'] = currStep.transit.departure_time.text;           // when bus will pick you up
+                    step['descriptionText'] =  '<span class="header">Bus: </span>' + step['bus_id'] + ' - ' + step['bus_name'] + ' - ' + step['description'] + '<br/>' +
+                                   '<span class="header">' + step['departure_time'] + '</span>: ' +  step['departure_location'] + '<br/>' +
+                                   '<span class="header">' + step['arrival_time'] + '</span>: ' + step['arrival_location'];
+                    step['short_description'] = 'Bus arrives at ' + step['departure_time'];
+                    step['travel_description'] = step['bus_agency'];
+                    step['imagePath'] = 'bus.png';
+                }
+                else if(step['travel_mode'] == 'WALKING')
+                {
+                    step['departure_time'] = 'undefined';
+                    step['descriptionText'] =  step['description'];                         //  Bus towards Inbound-FREEPORT ROAD TO PITTSBURGH
+                    step['short_description'] = 'Walk for about';
+                    step['travel_description'] = 'Walking';
+                    step['imagePath'] = 'walking.png';
+                }
+                else if(step['travel_mode'] == 'DRIVING')
+                {
+                    step['short_description'] = 'Drive for about';
+                    step['travel_description'] = 'Driving';
+                    step['departure_time'] = 'undefined';
+                    step['descriptionText'] =  step['description'];                         //  Bus towards Inbound-FREEPORT ROAD TO PITTSBURGH
+                    step['imagePath'] = 'car.png';
+                }
+
+                $scope.$apply(function(){
+                   $scope.directionBlocks.push(step);
+                });
+                steps.push(step);
+
+                 // set height of divs after elements are appended and rendered
+                var innerLeftHeight = $('#' + i + 'innerLeft').height();
+                var innerRightHeight = $('#'+i + 'innerRight').height();
+                var maxHeight = (innerLeftHeight > innerRightHeight ? innerLeftHeight : innerRightHeight);
+
+                $('#' + i + 'innerLeft').css('height',maxHeight);
+                $('#' + i + 'innerRight').css('height',maxHeight);
+                $('#' + i + 'innerLeft').css('height',maxHeight);
+                $('#' + i + 'innerLeftHeader').css('height',maxHeight);
+            } // end for
+
+        }
+    });
+
+
+
+
+
+
+
+
+
+
 
 
     // get saved directions
@@ -85,7 +189,11 @@ $(document).ready(function(){
                 end_address = route.end_address;                 // end address of route
 
                 // display directions to screen
-                createDirectionBlock(route);
+
+                var scope = angular.element(document.getElementById("directionsCtrl")).scope();
+                scope.createDirectionBlock(route);
+
+               // createDirectionBlock(route);
 
                 // remove current text
 	            $('#directionInfoDiv').remove();
@@ -110,165 +218,6 @@ $(document).ready(function(){
 
     }
 
-    function createDirectionBlock(route)
-    {
-         //alert(response.routes[0].legs[0].transit);
-        // get individual steps
-        /*
-            say your going to cathedral from bouquet gardens
-            step 1: turn left onto S.Bouquet Street
-            step 2: turn right onto 5th Ave
-            step 3: turn left onto Bigelow Blvd
-        */
-       //  printJSON(route);
-        var currStep;
-        var descriptionText; 						// step instructions: ex. head northwest onto springtide pl
-        var transitText = '';
-        // reset steps
-        steps = [];
-        for(var i=0; i< route.steps.length; i++)
-        {
-
-        	var step = {};														// step object containing data for step. to be saved into steps array. so we can save directions later on
-        	currStep = route.steps[i];
-
-            // parse step info
-            // save variables into step object which will then be stored globally in steps[]
-            step['durationText'] = currStep.duration.text;                              // duration of step, ex: 5 min
-            step['distanceText'] = currStep.distance.text;                              // distance of step, ex: 1mile
-            step['description'] = currStep.instructions;                                //  Bus towards Inbound-FREEPORT ROAD TO PITTSBURGH
-            step['travel_mode'] = currStep.travel_mode;									// WALKING, DRIVING, TRANSIT
-            step['lat'] = currStep.start_location.A;
-            step['lng'] = currStep.start_location.F;
-            step['order'] = i;
-
-            //printJSON(step);
-
-
-            // this step's transporation is TRANSIT
-            if(step['travel_mode'] == 'TRANSIT')
-            {
-                // parse json to get transit info
-                step['bus_agency'] = currStep.transit.line.agencies[0].name;             // port authority
-                step['bus_name'] = currStep.transit.line.name;                           // monroeville
-                step['bus_id'] = currStep.transit.line.short_name;                       // 64
-                step['arrival_location'] = currStep.transit.arrival_stop.name;           // where the bus will pick you up
-                step['arrival_time'] = currStep.transit.arrival_time.text;               // when the bus will drop you off at destination
-                step['departure_location'] = currStep.transit.departure_stop.name;       // where the bus will drop you off
-                step['departure_time'] = currStep.transit.departure_time.text;           // when bus will pick you up
-                descriptionText =  '<span class="header">Bus: </span>' + step['bus_id'] + ' - ' + step['bus_name'] + ' - ' + step['description'] + '<br/>' +
-                               '<span class="header">' + step['departure_time'] + '</span>: ' +  step['departure_location'] + '<br/>' +
-                               '<span class="header">' + step['arrival_time'] + '</span>: ' + step['arrival_location'];
-
-            }
-            else // walking or driving does not have departure time
-            {
-                step['departure_time'] = 'undefined';
-                descriptionText = step['description'];
-            }
-
-
-            /*
-                CREATE HTML STEP BLOCKS
-            */
-            var subBlock = document.createElement('div');
-            subBlock.className = 'subBlock';
-            subBlock.id = i + 'subBlock';
-
-            var innerLeftHeader = document.createElement('div');
-            innerLeftHeader.className = 'innerLeftHeader';
-            innerLeftHeader.id = i + 'innerLeftHeader';
-
-            var innerLeftHeaderBlock = document.createElement('div');
-            innerLeftHeaderBlock.className = 'innerLeftHeaderBlock';
-            innerLeftHeaderBlock.innerHTML = step['order'];
-
-
-            var innerLeft = document.createElement('div');
-            innerLeft.className = 'innerLeft';
-            innerLeft.id = i + 'innerLeft';
-
-            var centerHorizontally = document.createElement('div');
-            centerHorizontally.className = 'centerHorizontally';
-            centerHorizontally.id = i + 'centerHorizontally';
-
-            var directionImg = document.createElement('img');
-            directionImg.className = 'directionImg';
-            if(step['travel_mode'] == 'WALKING'){
-                directionImg.src = '../static/images/walking.png';
-            }else if(step['travel_mode'] == 'DRIVING'){
-                directionImg.src = '../static/images/car.png';
-            }else{
-                directionImg.src = '../static/images/bus.png';
-            }
-
-            var innerLeftTextOne = document.createElement('div');
-            innerLeftTextOne.className = 'innerLeftText';
-            // there's no departure time for walking or driving
-            if(step['departure_time'] == 'undefined')
-            {
-                if(step['travel_mode'] == 'WALKING'){
-                    innerLeftTextOne.innerHTML = 'Walk for about';
-                }
-                else if(step['travel_mode'] == 'DRIVING'){
-                    innerLeftTextOne.innerHTML = 'Drive for about';
-                }
-
-            }else{
-                innerLeftTextOne.innerHTML = 'Bus arrives at ' + step['departure_time'];
-            }
-
-            var innerLeftTextTwo = document.createElement('div');
-            innerLeftTextTwo.className = 'innerLeftText';
-            innerLeftTextTwo.innerHTML = step['durationText'] + ', ' + step['distanceText'] ;
-
-            var agency = document.createElement('div');
-            agency.className = 'agency';
-            if(step.travel_mode == 'TRANSIT'){
-                agency.innerHTML = '<span class="header">' + step['bus_agency'] + '</span>';
-            }else if(step.travel_mode == 'WALKING'){
-                agency.innerHTML = '<span class="header">Walking</span>';
-            }else if(step.travel_mode == 'DRIVING'){
-                agency.innerHTML = '<span class="header">Driving</span>';
-            }
-
-
-            var innerRight = document.createElement('div');
-            innerRight.className = 'innerRight';
-            innerRight.innerHTML = descriptionText;
-            innerRight.id = i + 'innerRight';
-            innerRight.style.cssText = '';
-
-            // append children to '#directions' block
-           // centerHorizontally.appendChild(directionImg);
-            centerHorizontally.appendChild(innerLeftTextOne);
-            centerHorizontally.appendChild(innerLeftTextTwo);
-            centerHorizontally.appendChild(agency);
-
-            innerLeft.appendChild(centerHorizontally);
-            innerLeftHeader.appendChild(innerLeftHeaderBlock);
-            innerLeftHeader.appendChild(directionImg);
-            subBlock.appendChild(innerLeftHeader);
-            subBlock.appendChild(innerLeft);
-            subBlock.appendChild(innerRight);
-            document.getElementById('directions').appendChild(subBlock);
-
-
-            // set height of divs after elements are appended and rendered
-            var innerLeftHeight = $('#' + i + 'innerLeft').height();
-            var innerRightHeight = $('#'+i + 'innerRight').height();
-            var maxHeight = (innerLeftHeight > innerRightHeight ? innerLeftHeight : innerRightHeight);
-
-            $('#' + i + 'innerLeft').css('height',maxHeight);
-            $('#' + i + 'innerRight').css('height',maxHeight);
-            $('#' + i + 'innerLeft').css('height',maxHeight);
-            $('#' + i + 'innerLeftHeader').css('height',maxHeight);
-
-            // save step into steps array
-            steps.push(step);
-
-        }
-    }
 
     function getSavedDirections(directionID)
     {
@@ -303,7 +252,8 @@ $(document).ready(function(){
 
                 directionInfoDiv.innerHTML = directionInfoText;
                 document.getElementById('form-group-data').appendChild(directionInfoDiv);
-	            createDirectionBlock(data);
+	            var scope = angular.element(document.getElementById("directionsCtrl")).scope();
+                scope.createDirectionBlock(data);
 	        },
 	        error: function(jqXHR, exception) {
 	            alert('exception: ' + exception +'\njqXHR: ' + jqXHR.status);

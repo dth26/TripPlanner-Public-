@@ -12,9 +12,10 @@ var travelModes = {
     'walking' : google.maps.TravelMode.WALKING,
     'transit' : google.maps.TravelMode.TRANSIT
 };
-var listDestinationBlocks = {};         // stores destination blocks
-var destinationBlocksDuration = [];     // contains duration of every destination
-var numDestinations = 0;                // number of destinations
+
+
+
+
 
 
 // to set center of map  // map.setCenter(results[0].geometry.location);
@@ -24,13 +25,13 @@ var numDestinations = 0;                // number of destinations
 
 
 
-
 /*
     get users coordinates using geolocation
 */
 $(document).ready(function(){
 
     loadDots();
+    // loadPage();
 
     directionsDisplay = new google.maps.DirectionsRenderer();
     directionsService = new google.maps.DirectionsService();
@@ -43,6 +44,19 @@ $(document).ready(function(){
     }
 });
 
+// funtion loadPage(){
+//     var progress = setInterval(function() {
+//         var $bar = $('.bar');
+
+//         if ($bar.width()==400) {
+//             clearInterval(progress);
+//             $('.progress-bar').removeClass('active');
+//         } else {
+//             $bar.width($bar.width()+40);
+//         }
+//         $bar.text($bar.width()/4 + "%");
+//     }, 800);
+// }
 
 
 
@@ -59,7 +73,7 @@ function loadDots(){
                 $('.overlay').css('display','none');
            }, 500);
         }
-    }, 800);
+    }, 200);
 }
 
 
@@ -78,7 +92,7 @@ function loadDot(){
               $('.overlay').css('display','none');
             }, 500);
         }
-    }, 800);
+    }, 200);
 
 }
 
@@ -126,7 +140,8 @@ $(function() {
 
 
         // remove all previous directions before getting new
-        $('#directions').empty();
+        var scopeDirections = angular.element(document.getElementById("directionsCtrl")).scope();
+        scopeDirections.directionBlocks = [];
 
         // delete all markers from map
         google.maps.Map.prototype.clearMarkers = function() {
@@ -137,7 +152,12 @@ $(function() {
         };
 
         // add destinations with new transporation type
-        getDestinations(transitType);
+        var scopeDestinations = angular.element(document.getElementById("destinationBlockCtrl")).scope();
+        scopeDestinations.getDestinations(transitType);
+
+
+
+
     });
 });
 
@@ -229,12 +249,14 @@ function initialize(position) {
     // this enables the display to draw routes on map
     directionsDisplay.setMap(map);
 
+
     // add your current location to map
     addMarker(yourLatlng,'You','');
 
-    // make ajax call and get destinations from server
-    getDestinations($('#transitType').val());
 
+    // create destination blocks
+    var scope = angular.element(document.getElementById("destinationBlockCtrl")).scope();
+    scope.getDestinations($('#transitType').val());
 }
 
 
@@ -297,241 +319,8 @@ function getTime(hrs,mins){
     return date;
 }
 
-/*
-    -   get direction data info from google maps api
-    -   build destination blocks
-*/
-function createDestinationBlock(ID, url, name, latitude, longitude, travelMode)
-{
-    var durationText;
-    var distanceText;
-    var route;
-    var totalDistance = 0;
-    var totalDuration = 0;
-    travelMode = travelModes[travelMode.toLowerCase()];
-
-    var directionrequest =
-    {
-        origins: [yourLatlng],
-        destinations: [new google.maps.LatLng(latitude, longitude)],
-        unitSystem: google.maps.UnitSystem.IMPERIAL,
-        travelMode: travelMode
-    }
-
-    // call directionsSerice.route to get directions info
-    distanceService.getDistanceMatrix(directionrequest, function(response, status){
-
-    //   printJSON(response);
-
-        // set duration and distance menuItems of the route
-        if (response.rows[0].elements[0].status == "OK") {
-            // route = response.routes[0].legs[0];
-
-            totalDistance = response.rows[0].elements[0].distance.value;
-            distanceText = response.rows[0].elements[0].distance.text;
-            totalDuration = response.rows[0].elements[0].duration.value;
-            durationText = response.rows[0].elements[0].duration.text;
-
-            /* Create html elements */
-
-            // create new destinationBlock
-            var destinationBlock = document.createElement('div');
-            destinationBlock.id = ID;
-            destinationBlock.className = 'block destinationBlock';
 
 
-            // create menu
-            var menu = document.createElement('div');
-            menu.className = 'blockHeaderMenu';
-            menu.id = ID + 'Menu';
-
-            // create header for block and append to container-fluid
-            var blockHeader = document.createElement('div');
-            blockHeader.className = 'blockHeader';
-            blockHeader.id = ID + 'Header';
-
-
-            // blockMenuItem for display distance
-            var menuItemDistance = document.createElement('div');
-            menuItemDistance.className = 'blockMenuItem';
-            menuItemDistance.id = ID + 'distanceItem';
-            menuItemDistance.innerHTML = distanceText;
-
-            // blockMenuItem for display duration
-            var menuItemDuration = document.createElement('div');
-            menuItemDuration.className = 'blockMenuItem';
-            menuItemDuration.id = ID + 'durationItem';
-            menuItemDuration.innerHTML = durationText;
-
-            // store duration in hidden input
-            var input = document.createElement('input');
-            input.setAttribute('type','hidden');
-            input.setAttribute('id', ID + 'Duration');
-            input.setAttribute('value',totalDuration);
-
-            // blockMenuItem for mapping path on map when clicked
-            var menuItemDirections = document.createElement('div');
-            menuItemDirections.className = 'blockMenuItem GetDirections';
-            menuItemDirections.id = ID + 'GetDirections';
-            // create image of map item
-            directionsImg = document.createElement('span');
-            directionsImg.className = 'glyphicon glyphicon-map-marker';
-
-            // put order div into link
-            var order = document.createElement('div');
-            order.setAttribute('class','order');
-            order.id = ID + 'Order';
-
-            // create link for url and append to header
-            var linkURL = document.createElement('a');
-            linkURL.setAttribute('href', url);
-            linkURL.setAttribute('target', 'blank');
-            linkURL.className = 'linkURL';
-            linkURL.id = ID + 'Link';
-            linkURL.innerHTML = name;
-
-
-            //add hidden input to menu to get coordinates
-            var latitudeItem = document.createElement('input');
-            latitudeItem.className = 'blockMenuItem';
-            latitudeItem.id = ID + 'GetDirections' +  'Latitude';
-            latitudeItem.type = 'hidden';
-            latitudeItem.value = latitude;
-            var longitudeItem = document.createElement('input');
-            longitudeItem.className = 'blockMenuItem';
-            longitudeItem.id = ID + 'GetDirections' + 'Longitude';
-            longitudeItem.type = 'hidden';
-            longitudeItem.value = longitude;
-
-
-            //add hidden input to get name of destination
-            var destinationNameInput = document.createElement('input');
-            destinationNameInput.className = 'blockMenuItem';
-            destinationNameInput.id = ID + 'destinationNameInput';
-            destinationNameInput.type = 'hidden';
-            destinationNameInput.value = name;
-
-
-
-             // append children
-            destinationBlock.appendChild(blockHeader);
-            blockHeader.appendChild(order);
-            blockHeader.appendChild(linkURL);
-            blockHeader.appendChild(menu);
-            menu.appendChild(latitudeItem);
-            menu.appendChild(longitudeItem);
-            menu.appendChild(destinationNameInput);
-
-            menu.appendChild(menuItemDistance);
-            menu.appendChild(menuItemDuration);
-            menu.appendChild(menuItemDirections);
-            menuItemDirections.appendChild(directionsImg);
-            menu.appendChild(input);
-
-            listDestinationBlocks[totalDuration] = destinationBlock;
-            destinationBlocksDuration.push(totalDuration);
-
-        }
-        else if(response.rows[0].elements[0].status == 'ZERO_RESULTS') // no route was found from origin to destination
-        {
-            numDestinations--;
-            // blockMenuItem for display distance
-            // var menuItemNoRoute = document.createElement('div');
-            // menuItemNoRoute.className = 'blockMenuItem';
-            // menuItemNoRoute.id = ID + 'noRouteItem';
-            // menuItemNoRoute.innerHTML = 'No Route Found!';
-           // numDestinations--;
-
-        }
-        else if(response.rows[0].elements[0].status == "OVER_QUERY_LIMIT")
-        {
-            alert(name + ' ' + status);
-            console.log('OVER_QUERY_LIMIT');
-        }
-
-
-
-
-        if(numDestinations == Object.keys(listDestinationBlocks).length )
-        {
-            // order the durations
-            destinationBlocksDuration.sort(function(a,b){return a - b});
-
-            for(var z=0; z<numDestinations; z++){
-                // pull keys in order
-                var keyOfNextBlock = destinationBlocksDuration[z];
-                // append next block
-                document.getElementById('container-fluid').appendChild(listDestinationBlocks[keyOfNextBlock]);
-            }
-        }
-    });
-
-}
-
-
-
-
-/*
-    get destinations from server, then call function addNewDestination to add
-    destination to map
-
-    -   ajax callback
-    -   get data for each destination from database
-    -   create new destination block for each destination
-    -   add marker for each destination
-*/
-function getDestinations(travelMode){
-    $.ajax({
-        type: 'GET',
-        url: 'http://tripplanner.pythonanywhere.com/getDestinations',
-        dataType:'json',
-        success: function(data) {
-
-            // remove all current destination blocks if they exist
-            $('.destinationBlock').remove();
-
-            // reset data
-            listDestinationBlocks = {};
-            destinationBlocksDuration = [];
-            numDestinations = data.list.length;
-
-            for(var row in data.list)
-            {
-                // save data from database
-                var ID = data.list[row].ID;
-                var url = data.list[row].url;
-                var name = data.list[row].name;
-                var description =  data.list[row].description;
-                var latitude = data.list[row].latitude;
-                var longitude = data.list[row].longitude;
-
-
-                addMarker(new google.maps.LatLng(latitude, longitude) , name, description);
-
-                createDestinationBlock(ID, url, name, latitude, longitude, travelMode);                 // data about directions from your position to specific destination
-            }
-
-        },
-        error: function(jqXHR, exception) {
-            if (jqXHR.status === 0) {
-                alert('Not connect.\n Verify Network.');
-            } else if (jqXHR.status == 404) {
-                alert('Requested page not found. [404]');
-            } else if (jqXHR.status == 500) {
-                alert('Internal Server Error [500].');
-            } else if (exception === 'parsererror') {
-                alert('Requested JSON parse failed.');
-            } else if (exception === 'timeout') {
-                alert('Time out error.');
-            } else if (exception === 'abort') {
-                alert('Ajax request aborted.');
-            } else {
-                alert('Uncaught Error.\n' + jqXHR.responseText);
-            }
-        }
-    });
-
-}
 
 
 
@@ -569,4 +358,104 @@ function printJSON(json){
     alert(JSON.stringify(json, null, 2));
     console.log(JSON.stringify(json, null, 2));
 }
+
+
+
+
+
+
+
+
+
+//================================================================================
+
+
+
+
+/*
+Local scope:
+    response: json object containing directions info
+Arguments:
+    data: json object containing destinations info
+    index: index of current destination
+    stop: total number of destinations, base case
+    destinations: stores each destination containing destination info + distance/duration
+    durations: contains duration of every destination, used for ordering destination blocks
+Function
+    - set up controller
+    - getDestinations - get json object from server
+    - createBlock - change the model to add new destination
+*/
+tripplanner.controller('destinationBlockCtrl', function($scope, $http){
+
+    $scope.getDestinations = function(transitType){
+
+        $scope.destinations = [];
+
+        $http.get('http://tripplanner.pythonanywhere.com/getDestinations').success(function(data){
+            var temp = {};
+            var durations = [];
+            var destinations = [];
+            //destinations = createBlock(0, data.list.length, data.list, temp);
+            $scope.createBlock(0, data.list.length-1, data.list, temp, durations, transitType);
+        });
+    }
+
+    $scope.createBlock = function(index,stop,data,destinations, durations, transitType){
+
+        if(index == stop)
+        {
+            durations.sort(function(a,b){return a - b});
+
+            for(var z=0; z<index; z++){
+                // pull keys in order
+                var keyOfNextBlock = durations[z];
+                // append next block
+                $scope.$apply(function(){
+                   $scope.destinations.push(destinations[keyOfNextBlock]);
+                });
+            }
+
+
+            return;
+        }
+
+        var destinationInfo = data[index];
+        var directionrequest =
+        {
+            origins:  [yourLatlng],
+            destinations: [new google.maps.LatLng(destinationInfo.latitude, destinationInfo.longitude)],
+            unitSystem: google.maps.UnitSystem.IMPERIAL,
+            travelMode: travelModes[transitType.toLowerCase()]
+        }
+
+         distanceService.getDistanceMatrix(directionrequest, function(response, status){
+            if (response.rows[0].elements[0].status == "OK")
+            {
+                destinationInfo['totalDistance'] = response.rows[0].elements[0].distance.value;
+                destinationInfo['distanceText'] = response.rows[0].elements[0].distance.text;
+                destinationInfo['totalDuration'] = response.rows[0].elements[0].duration.value;
+                destinationInfo['durationText'] = response.rows[0].elements[0].duration.text;
+                //destinations.push(destinationInfo);
+                destinations[destinationInfo.totalDuration] = destinationInfo;
+                durations.push(destinationInfo.totalDuration);
+            }
+            else if(response.rows[0].elements[0].status == 'ZERO_RESULTS')
+            {  // no route found
+                stop--;
+            }
+            else if(response.rows[0].elements[0].status == "OVER_QUERY_LIMIT")
+            {
+                alert(name + ' ' + status);
+                console.log('OVER_QUERY_LIMIT');
+            }
+
+            $scope.createBlock(index+1,stop,data,destinations, durations, transitType);
+        });
+
+    }
+});
+
+
+
 
