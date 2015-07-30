@@ -29,10 +29,14 @@ db.create_all()
 
 
 
-@app.route('/createUser',methods=['POST'])
+@app.route('/createUser',methods=['GET'])
 def createUser():
-    username = request.form.get('username')
-    password = request.form.get('password')
+
+    if request.args.get('key', type=str) != 'tripplanner':
+        return jsonify(success=False)
+
+    username = request.args.get('username', type=str)
+    password = request.args.get('password', type=str)
 
     password = pwd_context.encrypt(password)
 	# connect to database
@@ -42,35 +46,40 @@ def createUser():
     connection.execute(query, username = username,  password = password)
     connection.close()
 
-    return redirect(url_for('home'))
+    return jsonify(success=True)
 
 
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-	username = request.form.get('username')
-	password = request.form.get('password')
+	username = request.args.get('username', type=str)
+	password = request.args.get('password', type=str)
 
 	#if request.method == 'POST':
 	user = Users.query.filter_by(username=username)
 
 	if user.count() > 0 and pwd_context.verify(password, user[0].password):
-	    session['username'] = user[0].username
-	    return render_template('index.html', user=session)
+	    session['isLogged'] = True
+	    session['username'] = username
+	    return jsonify(session)
 	else:
-	    session.pop('username', None)
-        return render_template('home.html', user=session)
-
+	    session['isLogged'] = False
+	    session['username'] = ''
+	    return jsonify(session)
 
 
 @app.route('/logout')
 def logout():
     # remove the username from the session if it's there
-    session.pop('username', None)
-    return redirect(url_for('index'))
+    session['isLogged'] = False
+    session['username'] = ''
+    return jsonify(session);
 
 
+@app.route('/isLogged', methods=['GET'])
+def isLogged():
+    return jsonify(session);
 
 
 # set the secret key.  keep this really secret:

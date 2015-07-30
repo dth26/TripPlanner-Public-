@@ -33,23 +33,35 @@
 		<link href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:300' rel='stylesheet' type='text/css'>
 
 	</head>
-	<body>
+	<body ng-controller="loginCtrl">
 	    <div class="modal fade bs-example-modal-lg" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
           <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="usernameIN">Username: </label>
-                        <input type="text" class="form-control" id="usernameIN">
+                <!-- if user is not logged in -->
+                <div ng-if="isLogged == false">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="usernameIN">Username: </label>
+                            <input type="text" class="form-control" id="usernameIN">
+                        </div>
+                        <div class="form-group">
+                            <label for="passwordIN">Password: </label>
+                            <input type="password" class="form-control" id="passwordIN">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="passwordIN">Password: </label>
-                        <input type="text" class="form-control" id="passwordIN">
+                    <div class="modal-footer">
+                        <button id="loginSubmit" type="button" class="btn btn-primary" ng-click="login()">Login</button>
+                        <button id="newUserSubmit" type="button" class="btn btn-primary" ng-click="newUser()">New User</button>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button id="loginSubmit" type="button" class="btn btn-primary">Login</button>
-                    <button id="logoutSubmit" type="button" class="btn btn-primary">Logout</button>
+                <!-- if user is logged in -->
+                <div ng-if="isLogged == true">
+                    <div class="modal-body">
+                        <h4 class="modal-title">You are already logged in! </h4>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="logoutSubmit" type="button" class="btn btn-primary" ng-click="logout()">Logout</button>
+                    </div>
                 </div>
             </div>
           </div>
@@ -70,7 +82,7 @@
                         <li><a id="menuItemNew" href="{{ url_for('createNew') }}">New</a></li>
                         <li><a id="menuItemDirections" href="{{ url_for('savedDirections') }}">Directions</a></li>
                         <li><a id="menuItemDirections" href="{{ url_for('layout') }}">Layout</a></li>
-                        <li><a id="menuItemLogin" href="{{ url_for('login') }}">Login</a></li>
+                        <li><a id="menuItemLogin" href="#" ng-click="loadLoginModal()">Login</a></li>
                     </ul>
                 </div>
             </div>

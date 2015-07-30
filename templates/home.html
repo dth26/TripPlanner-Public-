@@ -214,6 +214,7 @@
                     <div id="[[d.ID]]GetDirections" class="blockMenuItem GetDirections">
                         <span class="glyphicon glyphicon-map-marker"></span>
                     </div>
+                    <div id="[[d.ID]]Delete" class="delete blockMenuItem" ng-click="deleteDestination([[d.ID]],[[d.name]])" ng-show="isLogged">X</div>
                     <input id="[[d.ID]]Duration" type="hidden" value="[[d.totalDuration]]">
                 </div>
             </div>

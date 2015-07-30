@@ -91,9 +91,15 @@ def addNewDestination():
     return jsonify(name=name)
 
 
+@app.route('/deleteDestination', methods=['GET'])
+def deleteDestination():
+	id = request.args.get('id')
 
+	engine = create_engine('sqlite:///' + os.path.join(basedir, 'db_file.db'), echo=True)
+	connection = engine.connect()
+	query = text('DELETE FROM Destinations WHERE ID=:id');
+	connection.execute(query, id=id)
+	connection.close()
 
-
-
-
+	return jsonify(success=True)
 

@@ -388,6 +388,16 @@ Function
 */
 tripplanner.controller('destinationBlockCtrl', function($scope, $http){
 
+    $scope.deleteDestination = function(id, name){
+        if(confirm('Delete ' + name + '?')){
+            $http.get('http://tripplanner.pythonanywhere.com/deleteDestination', {
+                params: {
+                    id:parseInt(id)
+                }
+            });
+        }
+    }
+
     $scope.getDestinations = function(transitType){
 
         $scope.destinations = [];
@@ -397,7 +407,7 @@ tripplanner.controller('destinationBlockCtrl', function($scope, $http){
             var durations = [];
             var destinations = [];
             //destinations = createBlock(0, data.list.length, data.list, temp);
-            $scope.createBlock(0, data.list.length-1, data.list, temp, durations, transitType);
+            $scope.createBlock(0, data.list.length, data.list, temp, durations, transitType);
         });
     }
 
@@ -407,7 +417,7 @@ tripplanner.controller('destinationBlockCtrl', function($scope, $http){
         {
             durations.sort(function(a,b){return a - b});
 
-            for(var z=0; z<index; z++){
+            for(var z=0; z<durations.length; z++){
                 // pull keys in order
                 var keyOfNextBlock = durations[z];
                 // append next block
@@ -421,6 +431,7 @@ tripplanner.controller('destinationBlockCtrl', function($scope, $http){
         }
 
         var destinationInfo = data[index];
+       // alert(destinationInfo.ID + ' ' + destinationInfo.name);
         var directionrequest =
         {
             origins:  [yourLatlng],
@@ -442,7 +453,7 @@ tripplanner.controller('destinationBlockCtrl', function($scope, $http){
             }
             else if(response.rows[0].elements[0].status == 'ZERO_RESULTS')
             {  // no route found
-                stop--;
+
             }
             else if(response.rows[0].elements[0].status == "OVER_QUERY_LIMIT")
             {
