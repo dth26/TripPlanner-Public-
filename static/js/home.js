@@ -394,6 +394,8 @@ tripplanner.controller('destinationBlockCtrl', function($scope, $http){
                 params: {
                     id:parseInt(id)
                 }
+            }).success(function(){
+                $('#'+id).hide();
             });
         }
     }

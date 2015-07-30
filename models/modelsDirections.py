@@ -237,9 +237,20 @@ def getDirectionsForDestination():
 
 
 
+@app.route('/deleteDirections',methods=['GET'])
+def deleteDirections():
+    directionID = request.args.get('directionID')
 
+    engine = create_engine('sqlite:///' + os.path.join(basedir, 'db_file.db'), echo=True)
+    connection = engine.connect()
+    queryDirection = text('DELETE FROM Directions WHERE ID=:directionID')
+    querySteps = text('DELETE FROM Steps WHERE directionID=:directionID')
 
+    connection.execute(queryDirection, directionID = directionID)
+    connection.execute(querySteps, directionID = directionID)
+    connection.close()
 
+    return jsonify(success=True)
 
 
 

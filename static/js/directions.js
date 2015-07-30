@@ -15,6 +15,20 @@
 
     tripplanner.controller('directionsCtrl', function($scope,$http){
 
+        $scope.deleteDirections = function(){
+            var directionID = $('#directionsFor').find('option:selected').attr('id');
+
+            if(confirm('Delete Directions')){
+                $http.get('http://tripplanner.pythonanywhere.com/deleteDirections', {
+                    params: {
+                        directionID: parseInt(directionID)
+                    }
+                }).success(function(){
+                    $("#directionsFor option[id='" + directionID +"']").remove();
+                });
+            }
+        }
+
         $scope.createDirectionBlock = function(route){
             // get individual steps
             /*

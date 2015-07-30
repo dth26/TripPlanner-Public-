@@ -27,7 +27,7 @@
 
 
 <!--class="panel-body"-->
-    <div class="panel panel-default">
+    <div class="panel panel-default" ng-controller="directionsCtrl">
         <div class="panel-body">
             <div class="inlineForm">
                 <form class="form-inline">
@@ -37,11 +37,11 @@
                         </p>
                         <select id="directionsFor"class="form-control time">
                         {% for d in destinations %}
-                                <option id="{{d.directionID}}"><div>{{d.name}} ({{d.travelMode}})</div></option>
+                            <option id="{{d.directionID}}">{{d.name}} ({{d.travelMode}})</option>
                         {% endfor %}
                         </select>
-                        <br/><br/>
                     </div>
+                    <button ng-click="deleteDirections()" ng-show="isLogged" style="float:right; margin-right:30px;" class="btn btn-default btn-lg delete"  type="submit">Delete Directions</button>
                     <button id="getSavedDirections" style="float:right; margin-right:30px;" class="btn btn-default btn-lg"  type="submit">Get Saved Directions</button>
                 </form>
             </div>
