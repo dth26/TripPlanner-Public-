@@ -1,39 +1,78 @@
+/**{*/
+/*    border-radius: 0 !important;*/
+/*}*/
 body{
-    background-color: rgb(199, 231, 231);
+    background-color: rgb(200, 236, 236);
+    color: rgb(120, 120, 120);
 }
 .header{
     font-size: 20px;
-    color: white;
-    margin-top: 10px;
+    color: whitesmoke;
+    margin-top: 5px;
+    margin-bottom: 5px;
     position: relative;
 }
+.btn:focus, .btn:active, .btn:active:focus{
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+.btn-glf{
+    color: white;
+    font-size: 25px;
+}
+/*btn when normal*/
+.btn-success{
+    background: rgb(134, 203, 195) !important;
+    border: #71BFB6;
+    font-weight: bold;
+    height: 40px;
+}
+/*btn when hover*/
+.btn-success:hover, .btn-success:focus, .btn-success:active, .btn-success.active, .open > .dropdown-toggle.btn-success {
+    background: #71BFB6 !important;
+}
+/*btn when pressed and held*/
+.btn-success:active, .btn-success.active {
+    background: #65B8AE !important;
+    box-shadow: none;
+}
+.form-group-sm{
+    margin-bottom: 7px;
+}
+
 #navtab1{
     position: absolute;
     width: 100%;
     height: 60px;
-    background-color: rgb(161, 217, 215);
+    background-color: #9ED8D6;
     margin-left: -15px;
+    border:none;
 }
 #navtab2{
     position: absolute;
     width: 100%;
     height: 60px;
-    background-color: rgb(150, 213, 208);
+    background-color: #88D0CC;
     margin-left: -15px;
+    border:none;
 }
 #navtab3{
     position: absolute;
     width: 100%;
     height: 60px;
-    background-color: rgb(140, 209, 203);
+    background-color: #77C3BA;
     margin-left: -15px;
+    border:none;
+    border-bottom: 5px solid #54B09C;
 }
 #navtab4{
     position: absolute;
     width: 100%;
     height: 60px;
-    background-color: rgb(134, 203, 195);
+    background-color: #6DBFB2;
     margin-left: -15px;
+    border:none;
 }
 #map-canvas {
     height: 300px;
