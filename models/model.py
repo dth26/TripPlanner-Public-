@@ -1,5 +1,6 @@
 from modelsDestinations import *
 from modelsDirections import *
+from yelpScraper import *
 
 from __init__ import db
 from passlib.apps import custom_app_context as pwd_context

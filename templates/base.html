@@ -38,7 +38,7 @@
           <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <!-- if user is not logged in -->
-                <div ng-if="isLogged == false">
+                <div ng-if="!isLogged">
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="usernameIN">Username: </label>
@@ -55,7 +55,7 @@
                     </div>
                 </div>
                 <!-- if user is logged in -->
-                <div ng-if="isLogged == true">
+                <div ng-if="isLogged">
                     <div class="modal-body">
                         <h4 class="modal-title">You are already logged in! </h4>
                     </div>

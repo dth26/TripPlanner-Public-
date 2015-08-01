@@ -1,6 +1,11 @@
-$(document).ready(function(){
-    // add new destination to database
-     $('#submitIn').click(function(){
+
+
+tripplanner.controller('newCtrl', function($scope, $http){
+
+    var geocoder = new google.maps.Geocoder();
+
+    $scope.submitManual = function(){
+        alert('click');
         var address = $('input[name="Address"]').val();
         var description =  $('input[name="Description"]').val();
         var name = $('input[name="Name"]').val();
@@ -11,8 +16,33 @@ $(document).ready(function(){
         document.getElementById("URLin").value = "";
         document.getElementById("descrptionIn").value = "";
 
+        $scope.addDestination(name, description, address, url);
+
+    }
+
+
+    $scope.submitYelp = function(){
+        var url = $('input[name="URL"]').val();
+        $('#URLYelpIn').value = "";
+
+        // scrape url and get address, and other infro for destination from yelp
+
+        $.getJSON('/scrapeYelp',{
+            url: url
+        }).done(function(data){
+            JSON.stringify(data);
+            var address = data.address + ', ' + data.city + ', ' + data.state + ' ' + data.zip;
+            $scope.addDestination(data.name, data.category, address, url);
+        }).fail(function(error){
+            alert(error.status);
+        });
+
+
+    }
+
+    $scope.addDestination = function(name, description, address, url){
+
         // geocoder gets the geographical coordinates of the address
-        geocoder = new google.maps.Geocoder();
         geocoder.geocode({'address' : address}, function(results, status){
 
             if (status == google.maps.GeocoderStatus.OK) {
@@ -42,7 +72,84 @@ $(document).ready(function(){
 
 
         });
-    });
+    }
+
+
+
 });
+
+
+
+
+
+
+// $(document).ready(function(){
+
+
+//     // add new manual destination to database
+//     $('#submitIn').click(function(){
+//         var address = $('input[name="Address"]').val();
+//         var description =  $('input[name="Description"]').val();
+//         var name = $('input[name="Name"]').val();
+//         var url = $('input[name="URL"]').val();
+
+//         document.getElementById("nameIn").value = "";
+//         document.getElementById("addressIn").value = "";
+//         document.getElementById("URLin").value = "";
+//         document.getElementById("descrptionIn").value = "";
+
+//         var geocoder = new google.maps.Geocoder();
+//         // geocoder gets the geographical coordinates of the address
+//         geocoder.geocode({'address' : address}, function(results, status){
+
+//             if (status == google.maps.GeocoderStatus.OK) {
+//                 console.log( "latitude : " + results[0].geometry.location.lat() );
+//                 console.log( "longitude : " + results[0].geometry.location.lng() );
+//                 var coordinates = {}
+//                 coordinates['latitude'] = results[0].geometry.location.lat();
+//                 coordinates['longitude'] = results[0].geometry.location.lng();
+//                 // send data to server and store data
+//                 $.getJSON('/newDestination', {
+//                     Name: name,
+//                     Description: description,
+//                     Address: address,
+//                     URL: url,
+//                     Latitude: coordinates['latitude'],
+//                     Longitude: coordinates['longitude']
+//                 }).done(function(data) {
+//                     alert(data.name + " was successfully created!");
+//                 }).fail(function(error) {
+//                     alert(error.status);
+//                 });
+//             }
+//             else
+//             {
+//                 alert('Geocode was not successful for the following reason: ' + status);
+//             }
+
+
+//         });
+//     });
+
+//     // add new yelp destination
+//     $('#submitYelpIn').click(function(){
+//         alert('a');
+//         var url = $('input[name="URL"]').val();
+
+//         $('input[name="URL"]').val() = "";
+
+//         // scrape url and get address, and other infro for destination from yelp
+//         $.ajax({
+//             url: 'http://tripplanner.pythonanywhere.com/scrape',
+//             dataType: 'json',
+//             data: url,
+//             success: function(data){
+//                 printJSON(data);
+//             }
+//         });
+
+//     });
+
+// });
 
 
