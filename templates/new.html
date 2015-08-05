@@ -20,10 +20,10 @@
   <h3 class="modal-title">Yelp </h3>
   <div class="form-group">
     <!--<label for="URYelpIn">URL:</label>-->
-    <input type="text"  name="URL" class="form-control"  id="URLYelpIn" placeholder="ENTER YELP URL">
+    <input type="text"  name="yelpURL" class="form-control"  id="URLYelpIn" placeholder="ENTER YELP URL">
   </div>
   <div class="form-group">
-    <button id="submitYelpIn" ng-click="submitYelp()" type="button" class="btn btn-default btn-lg">Create Yelp Destination</button>
+    <button ng-click="submitYelp()" type="button" class="btn btn-default btn-lg">Create Yelp Destination</button>
   </div>
   <br><br>
   <h3 class="modal-title">Manual </h3>
@@ -37,7 +37,7 @@
     <input type="text"  name="URL" class="form-control"  id="URLin" placeholder="URL">
   </div>
   <div class="form-group">
-    <textarea id="descrptionIn" name="Description" value="Description" placeholder="Notes" class="form-control" rows="3">Notes</textarea>
+    <textarea id="descrptionIn" name="Description" value="Description" class="form-control" rows="3"></textarea>
   </div>
   <div class="form-group">
     <button id="submitIn" ng-click="submitManual()" type="button" class="btn btn-default btn-lg">Create Manual Destination</button>

@@ -5,12 +5,28 @@ body{
     background-color: rgb(200, 236, 236);
     color: rgb(120, 120, 120);
 }
+.header-fixed{
+    position: fixed;
+    width: 100%;
+    z-index: 99;
+}
 .header{
-    font-size: 20px;
+    font-size: 15px;
+    font-weight: bold;
     color: whitesmoke;
-    margin-top: 5px;
+    margin-top: 2px;
     margin-bottom: 5px;
     position: relative;
+}
+p{
+    font-size: 12px;
+}
+.log-in{
+     float: right;
+     color: white;
+     margin-top: 3px;
+     margin-right: 3px;
+     font-size: 13px;
 }
 .btn:focus, .btn:active, .btn:active:focus{
     border: none !important;
@@ -19,7 +35,12 @@ body{
 }
 .btn-glf{
     color: white;
-    font-size: 25px;
+    font-size: 15px;
+}
+.btn-glf-user{
+    color: white;
+    font-size: 13px;
+    margin-top: 4px;
 }
 /*btn when normal*/
 .btn-success{
@@ -40,11 +61,13 @@ body{
 .form-group-sm{
     margin-bottom: 7px;
 }
-
+.btn.sharp {
+  border-radius:0;
+}
 #navtab1{
     position: absolute;
     width: 100%;
-    height: 60px;
+    height: 40px;
     background-color: #9ED8D6;
     margin-left: -15px;
     border:none;
@@ -52,7 +75,7 @@ body{
 #navtab2{
     position: absolute;
     width: 100%;
-    height: 60px;
+    height: 40px;
     background-color: #88D0CC;
     margin-left: -15px;
     border:none;
@@ -60,7 +83,7 @@ body{
 #navtab3{
     position: absolute;
     width: 100%;
-    height: 60px;
+    height: 40px;
     background-color: #77C3BA;
     margin-left: -15px;
     border:none;
@@ -69,17 +92,25 @@ body{
 #navtab4{
     position: absolute;
     width: 100%;
-    height: 60px;
+    height: 40px;
     background-color: #6DBFB2;
     margin-left: -15px;
     border:none;
 }
 #map-canvas {
-    height: 300px;
+    height: 200px;
     width: 100%;
     margin: 0;
     padding: 0;
     display: block;
-    z-index: 1000;
-    margin-top: 60px;
+    margin-top: 66px;
+}
+
+.modal{
+    margin-top: 80px;
+}
+
+.panel-heading{
+    padding-top: 8px;
+    padding-bottom: 0px;
 }
