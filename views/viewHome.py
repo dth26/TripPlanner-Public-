@@ -6,4 +6,4 @@ from model import *
 @app.route('/home')
 @app.route('/home/')
 def home():
-	return render_template('home.html')
+	return render_template('base.html')

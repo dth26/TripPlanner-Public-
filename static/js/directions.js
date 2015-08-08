@@ -147,6 +147,7 @@
 
     $(document).on("click", '.GetDirections', function() {
         destinationID = $(this).attr('id');
+        alert(destinationID);
         destinationID = destinationID.substring(0, destinationID.length - 13);
         destinationName = $('#' + destinationID + 'destinationNameInput').attr('value');
         var latitude = $('#' + $(this).attr('id') + 'Latitude').attr('value');
@@ -179,6 +180,7 @@
 
         travelMode = travelModes[travelMode.toLowerCase()];
         var directionsText = '', busPath;
+
         var directionrequest =
         {
             origin: yourLatlng,
@@ -194,6 +196,7 @@
             if (status == google.maps.DirectionsStatus.OK) {
                 // display route on map
                 directionsDisplay.setDirections(response);
+                switchTab('navtab1','fade');
                 route = response.routes[0].legs[0];
 
                 // save directions info
@@ -206,6 +209,8 @@
 
                 var scope = angular.element(document.getElementById("directionsCtrl")).scope();
                 scope.createDirectionBlock(route);
+
+
 
                // createDirectionBlock(route);
 
@@ -223,7 +228,7 @@
 
 
                 directionInfoDiv.innerHTML = directionInfoText;
-                document.getElementById('form-group-data').appendChild(directionInfoDiv);
+                document.getElementById('directionsCtrl').appendChild(directionInfoDiv);
             }else{
                 alert('google.maps.DirectionsStatus not okay');
             }

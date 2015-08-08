@@ -1,121 +1,16 @@
-{% extends "base.html" %}
-
-
-
-{% block js %}
-	<script src="{{ url_for('static', filename='js/savedDirections.js')}}"></script>
-	<script src="{{ url_for('static', filename='js/directions.js')}}"></script>
-	<script>
-	    $(document).ready(function(){
-            $('#menuItemDirections').css('color','white');
-        });
-	</script>
-{% endblock %}
-
-
-
-
-{% block css %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/savedDirections.css') }}" media="screen" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/directions.css') }}" media="screen" />
-{% endblock %}
-
-
-
-
-{% block content %}
-
-
-<!--class="panel-body"-->
-    <div class="panel panel-default" ng-controller="directionsCtrl">
-        <div class="panel-body">
-            <div class="inlineForm">
-                <form class="form-inline">
-                    <div id="form-group-data" class="form-group">
-                        <p class="form-control-static">
-                            <strong>Directions For:</strong>
-                        </p>
-                        <select id="directionsFor"class="form-control time">
-                        {% for d in destinations %}
-                            <option id="{{d.directionID}}">{{d.name}} ({{d.travelMode}})</option>
-                        {% endfor %}
-                        </select>
-                    </div>
-                    <button ng-click="deleteDirections()" ng-show="isLogged" style="float:right; margin-right:30px;" class="btn btn-default btn-lg delete"  type="submit">Delete Directions</button>
-                    <button id="getSavedDirections" style="float:right; margin-right:30px;" class="btn btn-default btn-lg"  type="submit">Get Saved Directions</button>
-                </form>
-            </div>
+ <div style="margin-top: 90px">
+    <div class="col-xs-12">
+        <form>
+            <label>Saved Directions</label>
+            <select class="form-control">
+                <option>------- Default -------</option>
+                <option>Dan's Dream (Mindreading)</option>
+                <option>Dan's bedroom (Teleporting)</option>
+                <option>Dan's Fluffy Chicken Hair (Rubbing)</option>
+            </select>
+        </form>
+        <div class="text-center">
+            <button type="button" class="btn btn-success" style="margin-top: 20px">Load Direction</button>
         </div>
     </div>
-    <div id="directions">
-        <!-- <div id="1subBlock" class="subBlock">-->
-        <!--    <div class="innerLeftHeader">-->
-        <!--        <div class="innerLeftHeaderBlock">1</div>-->
-        <!--        <img class="directionImg" src="../static/images/bus.png">-->
-        <!--    </div>-->
-        <!--    <div id="1innerLeft" class="innerLeft">-->
-        <!--        <div id="1centerHorizontally" class="centerHorizontally">-->
-        <!--            <div class="innerLeftText">Bus arrives at 1:07pm</div>-->
-        <!--            <div class="innerLeftText">31 mins, 5.2 mi</div>-->
-        <!--            <div class="agency">-->
-        <!--                <span class="header">Port Authority of Allegheny County</span>-->
-        <!--            </div>-->
-        <!--        </div>-->
-        <!--    </div>-->
-        <!--    <div id="1innerRight" class="innerRight" style="">-->
-        <!--        <span class="header">Bus: </span>-->
-        <!--        54 - North Side-Oakland-South Side - Bus towards Outbound-OAKLAND-SOUTH SIDE BON AIR VIA POLISH HILL-->
-        <!--        <br>-->
-        <!--        <span class="header">1:07pm</span>-->
-        <!--        : Ridge Ave at Arch St NS-->
-        <!--        <br>-->
-        <!--        <span class="header">1:38pm</span>-->
-        <!--        : Millvale Ave at Baum Blvd-->
-        <!--    </div>-->
-        <!--</div>-->
-    </div>
-
-    <div id="directionsCtrl" ng-controller="directionsCtrl">
-        <div id="[[d.order]]subBlock" class="subBlock" ng-repeat="d in directionBlocks">
-            <div id="[[d.order]]innerLeftHeader" class="innerLeftHeader">
-                <div class="innerLeftHeaderBlock">[[d.order]]</div>
-                <img class="directionImg" src="../static/images/[[d.imagePath]]">
-            </div>
-            <div id="[[d.order]]innerLeft" class="innerLeft">
-                <div id="[[d.order]]centerHorizontally" class="centerHorizontally">
-                    <div class="innerLeftText">[[d.short_description]]</div>
-                    <div class="innerLeftText">[[d.durationText]], [[d.distanceText]]</div>
-                    <div class="agency">
-                        <span class="header">[[d.travel_description]]</span>
-                    </div>
-                </div>
-            </div>
-            <div ng-bind-html="d.descriptionText" id="[[d.order]]innerRight" class="innerRight" >[[d.descriptionText]]</div>
-        </div>
-    </div>
-{% endblock %}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+</div>

@@ -1,0 +1,63 @@
+
+.btn:focus, .btn:active, .btn:active:focus{
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+.btn-glf{
+    color: white;
+    font-size: 15px;
+}
+.btn-glf-user{
+    color: white;
+    font-size: 13px;
+    margin-top: 4px;
+}
+/*btn when normal*/
+.btn-success{
+    background: rgb(134, 203, 195) !important;
+    border: #71BFB6;
+    font-weight: bold;
+    height: 40px;
+}
+/*btn when hover*/
+.btn-success:hover, .btn-success:focus, .btn-success:active, .btn-success.active, .open > .dropdown-toggle.btn-success {
+    background: #71BFB6 !important;
+}
+/*btn when pressed and held*/
+.btn-success:active, .btn-success.active {
+    background: #65B8AE !important;
+    box-shadow: none;
+}
+
+.btn.sharp {
+  border-radius:0;
+}
+
+.form-group-sm{
+    margin-bottom: 7px;
+}
+
+.header-fixed{
+    position: fixed;
+    width: 100%;
+    z-index: 99;
+}
+
+.header{
+    font-size: 15px;
+    font-weight: bold;
+    color: whitesmoke;
+    margin-top: 2px;
+    margin-bottom: 5px;
+    position: relative;
+}
+
+.modal{
+    margin-top: 80px;
+}
+
+.panel-heading{
+    padding-top: 8px;
+    padding-bottom: 0px;
+}

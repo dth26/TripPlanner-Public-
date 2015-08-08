@@ -1,103 +1,142 @@
-
 <!DOCTYPE html>
 <html ng-app="trip">
-	<head>
-	    <meta charset="utf-8">
-	    <meta name="apple-mobile-web-app-capable" content="yes">
-	    <meta name="mobile-web-app-capable" content="yes">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta id="subpage" data-name="{{subpage}}" >
-        <!--<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta id="subpage" data-name="{{subpage}}" >
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Trip Planner</title>
 
-        <title>Trip Planner</title>
+	<!--Google Map API-->
+	<script type="text/javascript"src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCeWFY0CQcHswP7VOroCgd49bEBI1P6_-4"></script>
 
-		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/base.css') }}" media="screen" />
-		<link href='http://fonts.googleapis.com/css?family=Bangers|Satisfy|Roboto+Condensed' rel='stylesheet' type='text/css'>
+     <!--CSS-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/base.css') }}" media="screen" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/directions.css.css') }}" media="screen" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/new.css') }}" media="screen" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/savedDirections.css') }}" media="screen" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/destinations.css') }}" media="screen" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/bootStrapEdit.css') }}" media="screen" />
+    <link href='http://fonts.googleapis.com/css?family=Bangers|Satisfy|Roboto+Condensed' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:300' rel='stylesheet' type='text/css'>
 
-		<!-- Jquery -->
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
-		<!--Google Map API-->
-		<script type="text/javascript"src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCeWFY0CQcHswP7VOroCgd49bEBI1P6_-4"></script>
+    <!--JavaScript-->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+	<script src="{{ url_for('static', filename='node_modules/angular/angular.js' )}}"></script>
+    <script src="{{ url_for('static', filename='node_modules/angular-sanitize/angular-sanitize.js' )}}"></script>
+	<script src="{{ url_for('static', filename='js/base.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/home.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/directions.js')}}"></script>
+	<script src="{{ url_for('static', filename='js/layout.js')}}"></script>
+    {% block js %}{% endblock %}
 
-        <!-- Bootstrap -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
-        <script src="{{ url_for('static', filename='node_modules/angular/angular.js' )}}"></script>
-        <script src="{{ url_for('static', filename='node_modules/angular-sanitize/angular-sanitize.js' )}}"></script>
-        <script src="{{ url_for('static', filename='js/base.js') }}"></script>
-		{% block js %}{% endblock %}
 
-		<!-- load proper css file -->
-		{% block css %}{% endblock %}
-
-		<link href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:300' rel='stylesheet' type='text/css'>
-
-	</head>
-	<body ng-controller="loginCtrl">
-	    <div class="modal fade bs-example-modal-lg" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
-          <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <!-- if user is not logged in -->
-                <div ng-if="!isLogged">
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="usernameIN">Username: </label>
-                            <input type="text" class="form-control" id="usernameIN">
-                        </div>
-                        <div class="form-group">
-                            <label for="passwordIN">Password: </label>
-                            <input type="password" class="form-control" id="passwordIN">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button id="loginSubmit" type="button" class="btn btn-primary" ng-click="login()">Login</button>
-                        <button id="newUserSubmit" type="button" class="btn btn-primary" ng-click="newUser()">New User</button>
-                    </div>
+</head>
+<body ng-controller="loginCtrl">
+<!------------------------------------------------>
+<!----------------- Log-In Modal ----------------->
+<!------------------------------------------------>
+<div class="modal fade bs-example-modal-lg" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <!-- if user is not logged in -->
+        <div ng-if="!isLogged">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="usernameIN">Username: </label>
+                    <input type="text" class="form-control" id="usernameIN">
                 </div>
-                <!-- if user is logged in -->
-                <div ng-if="isLogged">
-                    <div class="modal-body">
-                        <h4 class="modal-title">You are already logged in! </h4>
-                    </div>
-                    <div class="modal-footer">
-                        <button id="logoutSubmit" type="button" class="btn btn-primary" ng-click="logout()">Logout</button>
-                    </div>
+                <div class="form-group">
+                    <label for="passwordIN">Password: </label>
+                    <input type="password" class="form-control" id="passwordIN">
                 </div>
             </div>
-          </div>
-        </div>
-
-	    <nav class="navbar navbar-inverse">
-            <div class="container-fluid">
-            <div class="row">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand">TripPlanner</a>
-                <div class="collapse navbar-collapse" id="myNavbar">
-                    <ul class="nav navbar-nav">
-                        <li><a id="menuItemHome" href="{{ url_for('home') }}" >Home</a></li>
-                        <li><a id="menuItemNew" href="{{ url_for('createNew') }}">New</a></li>
-                        <li><a id="menuItemDirections" href="{{ url_for('savedDirections') }}">Directions</a></li>
-                        <li><a id="menuItemDirections" href="{{ url_for('layout') }}">Layout</a></li>
-                        <li><a id="menuItemLogin" href="#" ng-click="loadLoginModal()">Login</a></li>
-                    </ul>
-                </div>
+            <div class="modal-footer">
+                <button id="loginSubmit" type="button" class="btn btn-primary" ng-click="login()">Login</button>
+                <button id="newUserSubmit" type="button" class="btn btn-primary" ng-click="newUser()">New User</button>
             </div>
         </div>
-    </nav>
-	    <div id="container-fluid" class="container-fluid">
-    		{% block content %}
-    		{% endblock %}
-	    </div>
-	</body>
+        <!-- if user is logged in -->
+        <div ng-if="isLogged">
+            <div class="modal-body">
+                <h4 class="modal-title">You are already logged in! </h4>
+            </div>
+            <div class="modal-footer">
+                <button id="logoutSubmit" type="button" class="btn btn-primary" ng-click="logout()">Logout</button>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+<!------------------------------------------------>
+<!-------------------- Header -------------------->
+<!------------------------------------------------>
+<div class="container-fluid " data-role="page">
+    <div class="row header-fixed" style="background-color: #53B29D; margin-left: 0px">
+        <div class="col-xs-12" style="height: 26px">
+           <div class="row">
+               <div class="col-xs-5">
+                    <p class="header">TripPlanner</p>
+               </div>
+               <div class="col-xs-offset-3 col-xs-4">
+                    <i class="glyphicon glyphicon-user btn-glf-user" style="float: right"></i>
+                    <a id="menuItemLogin" href="#" ng-click="loadLoginModal()"><p class="log-in">log in</p></a>
+               </div>
+           </div>
+        </div>
 
+        <!------------------------------------------------>
+        <!-------------------- Navbar -------------------->
+        <!------------------------------------------------>
+        <div class="col-xs-12" style="height: 36px;">
+           <div class="row">
+                <div class="col-xs-3">
+                    <button class="btn btn-default sharp" id="navtab1">
+                        <span class="glyphicon glyphicon-home btn-glf"></span>
+                    </button>
+                </div>
+                <div class="col-xs-3">
+                    <button class="btn btn-default sharp" id="navtab2">
+                        <span class="glyphicon glyphicon-list btn-glf"></span>
+                    </button>
+                </div>
+                <div class="col-xs-3">
+                    <button class="btn btn-default sharp" id="navtab3">
+                        <a ><span class="glyphicon glyphicon-plus btn-glf"></span>
+                    </button>
+                </div>
+                <div class="col-xs-3">
+                    <button class="btn btn-default sharp" id="navtab4">
+                        <span class="glyphicon glyphicon-open btn-glf"></span>
+                    </button>
+                </div>
+           </div>
+        </div>
+    </div>
+    <!------------------------------------------------>
+    <!--------------Load Body Contents---------------->
+    <!------------------------------------------------>
+
+    <input type="hidden" id="currPage" value="navtab1">
+    <div id="destinationBlockCtrl" ng-controller="destinationBlockCtrl" >
+        <!--DESTINATIONS VIEW 1st tab -->
+        <div id="view1" class="row row-fixed view" visible>{% include 'destinations.html' %}</div>
+        <!--DIRECTIONS TAB 2nd tab-->
+        <div id="view2" class="row row-fixed view" hidden>{% include 'directions.html' %}</div>
+    </div>
+    <!-- NEW 3rd tab -->
+    <div id="view3" class="row row-fixed view" hidden>{% include 'new.html' %}</div>
+    <!-- SAVEDDIRECTIONS 4th tab-->
+    <div id="view4" class="row row-fixed view" hidden>{% include 'savedDirections.html' %}</div>
+
+</div>
+</body>
 </html>
-
-
-
-

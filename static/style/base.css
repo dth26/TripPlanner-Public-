@@ -8,68 +8,76 @@
      box-sizing: border-box;
      z-index: 1;
 }
-a{
-    text-decoration: none;
-}
-body{
-    font-family: 'Arial' !important;
-    font-size: 18px !important;
-}
-.block{
-	position: relative;
-	width: 100%;
-	height: auto;
-	clear: both;
-	display: inline-block;
-	margin: 0px;
-	margin-bottom: 20px;
-	margin-top: 20px;
-	float: left;
-	border: 1px solid #91C2F2;
-	border-radius: 10px;
 
+body{
+    background-color: rgb(200, 236, 236);
+    color: rgb(120, 120, 120);
 }
-.blockHeader{
+
+
+/* center vertically and horizontally */
+.center{
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%,-50%);
+    -moz-transform: translate(-50%,-50%);
+    -o-transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+}
+.log-in{
+     float: right;
+     color: white;
+     margin-top: 3px;
+     margin-right: 3px;
+     font-size: 13px;
+}
+#map-canvas {
+    height: 200px;
     width: 100%;
-    background-color: #91C2F2;
-    font-size: 30px;
-    color: white;
-    top: 0px;
-    left: 0px;
-    display: inline-block;
-    border-radius: 10px;
-    padding-left: 10px;
+    margin: 0;
+    padding: 0;
+    display: block;
+    margin-top: 66px;
 }
-.blockHeader, .blockHeaderMenu, .blockMenuItem, .order,.linkURL{
-    height: 45px;
-    line-height: 45px;
-}
-.blockHeaderMenu{
+#navtab1{
     position: absolute;
-    right: 0px;
-    top: 0px;
-    width: auto;
+    width: 100%;
+    height: 40px;
+    background-color: #9ED8D6;
+    margin-left: -15px;
+    border:none;
 }
-.blockMenuItem{
-    float:left;
-    width: auto;
-    padding-left: 7px;
-    padding-right: 20px;
-    /*border-left: 1px solid black;*/
-    text-align: center;
+#navtab2{
+    position: absolute;
+    width: 100%;
+    height: 40px;
+    background-color: #88D0CC;
+    margin-left: -15px;
+    border:none;
 }
-.delete{
-    cursor: pointer;
+#navtab3{
+    position: absolute;
+    width: 100%;
+    height: 40px;
+    background-color: #77C3BA;
+    margin-left: -15px;
+    border:none;
+    border-bottom: 5px solid #54B09C;
 }
-.navbar{
-    font-weight: 500 !important;
+#navtab4{
+    position: absolute;
+    width: 100%;
+    height: 40px;
+    background-color: #6DBFB2;
+    margin-left: -15px;
+    border:none;
 }
-.navbar-brand{
-    font-size: 30px !important;
-    margin-left: 5px !important;
+
+p{
+    font-size: 12px;
 }
-.glyphicon-map-marker{
-    color: white;
-    font-size: 30px;
-    margin-top: 7px;
+
+.view{
+    padding: 20px !important;
 }
+

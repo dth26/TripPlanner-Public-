@@ -256,7 +256,13 @@ function initialize(position) {
 
     // create destination blocks
     var scope = angular.element(document.getElementById("destinationBlockCtrl")).scope();
-    scope.getDestinations($('#transitType').val());
+
+
+    var transitType = $('#transitType').val();
+    if(transitType=='' || transitType== undefined){
+        transitType = 'Walking';
+    }
+    scope.getDestinations(transitType);
 }
 
 
@@ -433,6 +439,8 @@ tripplanner.controller('destinationBlockCtrl', function($scope, $http){
         }
 
         var destinationInfo = data[index];
+        addMarker(new google.maps.LatLng(destinationInfo.latitude, destinationInfo.longitude));
+
        // alert(destinationInfo.ID + ' ' + destinationInfo.name);
         var directionrequest =
         {

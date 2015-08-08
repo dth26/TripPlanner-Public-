@@ -1,0 +1,14 @@
+<div style="margin-top: 75px">
+    <div id="map-canvas"></div>
+    <div id="directionsCtrl" ng-controller="directionsCtrl" style="margin:20px"></div>
+    <ul class="list-group" >
+        <li class="list-group-item list-group-item-info" style="font-size: 16px">Recent Searches
+            <span style="float: right"><a href="#">View All</a></span>
+        </li>
+        <div id="[[d.ID]]" ng-repeat="d in destinations">
+            <li class="list-group-item">[[d.name]]</li>
+        </div>
+    </ul>
+</div>
+
+
