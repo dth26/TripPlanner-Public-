@@ -46,9 +46,12 @@ tripplanner.controller('loginCtrl', function($scope, $http){
    }
 
    $scope.logout = function(){
-        $scope.username = undefined;
-        $scope.isLogged = false;
         $('#loginModal').modal('toggle');
+        $http.get('http://tripplanner.pythonanywhere.com/logout', {
+        }).success(function(data){
+                $scope.username = undefined;
+                $scope.isLogged = false;
+        });
    }
 
    $scope.newUser = function(){
