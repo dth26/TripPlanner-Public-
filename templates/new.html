@@ -31,7 +31,7 @@
             </div>
         </form>
         <div class="text-center">
-            <button type="button" class="btn btn-success" style="width: 40%; margin-top: 10px">Create</button>
+            <button ng-if="isLogged" type="button" class="btn btn-success" style="width: 40%; margin-top: 10px">Create</button>
             <button ng-if="!isLogged" type="button" class="btn btn-success" style="width: 40%; margin-top: 10px">You must be logged in!</button>
         </div>
     </div>

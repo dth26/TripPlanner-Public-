@@ -407,7 +407,6 @@ tripplanner.controller('destinationBlockCtrl', function($scope, $http){
     }
 
     $scope.getDestinations = function(transitType){
-
         $scope.destinations = [];
 
         $http.get('http://tripplanner.pythonanywhere.com/getDestinations').success(function(data){

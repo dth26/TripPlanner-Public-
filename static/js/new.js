@@ -23,7 +23,7 @@ tripplanner.controller('newCtrl', function($scope, $http){
     $scope.submitYelp = function(){
         var url = $('input[name="yelpURL"]').val().trim();
         $('#URLYelpIn').value = "";
-        alert(url);
+
         // scrape url and get address, and other infro for destination from yelp
 
         $.getJSON('/scrapeYelp',{
@@ -58,6 +58,10 @@ tripplanner.controller('newCtrl', function($scope, $http){
                     Longitude: coordinates['longitude']
                 }).done(function(data) {
                     alert(data.name + " was successfully created!");
+
+                    var scope = angular.element(document.getElementById("destinationBlockCtrl")).scope();
+                    scope.getDestinations($('#transitType').val());
+
                 }).fail(function(error) {
                     alert(error.status);
                 });
