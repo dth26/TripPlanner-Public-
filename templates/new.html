@@ -27,11 +27,11 @@
             </div>
             <div class="form-group form-group-sm">
                 <label for="notes">Notes</label>
-                <textarea class="form-control input-sm" rows="4" id="descrptionIn" name="Description" id="submitIn" ng-click="submitManual()" ></textarea>
+                <textarea class="form-control input-sm" rows="4" id="descrptionIn" name="Description" id="submitIn" ></textarea>
             </div>
         </form>
         <div class="text-center">
-            <button ng-if="isLogged" type="button" class="btn btn-success" style="width: 40%; margin-top: 10px">Create</button>
+            <button ng-if="isLogged" type="button" class="btn btn-success" style="width: 40%; margin-top: 10px" ng-click="submitManual()">Create</button>
             <button ng-if="!isLogged" type="button" class="btn btn-success" style="width: 40%; margin-top: 10px">You must be logged in!</button>
         </div>
     </div>

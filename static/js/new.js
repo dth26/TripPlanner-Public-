@@ -57,7 +57,6 @@ tripplanner.controller('newCtrl', function($scope, $http){
                     Latitude: coordinates['latitude'],
                     Longitude: coordinates['longitude']
                 }).done(function(data) {
-                    printJSON(data);
                     if(data.success == true){
                         alert(data.name + " was successfully created!");
                         var scope = angular.element(document.getElementById("destinationBlockCtrl")).scope();
