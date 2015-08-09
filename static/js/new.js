@@ -57,10 +57,14 @@ tripplanner.controller('newCtrl', function($scope, $http){
                     Latitude: coordinates['latitude'],
                     Longitude: coordinates['longitude']
                 }).done(function(data) {
-                    alert(data.name + " was successfully created!");
-
-                    var scope = angular.element(document.getElementById("destinationBlockCtrl")).scope();
-                    scope.getDestinations($('#transitType').val());
+                    printJSON(data);
+                    if(data.success == true){
+                        alert(data.name + " was successfully created!");
+                        var scope = angular.element(document.getElementById("destinationBlockCtrl")).scope();
+                        scope.getDestinations($('#transitType').val());
+                    }else{
+                        alert('Destination already Exists!');
+                    }
 
                 }).fail(function(error) {
                     alert(error.status);

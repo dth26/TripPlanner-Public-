@@ -1,8 +1,5 @@
-
-
 * {
-
-   /*	 fixed width and height of divs despite paddings */
+   fixed width and height of divs despite paddings
      -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
      box-sizing: border-box;
@@ -10,7 +7,7 @@
 }
 
 body{
-    background-color: rgb(200, 236, 236);
+    background-image: url("../images/img1.jpg") !important;
     color: rgb(120, 120, 120);
 }
 

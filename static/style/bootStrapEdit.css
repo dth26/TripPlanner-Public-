@@ -1,4 +1,3 @@
-
 .btn:focus, .btn:active, .btn:active:focus{
     border: none !important;
     outline: none !important;
@@ -46,7 +45,6 @@
 
 .header{
     font-size: 15px;
-    font-weight: bold;
     color: whitesmoke;
     margin-top: 2px;
     margin-bottom: 5px;

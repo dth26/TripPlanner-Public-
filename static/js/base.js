@@ -81,44 +81,44 @@ tripplanner.controller('loginCtrl', function($scope, $http){
 //==============================================
 //============ swipe functionality =============
 //==============================================
-var supportsTouch = 'ontouchstart' in window || navigator.msMaxTouchPoints
+// var supportsTouch = 'ontouchstart' in window || navigator.msMaxTouchPoints
 
-if(supportsTouch){
-    $(document).on("pagecreate",".container-fluid",function(){
-        var nextView;
+// if(supportsTouch){
+//     $(document).on("pagecreate",".container-fluid",function(){
+//         var nextView;
 
-        $(".container-fluid").on("swipeleft",function(){
-            var currView = $('#currPage').attr('value');
-            if(currView == 'navtab4'){
-                nextView = 'navtab1';
-            }else if (currView == 'navtab1'){
-                nextView = 'navtab2';
-            }else if (currView == 'navtab2'){
-                nextView = 'navtab3';
-            }else if (currView == 'navtab3'){
-                nextView = 'navtab4'
-            }
-        //    alert('curr: '+currView +'\nnext: '+ nextView);
-            switchTab(nextView, "left");
-        });
+//         $(".container-fluid").on("swipeleft",function(){
+//             var currView = $('#currPage').attr('value');
+//             if(currView == 'navtab4'){
+//                 nextView = 'navtab1';
+//             }else if (currView == 'navtab1'){
+//                 nextView = 'navtab2';
+//             }else if (currView == 'navtab2'){
+//                 nextView = 'navtab3';
+//             }else if (currView == 'navtab3'){
+//                 nextView = 'navtab4'
+//             }
+//         //    alert('curr: '+currView +'\nnext: '+ nextView);
+//             switchTab(nextView, "left");
+//         });
 
-        $(".container-fluid").on("swiperight",function(){
-            var currView =  $('#currPage').attr('value');
+//         $(".container-fluid").on("swiperight",function(){
+//             var currView =  $('#currPage').attr('value');
 
-            if(currView == 'navtab1'){
-                nextView = 'navtab4';
-            }else if (currView == 'navtab2'){
-                nextView = 'navtab1';
-            }else if (currView == 'navtab3'){
-                nextView = 'navtab2';
-            }else if (currView == 'navtab4'){
-                nextView = 'navtab3'
-            }
-            // alert('curr: '+currView +'\nnext: '+ nextView);
-            switchTab(nextView, "right");
-        });
-    });
-}
+//             if(currView == 'navtab1'){
+//                 nextView = 'navtab4';
+//             }else if (currView == 'navtab2'){
+//                 nextView = 'navtab1';
+//             }else if (currView == 'navtab3'){
+//                 nextView = 'navtab2';
+//             }else if (currView == 'navtab4'){
+//                 nextView = 'navtab3'
+//             }
+//             // alert('curr: '+currView +'\nnext: '+ nextView);
+//             switchTab(nextView, "right");
+//         });
+//     });
+// }
 
 
 
