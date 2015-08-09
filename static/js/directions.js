@@ -147,7 +147,6 @@
 
     $(document).on("click", '.GetDirections', function() {
         destinationID = $(this).attr('id');
-        alert(destinationID);
         destinationID = destinationID.substring(0, destinationID.length - 13);
         destinationName = $('#' + destinationID + 'destinationNameInput').attr('value');
         var latitude = $('#' + $(this).attr('id') + 'Latitude').attr('value');

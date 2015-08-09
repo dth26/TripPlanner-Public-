@@ -29,7 +29,7 @@ tripplanner.controller('newCtrl', function($scope, $http){
         $.getJSON('/scrapeYelp',{
             url: url
         }).done(function(data){
-            var address = data.address + ', ' + data.city + ', ' + data.state + ' ' + data.zip;
+            var address = data.address + ', ' + data.city + ', ' + data.state + ' ' + data.zipcode;
             $scope.addDestination(data.name, data.category, address, url);
         }).fail(function(error){
             alert(error.status);

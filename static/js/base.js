@@ -81,6 +81,9 @@ tripplanner.controller('loginCtrl', function($scope, $http){
 //==============================================
 //============ swipe functionality =============
 //==============================================
+
+// must import jquery mobile for this to work
+
 // var supportsTouch = 'ontouchstart' in window || navigator.msMaxTouchPoints
 
 // if(supportsTouch){
