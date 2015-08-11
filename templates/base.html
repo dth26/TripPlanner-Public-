@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <!--<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />-->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/base.css') }}" media="screen" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/directions.css.css') }}" media="screen" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/directions.css') }}" media="screen" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/new.css') }}" media="screen" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/savedDirections.css') }}" media="screen" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/destinations.css') }}" media="screen" />
@@ -42,6 +42,31 @@
 
 </head>
 <body ng-controller="loginCtrl">
+<!------------------------------------------------>
+<!-----------------Loading Bar-------------------->
+<!------------------------------------------------>
+    <div class="overlay">
+        <div class="overlayInner">
+            <div class="overlayInnerLoading">
+                Getting your coordinates and loading map
+            </div>
+            <div class="overlayInnerDotHolder">
+                 <div id="dot1" class="overlayInnerDot"></div>
+            </div>
+            <div class="overlayInnerDotHolder">
+                 <div id="dot2" class="overlayInnerDot"></div>
+            </div>
+            <div class="overlayInnerDotHolder">
+                 <div id="dot3" class="overlayInnerDot"></div>
+            </div>
+            <div class="overlayInnerDotHolder">
+                 <div id="dot4" class="overlayInnerDot"></div>
+            </div>
+            <div class="overlayInnerDotHolder">
+                 <div id="dot5" class="overlayInnerDot"></div>
+            </div>
+        </div>
+    </div>
 <!------------------------------------------------>
 <!----------------- Log-In Modal ----------------->
 <!------------------------------------------------>
@@ -80,8 +105,9 @@
 <!------------------------------------------------>
 <!-------------------- Header -------------------->
 <!------------------------------------------------>
+<img src = "/static/images/sf3.jpg" id="background-img" width="100%" min-height="100%">
 <div class="container-fluid " data-role="page">
-    <div class="row header-fixed" style="background-color: #53B29D">
+    <div class="row header-fixed">
         <div class="col-xs-12" style="height: 26px">
            <div class="row">
                <div class="col-xs-5">
@@ -97,27 +123,25 @@
         <!------------------------------------------------>
         <!-------------------- Navbar -------------------->
         <!------------------------------------------------>
-        <div class="col-xs-12" style="height: 36px;">
+        <div class="col-xs-12" style="height: 36px; margin-top: 70px">
            <div class="row">
-                <div class="col-xs-3">
-                    <button class="btn btn-default sharp" id="navtab1">
-                        <span class="glyphicon glyphicon-home btn-glf"></span>
-                    </button>
+                <div class="col-xs-offset-6 col-xs-3" >
+                    <div class="round-button" id="navtab2">
+                        <div class="round-button-circle">
+                            <a class="round-button">
+                                <span class="glyphicon glyphicon-list btn-glf"></span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-xs-3">
-                    <button class="btn btn-default sharp" id="navtab2">
-                        <span class="glyphicon glyphicon-list btn-glf"></span>
-                    </button>
-                </div>
-                <div class="col-xs-3">
-                    <button class="btn btn-default sharp" id="navtab3">
-                        <a ><span class="glyphicon glyphicon-plus btn-glf"></span>
-                    </button>
-                </div>
-                <div class="col-xs-3">
-                    <button class="btn btn-default sharp" id="navtab4">
-                        <span class="glyphicon glyphicon-open btn-glf"></span>
-                    </button>
+                    <div class="round-button" id="navtab3" style="margin-left: -10px">
+                        <div class="round-button-circle">
+                            <a class="round-button">
+                                <span class="glyphicon glyphicon-plus btn-glf"></span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
            </div>
         </div>
@@ -125,13 +149,12 @@
     <!------------------------------------------------>
     <!--------------Load Body Contents---------------->
     <!------------------------------------------------>
-
     <input type="hidden" id="currPage" value="navtab1">
     <div id="destinationBlockCtrl" ng-controller="destinationBlockCtrl" >
         <!--DESTINATIONS VIEW 1st tab -->
-        <div id="view1" class="row row-fixed view" visible>{% include 'destinations.html' %}</div>
+        <div id="view1" class="row row-fixed view" hidden>{% include 'destinations.html' %}</div>
         <!--DIRECTIONS TAB 2nd tab-->
-        <div id="view2" class="row row-fixed view" hidden>{% include 'directions.html' %}</div>
+        <div id="view2" class="row row-fixed view" visible>{% include 'directions.html' %}</div>
     </div>
     <!-- NEW 3rd tab -->
     <div id="view3" class="row row-fixed view" hidden>{% include 'new.html' %}</div>

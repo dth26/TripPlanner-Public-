@@ -1,84 +1,115 @@
-
-<div style="margin-top: 90px">
-    <div class="panel panel-info">
-        <div class="panel-body">
-            <form class="form-inline">
-                <label>Travel Type:</label>
-                <div class="form-group form-group-sm" style="width: 100%">
-                    <div class="col-md-3">
-                        <select class="form-control" id="transitType">
-                             <option>Transit</option>
-                             <option selected="selected">Walking</option>
-                             <option>Driving</option>
-                        </select>
-                    </div>
-                </div>
-            </form>
+<div style="margin-top: 150px">
+    <form class="form">
+        <div class="form-group form-group-sm">
+            <div class="col-md-3">
+                 <label>Travel Type:</label>
+                <select class="form-control" id="transitType">
+                     <option>Transit</option>
+                     <option selected="selected">Walking</option>
+                     <option>Driving</option>
+                </select>
+            </div>
         </div>
-        <div class="panel-body">
-            <form class="form-inline">
-                <label>Departure Time:</label>
-                <div class="form-group form-group-sm" style="width: 100%">
-                    <div class="col-md-3">
-                            <select class="form-control time" id="hours">
-                                <option>Now</option>
-                                {% for i in range(1, 13) %}
-                                <option>{{i}}</option>
-                                {% endfor %}
-                            </select>
-                      </div>
-                      <div class="col-md-3">
-                            <select class="form-control time" id="mins">
-                                <option>Now</option>
-                                {% for i in range(0, 60) %}
-                                <option>
-                                    {% if i < 10 %}
-                                        0{{i}}
-                                    {% else %}
-                                        {{i}}
-                                    {% endif %}
-                                </option>
-                                {% endfor %}
-                            </select>
-                      </div>
-                      <div class="col-md-3">
-                            <select class="form-control time" id="period">
-                                <option>Now</option>
-                                <option>AM</option>
-                                <option>PM</option>
-                            </select>
-                      </div>
-                </div>
-            </form>
+    </form>
+    <form class="form">
+        <div class="form-group form-group-sm">
+            <div class="col-xs-12">
+                <label>Departure Time: </label>
+            </div>
+            <div class="col-xs-4">
+                <select class="form-control time" id="hours">
+                    <option>Now</option>
+                    {% for i in range(1, 13) %}
+                    <option>{{i}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-xs-4">
+                <select class="form-control time" id="mins">
+                    <option>Now</option>
+                    {% for i in range(0, 60) %}
+                    <option>
+                        {% if i < 10 %}
+                            0{{i}}
+                        {% else %}
+                            {{i}}
+                        {% endif %}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-xs-4">
+                <select class="form-control time" id="period">
+                    <option>Now</option>
+                    <option>AM</option>
+                    <option>PM</option>
+                </select>
+            </div>
         </div>
-    </div>
+    </form>
 
-    <div id="destinationBlockCtrl" ng-controller="destinationBlockCtrl" class="panel panel-info">
-        <div class="panel-heading">
-            <table>
-                <tr id="[[d.ID]]" ng-repeat="d in destinations" style="border-bottom:1px solid black;">
+    <div id="destinationBlockCtrl" ng-controller="destinationBlockCtrl" class="panel panel-default" style="margin-top: 80px">
+        <div class="panel-body">
+            <ul id="toggle-view">
+                <li id="[[d.ID]]" ng-repeat="d in destinations">
                     <input id="[[d.ID]]GetDirectionsLatitude" class="blockMenuItem" type="hidden" value="[[d.latitude]]">
                     <input id="[[d.ID]]GetDirectionsLongitude" class="blockMenuItem" type="hidden" value="[[d.longitude]]">
                     <input id="[[d.ID]]destinationNameInput" class="blockMenuItem" type="hidden" value="[[d.name]]">
-                    <td style="width: 4%">
-                        <p id="[[d.ID]]Order">[[$index + 1]]</p>
-                    </td>
-                    <td style="width: 53%">
-                        <p style="font-weight: bold">[[d.name]]</p>
-                    </td>
-                    <td style="width: 13%">
-                        <p>[[d.distanceText]]</p>
-                    </td>
-                    <td style="width: 28%">
-                        <p>[[d.durationText]]</p>
-                    </td>
-                    <td style="width: 2%">
-                        <a id="[[d.ID]]GetDirections"  class="glyphicon glyphicon-map-marker GetDirections"></a>
-                    </td>
-                </tr>
-            </table>
+
+                    <div class="row">
+                        <div class="col-xs-1">
+                            <h3 id="[[d.ID]]Order"><strong>[[$index + 1]]</strong></h3>
+                        </div>
+                        <div class="col-xs-9" style="margin-left: -7px">
+                            <h3>[[d.name]]</h3>
+                        </div>
+                    </div>
+                    <span>
+                        <a id="[[d.ID]]GetDirections" class="glyphicon glyphicon-map-marker GetDirections"></a>
+                    </span>
+                    <div class="panel">
+                        <div class="row">
+                            <div class="col-xs-1"></div>
+                            <div class="col-xs-5" style="margin-left: -10px">
+                                <p style="color: green">[[d.durationText]]</p>
+                            </div>
+                            <div class="col-xs-4">
+                                <p>[[d.distanceText]]</p>
+                            </div>
+                            <div class="col-xs-2" style="margin-left: -7px; float: left">
+                                <a  id="[[d.ID]]Delete" ng-click="deleteDestination([[d.ID]],[[d.name]])" ng-show="isLogged" style="color: red">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
         </div>
-    </div>
+
+    <!--    <div class="panel-heading">-->
+    <!--        <table>-->
+    <!--            <tr id="[[d.ID]]" ng-repeat="d in destinations" style="border-bottom:1px solid black;">-->
+    <!--                <input id="[[d.ID]]GetDirectionsLatitude" class="blockMenuItem" type="hidden" value="[[d.latitude]]">-->
+    <!--                <input id="[[d.ID]]GetDirectionsLongitude" class="blockMenuItem" type="hidden" value="[[d.longitude]]">-->
+    <!--                <input id="[[d.ID]]destinationNameInput" class="blockMenuItem" type="hidden" value="[[d.name]]">-->
+    <!--                <td style="width: 4%">-->
+    <!--                    <p id="[[d.ID]]Order">[[$index + 1]]</p>-->
+    <!--                </td>-->
+    <!--                <td style="width: 53%">-->
+    <!--                    <p style="font-weight: bold">[[d.name]]</p>-->
+    <!--                </td>-->
+    <!--                <td style="width: 13%">-->
+    <!--                    <p>[[d.distanceText]]</p>-->
+    <!--                </td>-->
+    <!--                <td style="width: 28%">-->
+    <!--                    <p>[[d.durationText]]</p>-->
+    <!--                </td>-->
+    <!--                <td style="width: 2%">-->
+    <!--                    <a id="[[d.ID]]GetDirections"  class="glyphicon glyphicon-map-marker GetDirections"></a>-->
+    <!--                </td>-->
+    <!--            </tr>-->
+    <!--        </table>-->
+    <!--    </div>-->
+    <!--</div>-->
 </div>
 
 

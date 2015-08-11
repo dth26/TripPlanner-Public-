@@ -159,6 +159,7 @@ function switchTab(ID, direction){
             }
             $("#map-canvas").show();
             tabShow("#view1", direction);
+            //$( "#view1" ).scrollTop(280);
         }
     }
     //showing content2

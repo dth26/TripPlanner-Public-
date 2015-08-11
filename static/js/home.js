@@ -30,8 +30,9 @@ var travelModes = {
 */
 $(document).ready(function(){
 
-    loadDots();
+   // loadDots();
     // loadPage();
+    loadDot();
 
     directionsDisplay = new google.maps.DirectionsRenderer();
     directionsService = new google.maps.DirectionsService();
@@ -92,7 +93,7 @@ function loadDot(){
               $('.overlay').css('display','none');
             }, 500);
         }
-    }, 200);
+    }, 500);
 
 }
 
@@ -190,6 +191,8 @@ $(function() {
 
         geocoder.geocode( { 'address': location}, function(results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
+                loadDot();
+
                 lat = results[0].geometry.location.A;
                 lng = results[0].geometry.location.F;
 
@@ -248,7 +251,7 @@ function initialize(position) {
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
     // this enables the display to draw routes on map
     directionsDisplay.setMap(map);
-
+    loadDot();
 
     // add your current location to map
     addMarker(yourLatlng,'You','');
@@ -410,6 +413,8 @@ tripplanner.controller('destinationBlockCtrl', function($scope, $http){
         $scope.destinations = [];
 
         $http.get('http://tripplanner.pythonanywhere.com/getDestinations').success(function(data){
+            loadDot();
+
             var temp = {};
             var durations = [];
             var destinations = [];
@@ -419,9 +424,15 @@ tripplanner.controller('destinationBlockCtrl', function($scope, $http){
     }
 
     $scope.createBlock = function(index,stop,data,destinations, durations, transitType){
+        if(index == Math.ceil(stop/2)){
+            loadDot();
+        }
+
 
         if(index == stop)
         {
+            loadDot();
+
             durations.sort(function(a,b){return a - b});
 
             for(var z=0; z<durations.length; z++){
@@ -432,7 +443,6 @@ tripplanner.controller('destinationBlockCtrl', function($scope, $http){
                    $scope.destinations.push(destinations[keyOfNextBlock]);
                 });
             }
-
 
             return;
         }

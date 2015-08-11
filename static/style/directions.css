@@ -1,8 +1,41 @@
 .glyphicon-map-marker{
-    width: 30px;
-    height: 30px;
+    font-size: 20px;
+    margin-top: -3px;
+}
+.glyphicon-minus-sign{
+    color: #E4725C;
+    font-size: 20px;
+    margin-top: -3px;
 }
 
+#toggle-view {
+    list-style:none;
+    font-family:arial;
+    font-size:11px;
+    margin:0;
+    padding:0;
+    width:100%;
+}
+#toggle-view li {
+    margin-top:10px;
+    margin-bottom:10px;
+    border-bottom:1px solid #ccc;
+    position:relative;
+    cursor:pointer;
+}
 
+#toggle-view h3 {
+    margin:0;
+    font-size:16px;
+}
+#toggle-view span {
+    position:absolute;
+    right:5px; top:0;
+    color:#ccc;
+    font-size:13px;
+}
 
-
+#toggle-view .panel {
+    margin:5px 0;
+    /*display:none;*/
+}

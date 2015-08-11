@@ -328,6 +328,20 @@
 
 })(); // end of scope of directions info
 
+//toggle menu for destination list
+$(document).ready(function () {
+    $('#toggle-view li').click(function () {
+        var text = $(this).children('div.panel');
+        if (text.is(':hidden')) {
+            text.slideDown('200');
+            $(this).children('span').html('-');
+        } else {
+            text.slideUp('200');
+            $(this).children('span').html('+');
+        }
+
+    });
+});
 
 function printJSON(json){
     alert(JSON.stringify(json, null, 2));
