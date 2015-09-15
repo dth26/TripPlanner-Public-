@@ -1,14 +1,45 @@
-<div style="margin-top: 75px">
-    <div id="map-canvas"></div>
-    <div id="directionsCtrl" ng-controller="directionsCtrl" style="margin:20px"></div>
-    <!--<ul class="list-group" >-->
-    <!--    <li class="list-group-item list-group-item-info" style="font-size: 16px">Recent Searches-->
-    <!--        <span style="float: right"><a href="#">View All</a></span>-->
-    <!--    </li>-->
-    <!--    <div id="[[d.ID]]" ng-repeat="d in destinations">-->
-    <!--        <li class="list-group-item">[[d.name]]</li>-->
-    <!--    </div>-->
-    <!--</ul>-->
+<!--After user select a destination, they will be directed here with a map, info of the destination, and the directionsß-->
+<div style="margin-top: 15px">
+    <!-- shows the map -->
+    <div class="row">
+        <div class="col-xs-12">
+            <div id="map-canvas"></div>
+        </div>
+    </div>
+    <!-- shows details of path -->
+    <div class="row" style="margin-top: 10px">
+        <div class="col-xs-12" id="directionsInfo">
+        </div>
+    </div>
+    <!-- shows list of direction -->
+    <div class="row" style="margin-top: 10px">
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-body" id="directionsCtrl" ng-controller="directionsCtrl">>
+                    <ul id="toggle-view">
+                        <li id="[[d.order]]subBlock" class="subBlock" ng-repeat="d in directionBlocks">
+                            <div class="row">
+                                <!--this contains the icon for direction-->
+                                <div class="col-xs-2">
+                                    <span class="glyphicon glyphicon-arrow-up" style="font-size: 20px; color: #4E135B"></span>
+                                </div>
+                                <!-- this contains the direction guidance -->
+                                <div class="col-xs-7">
+                                    <p>[[d.short_description]]</p>
+                                    <p>[[d.travel_description]]</p>
+                                    <p>[[d.descriptionText]]</p>
+                                </div>
+                                <!-- this contains the distance-->
+                                <div class="col-xs-2" style="float: right">
+                                    <p>[[d.durationText]], [[d.distanceText]]</p>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 

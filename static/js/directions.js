@@ -227,7 +227,7 @@
 
 
                 directionInfoDiv.innerHTML = directionInfoText;
-                document.getElementById('directionsCtrl').appendChild(directionInfoDiv);
+                document.getElementById('directionsInfo').appendChild(directionInfoDiv);
             }else{
                 alert('google.maps.DirectionsStatus not okay');
             }

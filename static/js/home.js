@@ -30,8 +30,6 @@ var travelModes = {
 */
 $(document).ready(function(){
 
-   // loadDots();
-    // loadPage();
     loadDot();
 
     directionsDisplay = new google.maps.DirectionsRenderer();
@@ -45,37 +43,6 @@ $(document).ready(function(){
     }
 });
 
-// funtion loadPage(){
-//     var progress = setInterval(function() {
-//         var $bar = $('.bar');
-
-//         if ($bar.width()==400) {
-//             clearInterval(progress);
-//             $('.progress-bar').removeClass('active');
-//         } else {
-//             $bar.width($bar.width()+40);
-//         }
-//         $bar.text($bar.width()/4 + "%");
-//     }, 800);
-// }
-
-
-
-function loadDots(){
-    var dot = 1;
-
-    var dotInterval = setInterval(function(){
-        $('#dot' + dot).css('background-color','blue');
-        dot++;
-        if(dot == 6)
-        {
-            clearInterval(dotInterval);
-           setTimeout(function(){
-                $('.overlay').css('display','none');
-           }, 500);
-        }
-    }, 200);
-}
 
 
 var dotLoaded = 1;
@@ -93,7 +60,7 @@ function loadDot(){
               $('.overlay').css('display','none');
             }, 500);
         }
-    }, 500);
+    }, 200);
 
 }
 
@@ -424,7 +391,7 @@ tripplanner.controller('destinationBlockCtrl', function($scope, $http){
     }
 
     $scope.createBlock = function(index,stop,data,destinations, durations, transitType){
-        if(index == Math.ceil(stop/2)){
+        if(index == Math.ceil(stop/2) - 1){
             loadDot();
         }
 
