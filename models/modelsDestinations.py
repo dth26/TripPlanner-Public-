@@ -107,20 +107,33 @@ def addNewDestination():
 
     engine = create_engine('sqlite:///' + os.path.join(basedir, 'db_file.db'), echo=True)
     connection = engine.connect()
-    query = text('INSERT INTO Destinations(`address`,`description`,`name`,`url`,`longitude`,`latitude`, `yelp_url`, `category`) VALUES(:address, :description, :name, :url, :longitude, :latitude, :yelp_url, :category)')
-    connection.execute(
-                  query,
-                  address = address,
-                  description = description,
-                  name = name,
-                  longitude = longitude,
-                  latitude = latitude,
-                  url = URL,
-                  yelp_url = yelp_url,
-                  category = category)
+    querySelect = text('SELECT * FROM  Destinations WHERE yelp_url=:yelp_url OR (longitude=:longitude AND latitude=:latitude)')
+    queryInsert = text('INSERT INTO Destinations(`address`,`description`,`name`,`url`,`longitude`,`latitude`, `yelp_url`, `category`) VALUES(:address, :description, :name, :url, :longitude, :latitude, :yelp_url, :category)')
+
+    selectResult = connection.execute(querySelect, yelp_url = yelp_url, latitude=latitude, longitude=longitude)
+
+    rowCount = 0;
+    for row in selectResult:
+        rowCount += 1
+
+    if(rowCount == 0):
+        connection.execute(
+                      queryInsert,
+                      address = address,
+                      description = description,
+                      name = name,
+                      longitude = longitude,
+                      latitude = latitude,
+                      url = URL,
+                      yelp_url = yelp_url,
+                      category = category)
+        success = True
+    else:
+        success = False
+
     connection.close()
 
-    return jsonify(name=name)
+    return jsonify({'name':name, 'success':success})
 
 
 @app.route('/deleteDestination', methods=['GET'])

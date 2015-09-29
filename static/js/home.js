@@ -30,8 +30,7 @@ var travelModes = {
 */
 $(document).ready(function(){
 
-    loadDots();
-    // loadPage();
+    loadDot();
 
     directionsDisplay = new google.maps.DirectionsRenderer();
     directionsService = new google.maps.DirectionsService();
@@ -44,37 +43,6 @@ $(document).ready(function(){
     }
 });
 
-// funtion loadPage(){
-//     var progress = setInterval(function() {
-//         var $bar = $('.bar');
-
-//         if ($bar.width()==400) {
-//             clearInterval(progress);
-//             $('.progress-bar').removeClass('active');
-//         } else {
-//             $bar.width($bar.width()+40);
-//         }
-//         $bar.text($bar.width()/4 + "%");
-//     }, 800);
-// }
-
-
-
-function loadDots(){
-    var dot = 1;
-
-    var dotInterval = setInterval(function(){
-        $('#dot' + dot).css('background-color','blue');
-        dot++;
-        if(dot == 6)
-        {
-            clearInterval(dotInterval);
-           setTimeout(function(){
-                $('.overlay').css('display','none');
-           }, 500);
-        }
-    }, 200);
-}
 
 
 var dotLoaded = 1;
@@ -119,6 +87,8 @@ $(function() {
     // when document is ready show departure time if transit is already selected
     if($('#transitType').val() == 'Transit'){
         $('#transitDeparture').show();
+    }else{
+        $('#transitDeparture').hide();
     }
 
 
@@ -190,6 +160,8 @@ $(function() {
 
         geocoder.geocode( { 'address': location}, function(results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
+                loadDot();
+
                 lat = results[0].geometry.location.A;
                 lng = results[0].geometry.location.F;
 
@@ -241,22 +213,37 @@ function initialize(position) {
     //set map configuration
     var mapOptions = {
         center: yourLatlng,
-        zoom: 15,
+        zoom: 13,
         scrollwheel: false
     };
 
+    var menuHeight = $('#header').height() + $('#header2').height();
+    $('#map-canvas').css('height', $(window).height() +'px');
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
     // this enables the display to draw routes on map
     directionsDisplay.setMap(map);
+    loadDot();
 
 
     // add your current location to map
     addMarker(yourLatlng,'You','');
 
 
+
     // create destination blocks
     var scope = angular.element(document.getElementById("destinationBlockCtrl")).scope();
-    scope.getDestinations($('#transitType').val());
+
+
+    var transitType = $('#transitType').val();
+    if(transitType=='' || transitType== undefined){
+        transitType = 'Walking';
+    }
+    scope.getDestinations(transitType);
+
+
+    // create destination blocks
+    var scope2 = angular.element(document.getElementById("directionsListCtrl")).scope();
+    scope2.getListOfSavedDirections();
 }
 
 
@@ -401,10 +388,11 @@ tripplanner.controller('destinationBlockCtrl', function($scope, $http){
     }
 
     $scope.getDestinations = function(transitType){
-
         $scope.destinations = [];
 
         $http.get('http://tripplanner.pythonanywhere.com/getDestinations').success(function(data){
+            loadDot();
+
             var temp = {};
             var durations = [];
             var destinations = [];
@@ -414,9 +402,14 @@ tripplanner.controller('destinationBlockCtrl', function($scope, $http){
     }
 
     $scope.createBlock = function(index,stop,data,destinations, durations, transitType){
+        if(index == Math.ceil(stop/2) - 1){
+            loadDot();
+        }
 
         if(index == stop)
         {
+            loadDot();
+
             durations.sort(function(a,b){return a - b});
 
             for(var z=0; z<durations.length; z++){
@@ -428,11 +421,12 @@ tripplanner.controller('destinationBlockCtrl', function($scope, $http){
                 });
             }
 
-
             return;
         }
 
         var destinationInfo = data[index];
+
+
        // alert(destinationInfo.ID + ' ' + destinationInfo.name);
         var directionrequest =
         {
@@ -463,6 +457,7 @@ tripplanner.controller('destinationBlockCtrl', function($scope, $http){
                 console.log('OVER_QUERY_LIMIT');
             }
 
+            addMarker(new google.maps.LatLng(destinationInfo.latitude, destinationInfo.longitude), data[index].name, response.rows[0].elements[0].distance.text);
             $scope.createBlock(index+1,stop,data,destinations, durations, transitType);
         });
 

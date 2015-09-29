@@ -1,51 +1,39 @@
-{% extends "base.html" %}
 
-{% block js %}
-	<script src="{{ url_for('static', filename='js/new.js') }}"></script>
-	<script>
-	    $(document).ready(function(){
-            $('#menuItemNew').css('color','white');
-        });
-	</script>
-{% endblock %}
-
-
-
-{% block css %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/new.css') }}" media="screen" />
-{% endblock %}
-
-{% block content %}
-<div ng-if="isLogged" ng-controller="newCtrl">
-  <h3 class="modal-title">Yelp </h3>
-  <div class="form-group">
-    <!--<label for="URYelpIn">URL:</label>-->
-    <input type="text"  name="yelpURL" class="form-control"  id="URLYelpIn" placeholder="ENTER YELP URL">
-  </div>
-  <div class="form-group">
-    <button ng-click="submitYelp()" type="button" class="btn btn-default btn-lg">Create Yelp Destination</button>
-  </div>
-  <br><br>
-  <h3 class="modal-title">Manual </h3>
-  <div class="form-group">
-    <input type="text" name="Name"  class="form-control" id="nameIn" placeholder="Name">
-  </div>
-  <div class="form-group">
-    <input type="text" name="Address"  class="form-control" id="addressIn" placeholder="Address">
-  </div>
-  <div class="form-group">
-    <input type="text"  name="URL" class="form-control"  id="URLin" placeholder="URL">
-  </div>
-  <div class="form-group">
-    <textarea id="descrptionIn" name="Description" value="Description" class="form-control" rows="3"></textarea>
-  </div>
-  <div class="form-group">
-    <button id="submitIn" ng-click="submitManual()" type="button" class="btn btn-default btn-lg">Create Manual Destination</button>
-  </div>
+ <div ng-controller="newCtrl" style="margin-top: 150px">
+    <div class="col-xs-12">
+        <form>
+            <h3 class="modal-title hdg1">Yelp   <small>Add a new destination by its yelp URL</small> </h3>
+            <div class="form-group">
+            <label for="URYelpIn">URL:</label>
+                <input type="text"  name="yelpURL" class="form-control"  id="URLYelpIn" placeholder="ENTER YELP URL">
+            </div>
+            <div class="form-group">
+                <button ng-if="isLogged" ng-click="submitYelp()" type="button" class="btn btn-primary" style="margin-top: 10px">Create Yelp Destination</button>
+                <button ng-if="!isLogged" type="button" class="btn btn-primary" style="margin-top: 10px">You must be logged in!</button>
+            </div>
+            <br><br>
+            <h3 class="modal-title hdg1">Manual </h3>
+            <div class="form-group form-group-sm" id="black">
+                <label for="destinationName">Destination Name</label>
+                <input type="text" class="form-control input-sm"  name="Name" id="nameIn" >
+            </div>
+            <div class="form-group form-group-sm">
+                <label for="address">Address</label>
+                <input type="text" class="form-control input-sm"  name="Address" id="addressIn" placeholder="street address, city, state">
+            </div>
+            <div class="form-group form-group-sm">
+                <label for="url">URL</label>
+                <input type="text" class="form-control inpus-sm" name="URL" id="URLin" >
+            </div>
+            <div class="form-group form-group-sm">
+                <label for="notes">Notes</label>
+                <textarea class="form-control input-sm" rows="4" id="descrptionIn" name="Description" id="submitIn" ></textarea>
+            </div>
+        </form>
+        <div class="form-group">
+            <button ng-if="isLogged" type="button" class="btn btn-primary" style="margin-top: 10px" ng-click="submitManual()">Create</button>
+            <button ng-if="!isLogged" type="button" class="btn btn-primary" style="margin-top: 10px">You must be logged in!</button>
+        </div>
+    </div>
 </div>
 
-<div class="panel-body" ng-if="!isLogged">
-     <h4 class="modal-title">You must be logged in to add new Destination!</h4>
-</div>
-
-{% endblock %}

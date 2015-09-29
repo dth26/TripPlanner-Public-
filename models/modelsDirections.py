@@ -155,15 +155,29 @@ def saveDirections():
 
 # get list of destinations for saved directions
 # populate select tag with destination names
+@app.route('/getListOfSavedDirections', methods=['GET','POST'])
 def getDirectionsDestinations():
     engine = create_engine('sqlite:///' + os.path.join(basedir, 'db_file.db'), echo=True)
     connection = engine.connect()
-    query = text('select A.ID as directionID, A.destinationID as destinationID, A.travelMode, A.total_distance as distance, A.total_duration as duration, A.start_address as start, A.end_address as end, B.name as name  \
+    query = text('select A.ID as directionID, B.ID as destinationID, A.travelMode as travelMode, A.total_distance as distance, A.total_duration as duration, A.start_address as start, A.end_address as end, B.name as name  \
                   from Directions as A   \
                   INNER JOIN Destinations as B \
                   on A.destinationID = B.ID')
     results = connection.execute(query)
-    return results
+    listDest = []
+
+    for row in results:
+        data = {}
+        data['directionID'] = row['directionID']
+        data['destinationID'] = row['destinationID']
+        data['travelMode'] = row['travelMode']
+        data['distance'] = row['distance']
+        data['duration'] = row['duration']
+        data['start'] = row['start']
+        data['end'] = row['end']
+        data['name'] = row['name']
+        listDest.append(data)
+    return jsonify(data=listDest)
 
 
 # get directions for directionID
@@ -232,6 +246,7 @@ def getDirectionsForDestination():
 
     connection.close()
 
+    #return jsonify(directionsInfo=directionsInfo)
     return jsonify(steps=steps, directionsInfo=directionsInfo)
 
 

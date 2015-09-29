@@ -23,13 +23,13 @@ tripplanner.controller('newCtrl', function($scope, $http){
     $scope.submitYelp = function(){
         var url = $('input[name="yelpURL"]').val().trim();
         $('#URLYelpIn').value = "";
-        alert(url);
+
         // scrape url and get address, and other infro for destination from yelp
 
         $.getJSON('/scrapeYelp',{
             url: url
         }).done(function(data){
-            var address = data.address + ', ' + data.city + ', ' + data.state + ' ' + data.zip;
+            var address = data.address + ', ' + data.city + ', ' + data.state + ' ' + data.zipcode;
             $scope.addDestination(data.name, data.category, address, url);
         }).fail(function(error){
             alert(error.status);
@@ -57,7 +57,14 @@ tripplanner.controller('newCtrl', function($scope, $http){
                     Latitude: coordinates['latitude'],
                     Longitude: coordinates['longitude']
                 }).done(function(data) {
-                    alert(data.name + " was successfully created!");
+                    if(data.success == true){
+                        alert(data.name + " was successfully created!");
+                        var scope = angular.element(document.getElementById("destinationBlockCtrl")).scope();
+                        scope.getDestinations($('#transitType').val());
+                    }else{
+                        alert('Destination already Exists!');
+                    }
+
                 }).fail(function(error) {
                     alert(error.status);
                 });

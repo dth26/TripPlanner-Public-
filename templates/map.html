@@ -1,0 +1,24 @@
+<!------------------------------------------------>
+<!------------------ Map Canvas ------------------>
+<!------------------------------------------------>
+  <!-- shows the map -->
+    <div class="row">
+        <div class="col-xs-12">
+            <div id="map-canvas"></div>
+        </div>
+    </div>
+
+    <div class="modal" data-backdrop="false" id="directionsModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+             <h4 class="modal-title">Directions</h4>
+             <!--<div id="directionsInfo"></div>-->
+          </div>
+          <div class="modal-body">
+              {% include 'directions.html' %}
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
