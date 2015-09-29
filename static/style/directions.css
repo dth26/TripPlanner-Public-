@@ -6,6 +6,12 @@
     top: 100%;
     transform: translate(-100%,-100%);
 }
+#directionsModal{
+    font-size: 15px !important;
+}
+.dirImg{
+    height: 40px ;
+}
 .glyphicon-map-marker{
     font-size: 20px;
     margin-top: -3px;

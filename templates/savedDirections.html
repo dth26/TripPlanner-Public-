@@ -1,16 +1,22 @@
- <div style="margin-top: 90px">
-    <div class="col-xs-12">
-        <form>
-            <label>Saved Directions</label>
-            <select class="form-control">
-                <option>------- Default -------</option>
-                <option>Dan's Dream (Mindreading)</option>
-                <option>Dan's bedroom (Teleporting)</option>
-                <option>Dan's Fluffy Chicken Hair (Rubbing)</option>
-            </select>
-        </form>
-        <div class="text-center">
-            <button type="button" class="btn btn-success" style="margin-top: 20px">Load Direction</button>
+
+    <div class="panel panel-default" ng-controller="directionsListCtrl" id="directionsListCtrl" style="margin-top: 150px">
+        <div class="panel-body">
+            <div class="inlineForm">
+                <form class="form-inline">
+                    <div id="form-group-data" class="form-group">
+                        <p class="form-control-static">
+                            <strong>Saved Directions For:</strong>
+                        </p>
+                        <select id="directionsFor" class="form-control time" >
+                            <option ng-repeat="d in destinationsList" id="[[d.directionID]]">[[d.name]] ([[d.travelMode]])</option>
+                        </select>
+                    </div>
+                    <button ng-click="deleteDirections()" ng-show="isLogged" style="float:right; margin-right:30px;" class="btn btn-default btn-lg delete"  type="submit">Delete Directions</button>
+                    <button id="getSavedDirections" style="float:right; margin-right:30px;" class="btn btn-default btn-lg"  type="submit">Get Saved Directions</button>
+                </form>
+            </div>
         </div>
     </div>
-</div>
+
+    {% include 'directions.html' %}
+

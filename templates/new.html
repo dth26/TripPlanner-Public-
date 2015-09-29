@@ -2,24 +2,24 @@
  <div ng-controller="newCtrl" style="margin-top: 150px">
     <div class="col-xs-12">
         <form>
-            <h3 class="modal-title">Yelp </h3>
+            <h3 class="modal-title hdg1">Yelp   <small>Add a new destination by its yelp URL</small> </h3>
             <div class="form-group">
             <label for="URYelpIn">URL:</label>
                 <input type="text"  name="yelpURL" class="form-control"  id="URLYelpIn" placeholder="ENTER YELP URL">
             </div>
             <div class="form-group">
-                <button ng-if="isLogged" ng-click="submitYelp()" type="button" class="btn btn-success" style="width: 40%; margin-top: 10px">Create Yelp Destination</button>
-                <button ng-if="!isLogged" type="button" class="btn btn-success" style="width: 40%; margin-top: 10px">You must be logged in!</button>
+                <button ng-if="isLogged" ng-click="submitYelp()" type="button" class="btn btn-primary" style="margin-top: 10px">Create Yelp Destination</button>
+                <button ng-if="!isLogged" type="button" class="btn btn-primary" style="margin-top: 10px">You must be logged in!</button>
             </div>
             <br><br>
-            <h3 class="modal-title">Manual </h3>
+            <h3 class="modal-title hdg1">Manual </h3>
             <div class="form-group form-group-sm" id="black">
                 <label for="destinationName">Destination Name</label>
                 <input type="text" class="form-control input-sm"  name="Name" id="nameIn" >
             </div>
             <div class="form-group form-group-sm">
                 <label for="address">Address</label>
-                <input type="text" class="form-control input-sm"  name="Address" id="addressIn">
+                <input type="text" class="form-control input-sm"  name="Address" id="addressIn" placeholder="street address, city, state">
             </div>
             <div class="form-group form-group-sm">
                 <label for="url">URL</label>
@@ -30,9 +30,9 @@
                 <textarea class="form-control input-sm" rows="4" id="descrptionIn" name="Description" id="submitIn" ></textarea>
             </div>
         </form>
-        <div class="text-center">
-            <button ng-if="isLogged" type="button" class="btn btn-success" style="width: 40%; margin-top: 10px" ng-click="submitManual()">Create</button>
-            <button ng-if="!isLogged" type="button" class="btn btn-success" style="width: 40%; margin-top: 10px">You must be logged in!</button>
+        <div class="form-group">
+            <button ng-if="isLogged" type="button" class="btn btn-primary" style="margin-top: 10px" ng-click="submitManual()">Create</button>
+            <button ng-if="!isLogged" type="button" class="btn btn-primary" style="margin-top: 10px">You must be logged in!</button>
         </div>
     </div>
 </div>

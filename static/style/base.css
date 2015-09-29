@@ -1,18 +1,25 @@
 * {
-   fixed width and height of divs despite paddings
+   /*fixed width and height of divs despite paddings*/
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
      box-sizing: border-box;
      z-index: 1;
 }
+body{
+    background-color: #EDF1F2;
+    overflow-x: hidden;
+}
 
 #background-img{
     position: fixed;
+    width: 100%;
+    height: 200px;
     z-index: 10;
     top: 0px;
     left: 0px;
     bottom:0;
-    clip: rect(0px,700px,140px,0px);
+    /*clip: rect(0px,700px,140px,0px);*/
+    border: 1px solid red;
 }
 #content{
     position: absolute;
@@ -20,27 +27,104 @@
 }
 /* center vertically and horizontally */
 .center{
+    position: absolute;
     top: 50%;
     left: 50%;
+    transform: translate(-50%,-50%);
     -webkit-transform: translate(-50%,-50%);
     -moz-transform: translate(-50%,-50%);
     -o-transform: translate(-50%,-50%);
     -ms-transform: translate(-50%,-50%);
 }
-.log-in{
-     float: right;
-     color: white;
-     margin-top: 3px;
-     margin-right: 3px;
-     font-size: 13px;
+.centerHorizontally{
+    position: absolute;
+    left: 50%;
+    transform: translate(-0%,-50%);
+      -webkit-transform: translate(-50%,-0%);
+    -moz-transform: translate(-50%,-0%);
+    -o-transform: translate(-50%,-0%);
+    -ms-transform: translate(-50%,-0%);
+}
+.centerVertically{
+    top: 50%;
+    transform: translate(-0%,-50%);
+    -webkit-transform: translate(-0%,-50%);
+    -moz-transform: translate(-0%,-50%);
+    -o-transform: translate(-0%,-50%);
+    -ms-transform: translate(-0%,-50%);
+}
+.col-xs-2 img{
+    position: absolute;
+    display: inline-block;
+    cursor: pointer;
+}
+#header{
+    height: 60px;
+    background-color: #E8F6FA;
+    background-color: #EDF1FA;
+    /*border-bottom: 1px solid #4B6E7A;*/
+     font-family: 'Economica', sans-serif;
+     font-size:;
+}
+#header2{
+    height: 35px;
+    background-color: #E8F6FA;
+    background-color: #EDF1FA;
+    font-family: 'Economica', sans-serif;
+    border-bottom: 1px solid #4B6E7A;
+    cursor: pointer;
+}
+.hdg1{
+    color: #6B6E8A;
+}
+.hdg2{
+    color: #8C8EA1;
+}
+.highlight{
+    color: #8F9FCC;
+}
+.highlight2{
+    color: #CF6173;
+}
+.login{
+    position: relative;
+    top: 50%;
+    transform: translate(-0%,-50%);
+    font-size: 25px;
+    cursor: pointer;
+    text-align: right;
+}
+#loginText{
+    font-size: 16px;
+}
+.margin-bottom{
+    margin-bottom: 100px;
 }
 #map-canvas {
-    height: 150px;
-    width: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 99%;
     margin: 0;
     padding: 0;
-    display: block;
-    margin-top: 130px;
+    z-index: 100;
+}
+.menuItem{
+    font-size: 20px;
+    text-align:center;
+    /*border: 1px solid red;*/
+}
+/*#destItem:hover{*/
+/*    color: #989EE3;*/
+/*}*/
+.menuItemColorBase{
+    color: #C6CCCF;
+}
+.menuItemColorSelected{
+    color: #989EE3;
+}
+#name{
+    font-size: 20px;
 }
 #navtab1{
     position: absolute;
@@ -68,14 +152,7 @@
 /*    border:none;*/
 /*    border-bottom: 5px solid #54B09C;*/
 /*}*/
-#navtab4{
-    position: absolute;
-    width: 100%;
-    height: 40px;
-    background-color: #6DBFB2;
-    margin-left: -15px;
-    border:none;
-}
+
 .overlay{
     position: absolute;
     width: 100%;
@@ -85,11 +162,11 @@
     margin: 0px;
     padding: 0px;
     z-index: 1000;
-    background-color: rgba(255,255,255,.5);
+    background-color: rgba(255,255,255,.6);
     position: fixed;
 }
 .overlayInner, .overlayInnerBar, overlayInnerLoading{
-    width: 300px;
+    width: 330px;
 }
 .overlayInner{
     position: absolute;
@@ -103,12 +180,13 @@
     -ms-transform:  translate(-50%, -50%);
 }
 .overlayInnerLoading,.overlayInnerDotHolder{
-    height: 50px;
+    /*height: 50px;*/
     text-align: center;
 }
 .overlayInnerLoading{
     font-size: 17px;
     font-weight: 600;
+    margin-bottom: 40px;
 }
 .overlayInnerDotHolder{
     width: 59px;
@@ -128,12 +206,13 @@
     -ms-transform:  translate(-50%, -50%);
     border: 1px solid blue;
 }
-p{
-    font-size: 12px;
-}
+
 
 .view{
     padding: 10px !important;
+}
+.red{
+    color: #ED2B45;
 }
 .round-button {
 	width: 40px;
@@ -157,11 +236,18 @@ p{
     padding-bottom:50%;
 	line-height:1em;
 	margin-top:-0.5em;
-
 	text-align:center;
 	color:#e2eaf3;
     font-family:Verdana;
     font-size:1.2em;
     font-weight:bold;
     text-decoration:none;
+}
+
+#title{
+    font-size: 35px;
+    padding: 0px;
+    margin: 0px;
+    top: 50%;
+
 }

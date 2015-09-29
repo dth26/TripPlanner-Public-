@@ -1,0 +1,5 @@
+div.modal-backdrop { z-index: 0; background-color: none; }
+.directionsModal{
+    position: absolute;
+    z-index: 100008;
+}

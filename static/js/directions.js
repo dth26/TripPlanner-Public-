@@ -13,7 +13,29 @@
     var end_address;                // end address of route
 
 
+    tripplanner.controller('directionsListCtrl', function($scope,$http){
+
+         $scope.getListOfSavedDirections = function(){
+
+            $scope.destinationsList = [];
+
+            $http.get('http://tripplanner.pythonanywhere.com/getListOfSavedDirections').success(function(data){
+                var destinations = data['data'];
+
+                for(var z=0; z<destinations.length; z++){
+                    $scope.$apply(function(){
+                        $scope.destinationsList.push(destinations[z]);
+                    });
+                }
+
+
+            });
+         }
+
+    });
+
     tripplanner.controller('directionsCtrl', function($scope,$http){
+
 
         $scope.deleteDirections = function(){
             var directionID = $('#directionsFor').find('option:selected').attr('id');
@@ -104,9 +126,18 @@
                     step['imagePath'] = 'car.png';
                 }
 
+                // remove tags from string step['descriptionText']
+                var regex = /(<([^>]+)>)/ig
+                ,   body = step['descriptionText']
+                ,   result = body.replace(regex, "");
+                step['descriptionText'] = result;
+
                 $scope.$apply(function(){
                    $scope.directionBlocks.push(step);
                 });
+
+
+
                 steps.push(step);
 
                  // set height of divs after elements are appended and rendered
@@ -145,7 +176,17 @@
 
     });
 
+
     $(document).on("click", '.GetDirections', function() {
+
+
+        switchTab('mapItm');
+        $('#directionsModal').modal('show');
+        $("#directionsModal").draggable({
+            handle: ".modal-header"
+        });
+
+
         destinationID = $(this).attr('id');
         destinationID = destinationID.substring(0, destinationID.length - 13);
         destinationName = $('#' + destinationID + 'destinationNameInput').attr('value');
@@ -153,20 +194,28 @@
         var longitude = $('#' + $(this).attr('id') + 'Longitude').attr('value');
         var latlng = new google.maps.LatLng(latitude, longitude);
         var transitType = $('#transitType').val();
+        jQuery('html,body').animate({scrollTop:0},0);
         getDirections(latlng, transitType);
-
     });
 
     $(document).on("click",'#saveDirections',function(){
         // if no directions are available to save return
-        if($('#directionInfoDiv').length == 0){
+        if(steps.length == 0){
             alert("Sorry. No directions to save! (Click the map pin by the destination)");
             return;
         }
-
+             // printJSON(steps);
+        alert('Click Okay and please wait a short moment for a success/failure confirmation!');
         travelMode = $('#transitType').val();
         saveDirections();
-    })
+
+        var scope = angular.element(document.getElementById("directionsListCtrl")).scope();
+
+        scope.$apply(function(){
+              scope.getListOfSavedDirections();
+        });
+
+    });
 
     /* get directions from origin to destination */
     function getDirections(destination, travelMode)
@@ -195,7 +244,6 @@
             if (status == google.maps.DirectionsStatus.OK) {
                 // display route on map
                 directionsDisplay.setDirections(response);
-                switchTab('navtab1','fade');
                 route = response.routes[0].legs[0];
 
                 // save directions info
@@ -209,25 +257,35 @@
                 var scope = angular.element(document.getElementById("directionsCtrl")).scope();
                 scope.createDirectionBlock(route);
 
-
+                scope.$apply(function(){
+                      scope.destinationName = destinationName;
+                    scope.start_address = start_address;
+                    scope.end_address = end_address;
+                    scope.total_distance = total_distance;
+                    scope.total_duration = total_duration;
+                });
 
                // createDirectionBlock(route);
 
                 // remove current text
-	            $('#directionInfoDiv').remove();
+	           // $('#directionInfoDiv').remove();
 
-                var directionInfoDiv = document.createElement('div');
-                directionInfoDiv.id = 'directionInfoDiv';
+            //     var directionInfoDiv = document.createElement('div');
+            //     directionInfoDiv.id = 'directionInfoDiv';
 
-                var directionInfoText = "Destination:   <span style=\"color:#4F629C\">" + destinationName + "</span><br/>" +
-                                        "Start Address: <span style=\"color:#4F629C\">" + start_address + "</span><br/>" +
-                                        "End Address:   <span style=\"color:#4F629C\">" + end_address + "</span><br/>" +
-                                        "Distance:      <span style=\"color:#4F629C\">" + total_distance + "</span><br/>" +
-                                        "Duration:      <span style=\"color:#4F629C\">" + total_duration + "</span><br/>";
+                // var directionInfoText = "Destination:   <span style=\"color:#4F629C\">" + destinationName + "</span><br/>" +
+                //                         "Start Address: <span style=\"color:#4F629C\">" + start_address + "</span><br/>" +
+                //                         "End Address:   <span style=\"color:#4F629C\">" + end_address + "</span><br/>" +
+                //                         "Distance:      <span style=\"color:#4F629C\">" + total_distance + "</span><br/>" +
+                //                         "Duration:      <span style=\"color:#4F629C\">" + total_duration + "</span><br/>";
 
 
-                directionInfoDiv.innerHTML = directionInfoText;
-                document.getElementById('directionsInfo').appendChild(directionInfoDiv);
+                // directionInfoDiv.innerHTML = directionInfoText;
+
+//directionInfoDiv
+                // directions.html is included twice which means that the id 'directionsInfo' exists twice. So only one directionsInfo
+                // will be populated
+              //  document.getElementById('directionsInfo').appendChild(directionInfoDiv);
             }else{
                 alert('google.maps.DirectionsStatus not okay');
             }
@@ -240,6 +298,7 @@
     function getSavedDirections(directionID)
     {
         var data = {};
+       // alert('direcionID ' + directionID);
         data['directionID'] = parseInt(directionID);
 
          // remove all previous directions before getting new
@@ -254,23 +313,16 @@
 	        data: JSON.stringify(data),
 	        //data: JSON.stringify(data),
 	        success: function(data) {
-
-	            // remove current text
-	            $('#directionInfoDiv').remove();
-
-                var directionInfoDiv = document.createElement('div');
-                directionInfoDiv.id = 'directionInfoDiv';
-
-                var directionInfoText = "Destination:   <span style=\"color:#4F629C\">" + destinationName + "</span><br/>" +
-                                        "Start Address: <span style=\"color:#4F629C\">" + data.directionsInfo['start_address'] + "</span><br/>" +
-                                        "End Address:   <span style=\"color:#4F629C\">" + data.directionsInfo['end_address'] + "</span><br/>" +
-                                        "Distance:      <span style=\"color:#4F629C\">" + data.directionsInfo['total_distance'] + "</span><br/>" +
-                                        "Duration:      <span style=\"color:#4F629C\">" + data.directionsInfo['total_duration'] + "</span><br/>";
-
-
-                directionInfoDiv.innerHTML = directionInfoText;
-                document.getElementById('form-group-data').appendChild(directionInfoDiv);
+                //document.getElementById('directionsInfo').appendChild(directionInfoDiv);
 	            var scope = angular.element(document.getElementById("directionsCtrl")).scope();
+	            scope.$apply(function(){
+                    scope.destinationName = destinationName;
+                    scope.start_address = data['directionsInfo'].start_address;
+                    scope.end_address = data['directionsInfo'].end_address;
+                    scope.total_distance = data['directionsInfo'].total_distance;
+                    scope.total_duration = data['directionsInfo'].total_duration;
+                });
+
                 scope.createDirectionBlock(data);
 	        },
 	        error: function(jqXHR, exception) {

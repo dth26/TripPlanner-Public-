@@ -124,90 +124,78 @@ tripplanner.controller('loginCtrl', function($scope, $http){
 // }
 
 
-
+var currTab;
 
 $(document).ready(function(){
-    // IMPLEMENT SWITCHING TABS
-    $('#navtab1, #navtab2, #navtab3, #navtab4').click(function(){
-        switchTab(this.id, "fade");
+
+    var currTab = "#map";
+
+    // // IMPLEMENT SWITCHING TABS
+    // $('#navtab1, #navtab2, #navtab3, #navtab4').click(function(){
+    //     switchTab(this.id, "fade");
+    // });
+    $('#destImg, #mapImg, #newImg, #directImg, #destItm, #mapItm, #newItm, #directItm, #aboutItm, #aboutImg, #savedDirImg, #savedDirItm').click(function(){
+        switchTab(this.id);
     });
+
+
+
+    // $('#destImg, #destItm').hover(function(){
+    //     $('#destItm').css('color', '#989EE3');
+    // }, function(){
+    //     $('#destItm').css('color', '#C6CCCF');
+    // });
+
+    // $('#newImg, #newItm').hover(function(){
+    //     $('#newItm').css('color', '#989EE3');
+    // }, function(){
+    //     $('#newItm').css('color', '#C6CCCF');
+    // });
+
+    // $('#mapImg, #mapItem').hover(function(){
+    //     $('#mapItm').css('color', '#989EE3');
+    // }, function(){
+    //     $('#mapItm').css('color', '#C6CCCF');
+    // });
+
+    // $('#aboutImg, #aboutItm').hover(function(){
+    //     $('#aboutItm').css('color', '#989EE3');
+    // }, function(){
+    //     $('#aboutItm').css('color', '#C6CCCF');
+    // });
 });
 
 
-function tabShow(ID, direction){
-    if(direction=="left"){
-        $(ID).show("slide", { direction: "right" }, 500);
-    }else if(direction=="right"){
-        $(ID).show("slide", { direction: "left" }, 500);
-    }else{
-        $(ID).fadeIn(1000);
+
+function switchTab(ID){
+
+    var tabID = '#' + ID.substring(0, ID.length-3);
+
+    if(tabID == "#map"){
+        $('#directionsModal').modal('show');
     }
-}
 
-function switchTab(ID, direction){
-      //showing content1
-    if(ID == 'navtab1'){
-        $('#currPage').attr('value','navtab1');
+    //hide directions modal if tab is switched
+    if(currTab == "#map"){
+        $('#directionsModal').modal('hide');
+    }
+    currTab = tabID;
 
-        if ($('#view1').is(':hidden')){
-            if($('#view2').is(':visible')){
-                $("#view2").hide();
-            }else if($('#view3').is(':visible')){
-                $("#view3").hide();
-            }else if($('#view4').is(':visible')){
-                $("#view4").hide();
-            }
-            $("#map-canvas").show();
-            tabShow("#view1", direction);
-            //$( "#view1" ).scrollTop(280);
+    $('.menuItem').each(function(){
+        //alert($(this).attr('id'));
+        if($(this).hasClass('menuItemColorSelected')){
+           // $('#'+$(this).attr('id')).removeClass('menuItemColorSelected');
+           $(this).removeClass('menuItemColorSelected');
+           $(this).addClass('menuItemColorBase');
         }
-    }
-    //showing content2
-    else if(ID == 'navtab2'){
-        $('#currPage').attr('value','navtab2');
 
-        if ($('#view2').is(':hidden')){
-            if($('#view1').is(':visible')){
-                $("#view1").hide();
-                $("#map-canvas").hide();
-            }else if($('#view3').is(':visible')){
-                $("#view3").hide();
-            }else if($('#view4').is(':visible')){
-                $("#view4").hide();
-            }
-            tabShow("#view2", direction);
-        }
-    }
-    //showing content3
-    else if(ID == 'navtab3'){
-        $('#currPage').attr('value','navtab3');
+        // $(this).addClass('menuItemColorBase');
+    });
 
-        if ($('#view3').is(':hidden')){
-            if($('#view1').is(':visible')){
-                $("#view1").hide();
-                $("#map-canvas").hide();
-            }else if($('#view2').is(':visible')){
-                $("#view2").hide();
-            }else if($('#view4').is(':visible')){
-                $("#view4").hide();
-            }
-            tabShow("#view3", direction);
-        }
-    }
-    //showing content4
-    else if(ID == 'navtab4'){
-        $('#currPage').attr('value','navtab4');
-
-        if ($('#view4').is(':hidden')){
-            if($('#view1').is(':visible')){
-                $("#view1").hide();
-                $("#map-canvas").hide();
-            }else if($('#view2').is(':visible')){
-                $("#view2").hide();
-            }else if($('#view3').is(':visible')){
-                $("#view3").hide();
-            }
-            tabShow("#view4", direction);
-        }
-    }
+    $('.view').hide();
+    $(tabID).fadeIn(1000);
+ //   alert(tabID + "Itm");
+    $(tabID + "Itm").removeClass('menuItemColorBase');
+    $(tabID + "Itm").addClass('menuItemColorSelected');
+    // $(tabID + "Itm").css('color','#989EE3');
 }

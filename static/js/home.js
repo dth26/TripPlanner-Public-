@@ -87,6 +87,8 @@ $(function() {
     // when document is ready show departure time if transit is already selected
     if($('#transitType').val() == 'Transit'){
         $('#transitDeparture').show();
+    }else{
+        $('#transitDeparture').hide();
     }
 
 
@@ -211,17 +213,21 @@ function initialize(position) {
     //set map configuration
     var mapOptions = {
         center: yourLatlng,
-        zoom: 15,
+        zoom: 13,
         scrollwheel: false
     };
 
+    var menuHeight = $('#header').height() + $('#header2').height();
+    $('#map-canvas').css('height', $(window).height() +'px');
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
     // this enables the display to draw routes on map
     directionsDisplay.setMap(map);
     loadDot();
 
+
     // add your current location to map
     addMarker(yourLatlng,'You','');
+
 
 
     // create destination blocks
@@ -233,6 +239,11 @@ function initialize(position) {
         transitType = 'Walking';
     }
     scope.getDestinations(transitType);
+
+
+    // create destination blocks
+    var scope2 = angular.element(document.getElementById("directionsListCtrl")).scope();
+    scope2.getListOfSavedDirections();
 }
 
 
@@ -395,7 +406,6 @@ tripplanner.controller('destinationBlockCtrl', function($scope, $http){
             loadDot();
         }
 
-
         if(index == stop)
         {
             loadDot();
@@ -415,7 +425,7 @@ tripplanner.controller('destinationBlockCtrl', function($scope, $http){
         }
 
         var destinationInfo = data[index];
-        addMarker(new google.maps.LatLng(destinationInfo.latitude, destinationInfo.longitude));
+
 
        // alert(destinationInfo.ID + ' ' + destinationInfo.name);
         var directionrequest =
@@ -447,6 +457,7 @@ tripplanner.controller('destinationBlockCtrl', function($scope, $http){
                 console.log('OVER_QUERY_LIMIT');
             }
 
+            addMarker(new google.maps.LatLng(destinationInfo.latitude, destinationInfo.longitude), data[index].name, response.rows[0].elements[0].distance.text);
             $scope.createBlock(index+1,stop,data,destinations, durations, transitType);
         });
 

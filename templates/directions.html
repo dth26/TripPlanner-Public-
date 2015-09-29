@@ -1,120 +1,45 @@
-<!--This is the first view by the user that will display the travel type and the list of destinations-->
-<div style="margin-top: 150px">
-    <form class="form">
-        <div class="form-group form-group-sm">
-            <div class="col-md-3">
-                 <label>Travel Type:</label>
-                <select class="form-control" id="transitType">
-                     <option>Transit</option>
-                     <option selected="selected">Walking</option>
-                     <option>Driving</option>
-                </select>
+<!--After user select a destination, they will be directed here with a map, info of the destination, and the directionsß-->
+<div>
+    <!-- shows details of path -->
+    <div style="margin-top: 10px" class="panel panel-default" >
+        <div id="directionsInfo" class="panel-body" ng-if="[[destinationName]] != ''">
+            <span>Destination:   <span style="color:#4F629C"> [[destinationName]] </span></span><br>
+            <span>Start Address: <span style="color:#4F629C"> [[start_address]] </span></span><br>
+            <span>End Address:   <span style="color:#4F629C"> [[end_address]] </span></span><br>
+            <span>Distance:      <span style="color:#4F629C"> [[total_distance]] </span></span><br>
+            <span>Duration:      <span style="color:#4F629C"> [[total_duration]] </span></span><br>
+            <a ng-show="isLogged" style="float:right;color: red; cursor:pointer; margin-right: 10px" id="saveDirections">Save Directions</a>
+        </div>
+        <div id="directionsInfo" class="panel-body" ng-if="[[destinationName]] == ''" >
+            <p>Go to Destinations Page and click <a class="glyphicon glyphicon-map-marker"></a> to view route on the map and get directions</p>
+        </div>
+    </div>
+    <!-- shows list of direction -->
+    <div class="row" style="margin-top: 10px"  ng-if="[[destinationName]] != ''">
+        <div class="col-xs-12">
+            <div class="panel panel-default  margin-bottom">
+                <!--<div class="panel-body" id="directionsCtrl" ng-controller="directionsCtrl">-->
+                <div>
+                    <ul id="toggle-view">
+                        <li id="[[d.order]]subBlock" class="subBlock" ng-repeat="d in directionBlocks">
+                            <div class="row" style="font-size: 8px !important">
+                                <!--this contains the icon for direction-->
+                                <div class="col-xs-2">
+                                    <img class="dirImg" src="../static/images/[[d.imagePath]]">
+                                </div>
+                                <!-- this contains the direction guidance -->
+                                <div class="col-xs-10" style="font-size: 8px !important">
+                                    <p>[[d.order]]) [[d.short_description]]  <b>[[d.durationText]], [[d.distanceText]]</b></p>
+                                    <!--<p>[[d.travel_description]]</p>-->
+                                    <p>[[d.descriptionText]]</p>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </form>
-    <form class="form">
-        <div class="form-group form-group-sm">
-            <div class="col-xs-12">
-                <label>Departure Time: </label>
-            </div>
-            <div class="col-xs-4">
-                <select class="form-control time" id="hours">
-                    <option>Now</option>
-                    {% for i in range(1, 13) %}
-                    <option>{{i}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-xs-4">
-                <select class="form-control time" id="mins">
-                    <option>Now</option>
-                    {% for i in range(0, 60) %}
-                    <option>
-                        {% if i < 10 %}
-                            0{{i}}
-                        {% else %}
-                            {{i}}
-                        {% endif %}
-                    </option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-xs-4">
-                <select class="form-control time" id="period">
-                    <option>Now</option>
-                    <option>AM</option>
-                    <option>PM</option>
-                </select>
-            </div>
-        </div>
-    </form>
-
-    <div id="destinationBlockCtrl" ng-controller="destinationBlockCtrl" class="panel panel-default" style="margin-top: 80px">
-        <div class="panel-body">
-            <ul id="toggle-view">
-                <li id="[[d.ID]]" ng-repeat="d in destinations">
-                    <input id="[[d.ID]]GetDirectionsLatitude" class="blockMenuItem" type="hidden" value="[[d.latitude]]">
-                    <input id="[[d.ID]]GetDirectionsLongitude" class="blockMenuItem" type="hidden" value="[[d.longitude]]">
-                    <input id="[[d.ID]]destinationNameInput" class="blockMenuItem" type="hidden" value="[[d.name]]">
-
-                    <div class="row">
-                        <div class="col-xs-1">
-                            <h3 id="[[d.ID]]Order"><strong>[[$index + 1]]</strong></h3>
-                        </div>
-                        <div class="col-xs-9" style="margin-left: -7px">
-                            <h3>[[d.name]]</h3>
-                        </div>
-                        <div class="col-xs-2">
-                            <a id="[[d.ID]]GetDirections" class="glyphicon glyphicon-map-marker GetDirections"></a>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-1"></div>
-                        <div class="col-xs-5" style="margin-left: -7px">
-                            <p style="color: green">[[d.durationText]]</p>
-                        </div>
-                        <div class="col-xs-5">
-                            <p>[[d.distanceText]]</p>
-                        </div>
-                    </div>
-                    <div class="row" style="margin-bottom: 10px; margin-top: -30px">
-                        <div class="col-xs-1"></div>
-                        <div class="col-xs-2" style="margin-left: -7px">
-                            <a ng-show="isLogged" style="color: green">Save</a>
-                        </div>
-                        <div class="col-xs-2">
-                            <a id="[[d.ID]]Delete" ng-click="deleteDestination([[d.ID]],[[d.name]])" ng-show="isLogged" style="color: red">Delete</a>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-        </div>
-
-    <!--    <div class="panel-heading">-->
-    <!--        <table>-->
-    <!--            <tr id="[[d.ID]]" ng-repeat="d in destinations" style="border-bottom:1px solid black;">-->
-    <!--                <input id="[[d.ID]]GetDirectionsLatitude" class="blockMenuItem" type="hidden" value="[[d.latitude]]">-->
-    <!--                <input id="[[d.ID]]GetDirectionsLongitude" class="blockMenuItem" type="hidden" value="[[d.longitude]]">-->
-    <!--                <input id="[[d.ID]]destinationNameInput" class="blockMenuItem" type="hidden" value="[[d.name]]">-->
-    <!--                <td style="width: 4%">-->
-    <!--                    <p id="[[d.ID]]Order">[[$index + 1]]</p>-->
-    <!--                </td>-->
-    <!--                <td style="width: 53%">-->
-    <!--                    <p style="font-weight: bold">[[d.name]]</p>-->
-    <!--                </td>-->
-    <!--                <td style="width: 13%">-->
-    <!--                    <p>[[d.distanceText]]</p>-->
-    <!--                </td>-->
-    <!--                <td style="width: 28%">-->
-    <!--                    <p>[[d.durationText]]</p>-->
-    <!--                </td>-->
-    <!--                <td style="width: 2%">-->
-    <!--                    <a id="[[d.ID]]GetDirections"  class="glyphicon glyphicon-map-marker GetDirections"></a>-->
-    <!--                </td>-->
-    <!--            </tr>-->
-    <!--        </table>-->
-    <!--    </div>-->
-    <!--</div>-->
+    </div>
 </div>
 
 
