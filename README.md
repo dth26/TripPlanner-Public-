@@ -1,6 +1,6 @@
 # TripPlanner-Public-
 
-
+http://tripplanner.pythonanywhere.com/
 
 What is tripplanner? and Why does it exist?
 
@@ -19,7 +19,8 @@ What is tripplanner supposed to do?
   directions(transit,walking,driving), and info about each destination.
 
 
-Functionalities Login at top-right corner of page to test functionalities
+Functionalities (Login at top-right corner of page to test functionalities)
+
 New Destination
 
 By clicking 'New Destination', you can add a new destination that you'd like to visit on your trip
