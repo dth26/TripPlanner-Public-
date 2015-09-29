@@ -3,7 +3,6 @@ from modelsDirections import *
 from yelpScraper import *
 
 from __init__ import db
-from passlib.apps import custom_app_context as pwd_context
 from sqlalchemy import *
 from sqlalchemy.orm import relationship, backref
 from flask import request, url_for, render_template, redirect, session
@@ -39,7 +38,7 @@ def createUser():
     username = request.args.get('username', type=str)
     password = request.args.get('password', type=str)
 
-    password = pwd_context.encrypt(password)
+    password = pw.encrypt(password)
 	# connect to database
     engine = create_engine('sqlite:///' + os.path.join(basedir, 'db_file.db'), echo=True)
     connection = engine.connect()
@@ -83,8 +82,4 @@ def isLogged():
     return jsonify(session);
 
 
-# set the secret key.  keep this really secret:
-# create a session
-# any script that uses session must add this line of code
-app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 
