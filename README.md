@@ -1,8 +1,7 @@
 # TripPlanner-Public-
 
-http://tripplanner.pythonanywhere.com/
 
-What is tripplanner? and Why does it exist?
+## What is tripplanner? and Why does it exist?
 
   Tripplanner was designed to be used as a tool of guidance in San Francisco and San Diego. Without a car and 
   no geographical familiarity of the area my girlfriend and I could use Tripplanner to give us a sense of location 
@@ -10,7 +9,7 @@ What is tripplanner? and Why does it exist?
   have a sense of direction, have knowledge of the area we were in and what we could spend our day doing there.
 
 
-What is tripplanner supposed to do?
+## What is tripplanner supposed to do?
 
   Prior to the trip we could add destinations we want to visit in these cities (restaurants, museums, beaches, 
   piers, popular streets) by saving the location, and important info about a destination. Then on the trip 
@@ -19,9 +18,9 @@ What is tripplanner supposed to do?
   directions(transit,walking,driving), and info about each destination.
 
 
-Functionalities (Login at top-right corner of page to test functionalities)
+## Functionalities (Login at top-right corner of page to test functionalities)
 
-New Destination
+### New Destination
 
 By clicking 'New Destination', you can add a new destination that you'd like to visit on your trip
 
@@ -29,7 +28,7 @@ By clicking 'New Destination', you can add a new destination that you'd like to 
 
 * Create destination manually - fill out information about the destination and click 'create'
 
-Destinations
+### Destinations
 
 By clicking 'Destinations', a list of destinations that you have already added will appear. These destinations will appear in order in relative to the distance to a destination from your current position
 
@@ -41,7 +40,7 @@ By clicking 'Destinations', a list of destinations that you have already added w
 
 * Deleting Destination - Click 'delete' to delete a destination
 
-Map
+### Map
 
 By clicking 'Map', a map will be displayed showing your current location on the map as well as the destinations
 
@@ -51,7 +50,7 @@ By clicking 'Map', a map will be displayed showing your current location on the 
 
 * Moving the Directions Panel- you can move the directions panel by clicking+holding the light blue bar and dragging it
 
-Directions
+### Directions
 
 By clicking 'Directions', a map will be displayed showing your current location on the map as well as the destinations.
 
